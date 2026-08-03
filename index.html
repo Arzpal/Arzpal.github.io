@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andrés Ruiz Palomino · Gameplay Systems &amp; Tools Programmer</title>
+<meta name="description" content="Gameplay systems, editor tooling and game feel in Unity / C#. Ability systems, state machines, cameras and the tools designers iterate with.">
+
+<meta property="og:title" content="Andrés Ruiz Palomino · Gameplay Systems &amp; Tools Programmer">
+<meta property="og:description" content="Gameplay systems, editor tooling and game feel in Unity / C#.">
+<meta property="og:type" content="website">
+
+<style>
+  :root {
+    --bg:        #0e1116;
+    --bg-soft:   #151a21;
+    --card:      #171d25;
+    --line:      #252d38;
+    --ink:       #e7ecf2;
+    --muted:     #97a3b2;
+    --dim:       #6d7889;
+    --accent:    #2fbd89;
+    --accent-dk: #0f7a5a;
+    --radius:    14px;
+    --maxw:      1000px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* ---------------- nav ---------------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(14,17,22,.82);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in {
+    max-width: var(--maxw); margin: 0 auto; padding: 12px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { font-weight: 700; letter-spacing: .2px; color: var(--ink); }
+  .brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 20px; font-size: 14px; }
+  .nav-links a { color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  @media (max-width: 620px) { .nav-links { display: none; } }
+
+  /* ---------------- hero ---------------- */
+  .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
+  .eyebrow {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin-bottom: 14px;
+  }
+  h1 { margin: 0 0 8px; font-size: clamp(30px, 5.2vw, 46px); line-height: 1.12; letter-spacing: -.4px; }
+  .role { font-size: clamp(16px, 2.4vw, 20px); color: var(--muted); margin: 0 0 24px; font-weight: 500; }
+  .about { max-width: 68ch; color: var(--ink); font-size: 17px; }
+  .about p { margin: 0 0 14px; }
+  .about p:last-child { margin-bottom: 0; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 28px; }
+  .pill {
+    font-size: 13px; color: var(--muted);
+    border: 1px solid var(--line); background: var(--bg-soft);
+    padding: 5px 12px; border-radius: 999px;
+  }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    border: 1px solid var(--line); background: var(--bg-soft); color: var(--ink);
+    transition: border-color .15s ease, background .15s ease, transform .15s ease;
+  }
+  .btn:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-1px); }
+  .btn-primary { background: var(--accent-dk); border-color: var(--accent-dk); color: #fff; }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
+
+  /* ---------------- sections ---------------- */
+  section.block { padding: 64px 0; border-bottom: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+  h2 { margin: 0; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+  .sec-note { color: var(--dim); font-size: 14px; margin: 0 0 28px; }
+
+  /* ---------------- filters ---------------- */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+  .filter {
+    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 7px 14px; border-radius: 999px;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--line);
+    transition: all .15s ease;
+  }
+  .filter:hover { color: var(--ink); border-color: var(--dim); }
+  .filter[aria-pressed="true"] { background: var(--accent-dk); border-color: var(--accent-dk); color: #fff; }
+
+  /* ---------------- project cards ---------------- */
+  .projects { display: flex; flex-direction: column; gap: 22px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+    transition: border-color .18s ease;
+  }
+  .card:hover { border-color: #33404f; }
+  .card.no-media { grid-template-columns: 1fr; }
+  @media (max-width: 780px) { .card { grid-template-columns: 1fr; } }
+
+  .card-body { padding: 24px 26px; }
+  .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .card h3 { margin: 0; font-size: 19px; line-height: 1.3; }
+  .card .org { color: var(--muted); font-weight: 500; }
+  .dates { font-size: 13px; color: var(--dim); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .role-line { margin: 6px 0 0; font-size: 13.5px; color: var(--accent); font-weight: 600; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 12px; }
+  .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 5px; border: 1px solid;
+  }
+  .tag-professional { color: #52d3a2; border-color: #1f5a45; background: #10231d; }
+  .tag-prototype    { color: #7fb2ff; border-color: #234168; background: #101a28; }
+  .tag-freelance    { color: #f0b45e; border-color: #6a4d21; background: #241c10; }
+  .tag-personal     { color: #c79bf0; border-color: #4d3468; background: #1d1528; }
+  .tag-team         { color: #f28ba0; border-color: #6b2f3c; background: #251217; }
+
+  .card p.desc { margin: 0; color: var(--muted); font-size: 15px; }
+  .card ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 14.5px; }
+  .card li { margin: 5px 0; }
+  .card-links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 14px; font-weight: 600; }
+
+  /* ---------------- youtube lite embed ---------------- */
+  .yt {
+    position: relative; width: 100%; aspect-ratio: 16 / 9;
+    background: #000 center/cover no-repeat;
+    border: 0; padding: 0; cursor: pointer; display: block;
+    border-right: 1px solid var(--line);
+  }
+  @media (max-width: 780px) { .yt { border-right: 0; border-bottom: 1px solid var(--line); } }
+  .yt::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.45));
+    transition: background .2s ease;
+  }
+  .yt:hover::after { background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.25)); }
+  .yt-play {
+    position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    width: 62px; height: 44px; border-radius: 11px;
+    background: rgba(16,20,26,.78); border: 1px solid rgba(255,255,255,.22);
+    display: grid; place-items: center;
+    transition: background .2s ease, transform .2s ease;
+  }
+  .yt:hover .yt-play { background: var(--accent-dk); border-color: var(--accent); transform: translate(-50%,-50%) scale(1.06); }
+  .yt-play svg { width: 20px; height: 20px; fill: #fff; margin-left: 2px; }
+
+  /* una vez cargado el iframe, nada de overlay encima (bloquearia los controles) */
+  .yt-frame {
+    position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000;
+    border-right: 1px solid var(--line);
+  }
+  @media (max-width: 780px) { .yt-frame { border-right: 0; border-bottom: 1px solid var(--line); } }
+  .yt-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* ---------------- contact ---------------- */
+  .contact-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+  footer.foot { padding: 32px 0 44px; color: var(--dim); font-size: 13px; }
+  .foot-in { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+
+  .empty { color: var(--dim); font-size: 15px; padding: 20px 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top">Andrés Ruiz<span>.</span></a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div id="top"></div>
+
+<!-- ============================ HERO / ABOUT ============================ -->
+<header class="hero" id="about">
+  <div class="wrap">
+    <div class="eyebrow">Gameplay Systems &amp; Tools Programmer · Unity / C#</div>
+    <h1>Andrés Ruiz Palomino</h1>
+    <p class="role">Gameplay systems, editor tooling and the feel layer on top of them.</p>
+
+    <div class="about">
+      <p>
+        I build gameplay systems and the editor tools designers use to iterate on them: ability
+        systems, state machines, cameras, and the feel layer that makes a hit land (hitstop,
+        knockback, feedback). The rule I work by is that adding content should mean adding data,
+        not writing code, so most of what I build ends up data-driven and authored in the editor.
+      </p>
+      <p>
+        I also design the systems I build. I run a Spanish-language YouTube channel about game
+        design, so I show up to a feature with an opinion on why it should feel a certain way and
+        I can argue the trade-off with a designer instead of just implementing the ticket. That
+        overlap, systems programmer with a technical designer's eye, is the useful part of my
+        profile.
+      </p>
+      <p>
+        Three years across small indie teams, wearing systems, tooling, tech art and production
+        hats. Currently a programmer on a live-service Unity 6 mobile title, and building a 3D
+        action combat prototype solo on nights and weekends.
+      </p>
+    </div>
+
+    <div class="meta">
+      <span class="pill">Peru · UTC-5</span>
+      <span class="pill">English: Advanced</span>
+      <span class="pill">Open to full-time remote</span>
+      <span class="pill">Full US-hours overlap</span>
+    </div>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="mailto:andres.gp.ruiz@gmail.com">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4.24-8 4.76-8-4.76V6l8 4.76L20 6Z"/></svg>
+        Email me
+      </a>
+      <a class="btn" href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.75-1.95C21.4 8.75 22 11 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.1-3.4-2.1 0-2.4 1.6-2.4 3.3V21h-4V9Z"/></svg>
+        LinkedIn
+      </a>
+      <a class="btn" href="https://github.com/Arzpal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.26.8-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.57A12 12 0 0 0 12 .5Z"/></svg>
+        GitHub
+      </a>
+      <a class="btn" href="Andres-Ruiz-Game-Programmer.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 16 6 10h4V3h4v7h4l-6 6Zm-8 2h16v3H4v-3Z"/></svg>
+        Download CV
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ WORK ============================ -->
+<section class="block" id="work">
+  <div class="wrap">
+    <div class="sec-head"><h2>Selected work</h2></div>
+    <p class="sec-note">Studio work, team projects and things I build on my own time. Filter by type.</p>
+
+    <div class="filters" id="filters" role="group" aria-label="Filter projects by type"></div>
+    <div class="projects" id="projects"></div>
+  </div>
+</section>
+
+<!-- ============================ CONTACT ============================ -->
+<section class="block" id="contact">
+  <div class="wrap">
+    <div class="sec-head"><h2>Get in touch</h2></div>
+    <p class="sec-note">Open to full-time remote roles and contract work. Usually replies within a day.</p>
+    <div class="contact-grid">
+      <a class="btn btn-primary" href="mailto:andres.gp.ruiz@gmail.com">andres.gp.ruiz@gmail.com</a>
+      <a class="btn" href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="https://github.com/Arzpal" target="_blank" rel="noopener">github.com/Arzpal</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>© <span id="year"></span> Andrés Ruiz Palomino</div>
+    <div>Built as a static page, hosted on GitHub Pages.</div>
+  </div>
+</footer>
+
+<script>
+/* ==========================================================================
+   PROYECTOS — esto es lo único que necesitas editar para agregar trabajo.
+
+   Campos:
+     title      texto obligatorio
+     org        estudio o cliente (opcional; se muestra despues del titulo)
+     role       QUE HICISTE TU en el proyecto (opcional pero recomendado).
+                Es lo que evita que te confundan de rol: "Solo programmer",
+                "Game design and environment art", "Gameplay systems".
+     tags       ["professional"] | ["prototype"] | ["freelance"] | ["personal"]
+                (puedes poner mas de uno)
+     dates      texto libre: "Mar 2026 – Present", "2023 – 2025", "Jul 2026"
+     youtubeId  el ID del video, NO la URL entera.
+                De https://www.youtube.com/watch?v=dQw4w9WgXcQ  ->  "dQw4w9WgXcQ"
+                Si todavia no tienes video, pon null y la tarjeta se ve bien igual.
+     desc       parrafo corto (1-3 frases)
+     bullets    lista opcional de logros tecnicos concretos
+     links      lista opcional: { label: "GitHub", url: "..." }
+
+   PLANTILLA para copiar y pegar:
+
+   {
+     title: "Nombre del proyecto",
+     org: "Cliente o estudio",
+     tags: ["freelance"],
+     dates: "Ene 2026 – Mar 2026",
+     youtubeId: "PON_EL_ID_AQUI",
+     desc: "Que es el juego y que hiciste tu en una o dos frases.",
+     bullets: [
+       "Logro tecnico concreto y verificable.",
+     ],
+     links: [ { label: "GitHub", url: "https://github.com/..." } ]
+   },
+   ========================================================================== */
+
+const PROJECTS = [
+  {
+    title: "Don't Chicken Out!",
+    org: "Raymi Games",
+    role: "Gameplay Programmer · lead programmer on the project",
+    tags: ["team"],
+    dates: "Sep 2025 – Present",
+    youtubeId: "U-nvo6fbJK0",
+    desc: "Local party game for 2 to 4 players: chickens climb a tower of falling blocks while the camera rises, and the last one standing wins the round. Unity 6 / URP, currently in production, targeting PC and console. I am the lead programmer, with roughly 70% of the game's code, and I support design as well, which is how the role ended up titled Gameplay Programmer.",
+    bullets: [
+      "Rubber-band block pooling: the lead designer raised the problem, I proposed and built the answer. Blocks are pooled per player rank (winning, neutral, losing), so what spawns tracks who is ahead. It worked from the first pass, with the round of tuning you would expect.",
+      "Platformer feel (jump buffering, coyote time, glide, fall multiplier) implemented and exposed through a ScriptableObject, so the lead designer tunes the game's handling without going through me.",
+      "Match flow as a Menu / Prepare / Game / Win state machine driving rounds and first-to-N matches, plus local join for 2 to 4 players across split keyboard and gamepads.",
+      "Vertical auto-rising camera rig on an acceleration curve, which is the pressure the whole match runs on.",
+      "Items and hazards (bombs, spring discs, capsules, spawners), and FMOD integrated from scratch with adaptive music transitions and the SFX layer."
+    ],
+    links: [
+      { label: "Play on itch.io", url: "https://raymi-games.itch.io/dont-chicken-out" }
+    ]
+  },
+  {
+    title: "Tatemis3D",
+    org: "Personal project",
+    role: "Solo programmer and designer",
+    tags: ["personal", "prototype"],
+    dates: "Jul 2026 – Present",
+    youtubeId: null,
+    desc: "A 3D monster-battling game built around the thing the Pokémon anime shows and the games never do: creativity and resourcefulness in a fight. You control the creature directly, and the terrain, your own kit and even the enemy's kit are all options you can turn against the fight. Built solo in Unity 6 / URP.",
+    bullets: [
+      "Composable ability system so that a creature is data, not code: abilities are lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
+      "Wrote the camera rig from scratch rather than using Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.",
+      "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. Terrain now accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.",
+      "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states.",
+      "Editor tooling: scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases)."
+    ],
+    links: [
+      { label: "GitHub repo", url: "https://github.com/Arzpal/Project_Tatemis3D" }
+    ]
+  },
+  {
+    // Sin video ni capturas: NDA. youtubeId se queda en null a proposito.
+    // "Project Monster Shelter" es CODENAME. El titulo real no se publica en ningun sitio.
+    title: "Project Monster Shelter",
+    org: "DOB Studios",
+    role: "Game Programmer · tools, flow authoring and persistence",
+    tags: ["professional"],
+    dates: "Mar 2026 – Present",
+    youtubeId: null,
+    desc: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Shipped title, referred to here by codename. I work on the authoring tools, the tutorial and chapter flow, and the persistence layer.",
+    bullets: [
+      "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing (usually \"when my own events have finished\").",
+      "Built that idea into an in-Unity node-graph editor (EditorWindow + GraphView / UIElements, ~2,000 LOC), with polymorphic actions via [SerializeReference]. Three of us author with it now, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters (dialogue events plus missions), so shipping a new feature or chapter means adding steps instead of writing a new flow.",
+      "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
+      "Event-driven notification system with dual concurrency channels (instant plus FIFO queue), per-id de-duplication windows and pooled views."
+    ],
+    links: []
+  },
+  {
+    title: "Prismonaut",
+    org: "Naked Dog",
+    role: "Founder · designer, environment artist and lead technical artist",
+    tags: ["team"],
+    dates: "Dec 2024 – May 2026 · on pause",
+    youtubeId: "dtM9pDWQxzI",
+    desc: "2D platformer, and the studio I founded to build it. We started at ten and settled into a core six who actually shipped it, from prototype through Game Jam Plus incubation to a Steam build. The project is on pause now, with the team pushing progressive updates when it decides to. I came in on design and art and ended up the most active contributor on the repository, which meant writing gameplay code too.",
+    bullets: [
+      "Designed and programmed the hazards: slimes, thorn roots, spikes, dirt-ball spawners and the lava sequence of the tutorial. Designing them and then implementing them myself meant the tuning loop had no handoff in it.",
+      "Lead technical artist on the project, and the one who introduced several of the game-feel corrections that made the character read better to play.",
+      "Level design and environment art: tilesets, level layouts and the visual language of the world.",
+      "Worked across the module-based player controller (movement, power, input and health modules), the camera manager and the screen-shake layer.",
+      "Windows and Linux builds through the project's release cycle."
+    ],
+    links: [
+      { label: "Play on itch.io", url: "https://naked-dog.itch.io/prismonaut" }
+    ]
+  },
+  {
+    title: "Hell Is Mine",
+    org: "Final degree project · Toulouse Lautrec",
+    role: "Game design, environment art and technical art",
+    tags: ["team"],
+    dates: "Mar – Dec 2022",
+    youtubeId: "9WE1rslrnqE",
+    desc: "Top-down action game set in a stylized underworld, built as my final degree project. Low-poly geometry under a pixelated post-process, with glowing liquid and emissive terrain doing most of the storytelling.",
+    bullets: [
+      "Owned the look of the game: I wrote the shader for the glowing lava that lights most of the world, and authored the material work, texture effects and particle systems throughout. The only thing I did not make is the pixelation post-process, which was a shader the team bought.",
+      "Environment art and world dressing across the game's areas.",
+      "The design was more ambitious than what shipped: every gameplay decision was meant to change the player's moveset, branching into two endings. As the team lost programmers I cut it down to one ending, with upgrades that scale speed and damage instead of adding mechanics. Knowing which half of your design is the load-bearing half, and cutting the rest in time, is the part of that project I still use."
+    ],
+    links: [
+      { label: "GitHub repo", url: "https://github.com/Antoneat/HellIsMine-2.0" }
+    ]
+  },
+  {
+    title: "Space Invaders-like",
+    org: "Personal project · Godot",
+    role: "Solo: code, design and art",
+    tags: ["personal", "prototype"],
+    dates: "2024 · about two weeks",
+    youtubeId: "xrlycDqKVsw",
+    desc: "A roguelike bullet-hell built alone in Godot and GDScript, around the time of the Unity licensing controversy. The game was not really the point: I wanted to evaluate another engine first-hand, in enough depth to have an opinion, in case I ever had to move off Unity.",
+    bullets: [
+      "The verdict, which is what the exercise was for: Godot is genuinely intuitive and fast to work in, but its scene-based architecture is simple enough that I would expect it to strain on something the size of my current project. Worth knowing before you need to know it.",
+      "Designed the hitbox / hurtbox layer myself, from the engine documentation and experimentation rather than from a tutorial, so bullets, asteroids and the player all share one damage contract.",
+      "Debugged the projectile model end to end: bullets were passing through targets, sometimes colliding with the player that fired them, and the firing angle did not reliably follow the ship. Normalizing projectile speed and separating the collision layers made it predictable, and the charged shot builds on top of that.",
+      "Aim-assisted targeting, a camera rig on the Phantom Camera addon, and lighting passes for readability on a busy screen.",
+      "Ships, asteroids and explosions drawn by me in Photoshop and Aseprite. Only the background came from reference."
+    ],
+    links: [
+      { label: "GitHub repo", url: "https://github.com/Arzpal/SpaceInvadersLike" }
+    ]
+  },
+  {
+    title: "Crust and Conflict",
+    org: "Game Jam Plus 2023",
+    role: "Game designer and technical artist",
+    tags: ["team"],
+    dates: "Oct 2023 · about a month",
+    youtubeId: "x62QN_tkGs0",
+    desc: "A Papers, Please-style game where you are a baker during the French Revolution. Who you choose to sell bread to, nobles or the poor, is the whole game, and the choices you accumulate decide which ending you get. Taken to Game Jam Plus with a pitch and a playable build. Most active contributor of a six-person team.",
+    bullets: [
+      "The morality system was my idea, and it is the hook everything else hangs on: every sale is a side taken, and the game reads the pattern rather than any single choice.",
+      "Built the systems that carry it: bread inventory, item slots, drag-and-drop and the shop manager driving the sales loop, plus the sound controller, the menu and pause flow, and the playable scene assembly.",
+      "Environment and UI art (props, price tags, signage) alongside the design work.",
+      "Went back to the project on my own about a year later to clean up code that the jam deadline had left hardcoded. Nobody asked; it was bothering me."
+    ],
+    links: [
+      { label: "Play on itch.io", url: "https://teamakii.itch.io/crust-and-conflict" },
+      { label: "GitHub repo", url: "https://github.com/Arzpal/GJPlus-23" }
+    ]
+  },
+  {
+    // Sin video: son juegos de casino fisico, publicados por GMW.
+    title: "Casino cabinet games",
+    org: "GDP Studios · published under GMW",
+    role: "Unity developer · multi-cabinet layout and optimization",
+    tags: ["professional"],
+    dates: "Jul 2025 – Mar 2026",
+    youtubeId: null,
+    desc: "Unity games that run on physical casino cabinets. Four titles: the Clownfish / Lionfish / Parrotfish Treasure family (one game behind three different art sets), Triple Bananas, the Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe family, and Ravin' Hot Deluxe.",
+    bullets: [
+      "The constraint that shaped everything: one Unity project had to run on three cabinet models with completely different screen arrangements. S4 stacks three 16:9 displays vertically, S5 runs 16:9 then 9:16 then 16:9, S8 is a 9:16 below a 16:9. Every layout is different and the game logic has to stay identical across all three.",
+      "Reskin pipeline for the cloned titles: same logic, different face, so the work was swapping the art scene by scene without the logic ever drifting between versions.",
+      "Proposed and drove optimization work across the projects, including cutting mini-features back to what they were actually worth.",
+      "Changed how the studio worked, not just my own tasks: researched font optimization for their output formats and proposed a workflow with the art and UX teams that removed friction for everyone."
+    ],
+    links: []
+  },
+  {
+    title: "Zarzilla Games",
+    org: null,
+    role: "Technical Artist → Lead Technical Artist → Studio Manager",
+    tags: ["professional"],
+    dates: "2023 – 2025",
+    youtubeId: "SERw7aExaIU",
+    desc: "Came in as a technical artist, was promoted to Lead Technical Artist, and about a year later to Studio Manager, running a studio of around 15 people across five areas: technical art, development, UI and raster art, animation and concept art.",
+    bullets: [
+      "Redefined what the technical art area was for. It had been art implementation and nothing else; I turned it into a group that also took on the technical work sitting next to art, and we built tools that sped up the animation team's workflow.",
+      "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. I kept my hands on the work while leading, which is the only reason the leading part went well.",
+      "Supervised development on Gin Rummy Super and on two projects I cannot talk about yet.",
+      "Defined the technical pipelines the teams worked through, and optimized runtime performance and resource usage.",
+      "Designed and implemented interactive behaviors, camera systems and visual-feedback systems.",
+      "As Studio Manager: coordinated schedules and sprint planning across the five areas and reworked how they handed work to each other."
+    ],
+    links: [
+      { label: "Gin Rummy Super trailer", url: "https://www.youtube.com/watch?v=SERw7aExaIU" },
+      { label: "Treasure Mines trailer (minigame)", url: "https://www.youtube.com/watch?v=bcCz_zDc9t8" }
+    ]
+  },
+  {
+    title: "Multiplayer sandbox: Photon Fusion 2 + PlayFab",
+    org: null,
+    role: "Learning exercise",
+    tags: ["prototype"],
+    dates: "Jul 2026",
+    youtubeId: null,
+    desc: "A small sandbox built over a weekend to get hands-on with networked state authority in Fusion 2 Shared Mode and PlayFab-backed player data. Networked spawn and movement, verified with an editor client and a standalone build in the same room. Not production experience, just the shortest path from reading about it to running it.",
+    bullets: [],
+    links: [
+      { label: "GitHub repo", url: "https://github.com/Arzpal/SandboxPlaytest" }
+    ]
+  }
+];
+
+const TAG_LABELS = {
+  personal:     "Personal",
+  team:         "Team project",
+  professional: "Professional",
+  prototype:    "Prototype",
+  freelance:    "Freelance"
+};
+
+/* ---------- render ---------- */
+const projectsEl = document.getElementById("projects");
+const filtersEl  = document.getElementById("filters");
+
+const esc = s => String(s).replace(/[&<>"']/g, c =>
+  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+
+function playIcon() {
+  return '<span class="yt-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"/></svg></span>';
+}
+
+function mediaHTML(p) {
+  if (!p.youtubeId) return "";
+  const id = esc(p.youtubeId);
+  return `<button class="yt" type="button" data-id="${id}"
+            aria-label="Play gameplay video for ${esc(p.title)}"
+            style="background-image:url('https://i.ytimg.com/vi/${id}/hqdefault.jpg')">
+            ${playIcon()}
+          </button>`;
+}
+
+function cardHTML(p) {
+  const media   = mediaHTML(p);
+  const org     = p.org ? ` <span class="org">· ${esc(p.org)}</span>` : "";
+  const tags    = (p.tags || []).map(t =>
+                    `<span class="tag tag-${esc(t)}">${esc(TAG_LABELS[t] || t)}</span>`).join("");
+  const bullets = (p.bullets && p.bullets.length)
+                    ? `<ul>${p.bullets.map(b => `<li>${esc(b)}</li>`).join("")}</ul>` : "";
+  const links   = (p.links && p.links.length)
+                    ? `<div class="card-links">${p.links.map(l =>
+                        `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</div>`
+                    : "";
+
+  return `<article class="card${media ? "" : " no-media"}" data-tags="${esc((p.tags || []).join(" "))}">
+    ${media}
+    <div class="card-body">
+      <div class="card-top">
+        <h3>${esc(p.title)}${org}</h3>
+        <span class="dates">${esc(p.dates || "")}</span>
+      </div>
+      ${p.role ? `<p class="role-line">${esc(p.role)}</p>` : ""}
+      <div class="tags">${tags}</div>
+      <p class="desc">${esc(p.desc || "")}</p>
+      ${bullets}
+      ${links}
+    </div>
+  </article>`;
+}
+
+function render(filter) {
+  const list = filter === "all"
+    ? PROJECTS
+    : PROJECTS.filter(p => (p.tags || []).includes(filter));
+
+  projectsEl.innerHTML = list.length
+    ? list.map(cardHTML).join("")
+    : `<p class="empty">Nothing here yet.</p>`;
+}
+
+/* ---------- filters (solo muestra las que existen de verdad) ---------- */
+const used = ["all", ...Object.keys(TAG_LABELS).filter(t =>
+  PROJECTS.some(p => (p.tags || []).includes(t)))];
+
+filtersEl.innerHTML = used.map((t, i) =>
+  `<button class="filter" type="button" data-filter="${t}" aria-pressed="${i === 0}">
+     ${t === "all" ? "All" : TAG_LABELS[t]}
+   </button>`).join("");
+
+filtersEl.addEventListener("click", e => {
+  const btn = e.target.closest(".filter");
+  if (!btn) return;
+  filtersEl.querySelectorAll(".filter").forEach(b =>
+    b.setAttribute("aria-pressed", String(b === btn)));
+  render(btn.dataset.filter);
+});
+
+/* ---------- click en la miniatura: recien ahi carga el iframe de YouTube ---------- */
+projectsEl.addEventListener("click", e => {
+  const box = e.target.closest(".yt");
+  if (!box) return;
+  const id = box.dataset.id;
+  const frame = document.createElement("iframe");
+  frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+  frame.title = "Gameplay video";
+  frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+  frame.allowFullscreen = true;
+  const holder = document.createElement("div");
+  holder.className = "yt-frame";
+  holder.appendChild(frame);
+  box.replaceWith(holder);
+});
+
+render("all");
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
