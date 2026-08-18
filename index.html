@@ -1,622 +1,1095 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Andrés Ruiz Palomino · Gameplay Systems &amp; Tools Programmer</title>
-<meta name="description" content="Gameplay systems, editor tooling and game feel in Unity / C#. Ability systems, state machines, cameras and the tools designers iterate with.">
-
-<meta property="og:title" content="Andrés Ruiz Palomino · Gameplay Systems &amp; Tools Programmer">
-<meta property="og:description" content="Gameplay systems, editor tooling and game feel in Unity / C#.">
-<meta property="og:type" content="website">
-
+<meta name="description" content="Gameplay systems, editor tooling and the feel layer on top of them. Unity / C# programmer based in Peru.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:        #0e1116;
-    --bg-soft:   #151a21;
-    --card:      #171d25;
-    --line:      #252d38;
-    --ink:       #e7ecf2;
-    --muted:     #97a3b2;
-    --dim:       #6d7889;
-    --accent:    #2fbd89;
-    --accent-dk: #0f7a5a;
-    --radius:    14px;
-    --maxw:      1000px;
-  }
+/* ============================================================================
+   DESIGN TOKENS — no agregar colores nuevos. Si hace falta un tono, derivarlo
+   de estos. La pagina es blanco y negro; el aqua es acento, nunca fondo de area.
+   ========================================================================== */
+:root{
+  --bg:#08090a; --bg-alt:#0f1112; --card:#0f1112; --card-inner:#0b0d0e;
+  --rule:#1a1d20; --border:#1e2124; --border-ctrl:#23272a; --border-hover:#2b3134;
+  --white:#ffffff; --ui:#f4f6f7; --body:#c1c8cb; --ai-body:#a9b1b5;
+  --sec:#8d9498; --dim:#7c8286; --faint:#5b6165; --ghost:#4a5054;
+  --aqua:#00e5c0; --aqua-hi:#6ffbe2; --on-aqua:#04100e;
+  --aqua-line:#14453c; --aqua-line-on:#1d6355;
+  --f-display:'Archivo',sans-serif;
+  --f-body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --f-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg)}
+body{color:var(--ui);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--aqua);text-decoration:none}
+a:hover{color:var(--aqua-hi)}
+::selection{background:var(--aqua);color:var(--on-aqua)}
+img{max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0}
 
-  * { box-sizing: border-box; }
+.sec{border-bottom:1px solid var(--rule)}
+.sec--alt{background:var(--bg-alt)}
+.sec-inner{max-width:1240px;margin:0 auto;padding:92px 36px 100px}
 
-  html { scroll-behavior: smooth; }
+/* ---------- barra superior (por encima del modal a proposito) ------------- */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(8,9,10,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--rule)}
+.topbar-inner{max-width:1240px;margin:0 auto;padding:15px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{cursor:pointer;font-family:var(--f-display);font-weight:800;font-size:15px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ui)}
+.brand span{color:var(--aqua)}
+.topbar-right{display:flex;align-items:center;gap:22px}
+.nav{display:flex;gap:26px;margin-right:14px;font-family:var(--f-mono);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+.nav button{cursor:pointer;padding-bottom:2px;transition:color .18s ease;color:var(--sec);border-bottom:1px solid transparent}
+.nav button.is-active{color:var(--aqua);border-bottom-color:var(--aqua)}
+.hairline{width:1px;height:20px;background:var(--border-ctrl)}
+.ai-toggle{display:flex;align-items:center;gap:10px;cursor:pointer;padding:4px 6px 4px 11px;border-radius:99px;border:1px solid var(--border-ctrl);background:#101315;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;transition:color .18s ease,border-color .18s ease;color:var(--faint)}
+.ai-toggle:hover{border-color:var(--border-hover)}
+.ai-toggle.is-on{color:var(--ui)}
+.switch{position:relative;width:38px;height:20px;border-radius:99px;flex:none;transition:background .2s ease,border-color .2s ease;border:1px solid var(--border-hover);background:#14171a}
+.ai-toggle.is-on .switch{border-color:var(--aqua-line-on);background:rgba(0,229,192,.14)}
+.knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:99px;transition:left .2s cubic-bezier(.4,.1,.2,1),background .2s ease;background:var(--ghost)}
+.ai-toggle.is-on .knob{left:20px;background:var(--aqua)}
+.langswitch{display:flex;border:1px solid var(--border-ctrl);border-radius:6px;overflow:hidden;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:1px}
+.langswitch button{padding:5px 9px;cursor:pointer;background:transparent;color:var(--sec)}
+.langswitch button.is-active{background:var(--aqua);color:var(--on-aqua)}
 
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ---------- hero --------------------------------------------------------- */
+.hero{position:relative;overflow:hidden;background:var(--bg);border-bottom:1px solid var(--rule)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(#12161a 1px,transparent 1px),linear-gradient(90deg,#12161a 1px,transparent 1px);background-size:76px 76px;mask-image:radial-gradient(115% 85% at 12% 8%,#000 0%,transparent 68%);-webkit-mask-image:radial-gradient(115% 85% at 12% 8%,#000 0%,transparent 68%);pointer-events:none}
+.hero-inner{position:relative;max-width:1240px;margin:0 auto;padding:110px 36px 84px}
+.eyebrow-row{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.eyebrow-dash{width:44px;height:2px;background:var(--aqua);flex:none}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:2.6px;text-transform:uppercase;color:var(--aqua);font-weight:500}
+.hero h1{margin:0 0 22px;font-family:var(--f-display);font-weight:800;font-size:clamp(52px,10vw,132px);line-height:.88;letter-spacing:-4px;text-transform:uppercase;color:var(--white);max-width:13ch}
+.hero-role{margin:0 0 44px;max-width:46ch;font-family:var(--f-display);font-weight:500;font-size:clamp(18px,2.1vw,24px);line-height:1.32;letter-spacing:-.4px;color:#9aa2a7}
+.hero-cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:56px;align-items:start;max-width:1050px}
+.hero-p1{margin:0;font-size:18px;line-height:1.62;color:#dfe4e6;text-wrap:pretty}
+.hero-side{display:flex;flex-direction:column;gap:16px;border-left:1px solid var(--border);padding-left:28px}
+.hero-p3{margin:0;font-size:16.5px;line-height:1.66;color:var(--body);text-wrap:pretty}
+.hero-p2{margin:0;font-size:14.5px;line-height:1.66;color:var(--dim);text-wrap:pretty}
+.ai-block{margin:38px 0 0;max-width:1050px;border-top:1px solid var(--border);padding-top:26px;display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:24px;align-items:start}
+.ai-block-label{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--aqua)}
+.ai-block-label i{width:22px;height:1px;background:var(--aqua);flex:none}
+.ai-block p{margin:0;max-width:74ch;font-size:15.5px;line-height:1.66;color:var(--ai-body);text-wrap:pretty}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:38px 0 32px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.6px;text-transform:uppercase}
+.pills div{color:var(--sec);border:1px solid var(--border);background:var(--card);padding:6px 12px;border-radius:5px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:14px 22px;border-radius:7px;font-family:var(--f-mono);font-size:12.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.btn svg{width:15px;height:15px;fill:currentColor;flex:none}
+.btn-primary{background:var(--aqua);border:1px solid var(--aqua);color:var(--on-aqua);transition:transform .16s ease,box-shadow .16s ease}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px -10px rgba(0,229,192,.6);color:var(--on-aqua)}
+.btn-ghost{border:1px solid #262b2e;background:transparent;color:var(--ui);transition:border-color .16s ease,transform .16s ease}
+.btn-ghost:hover{border-color:var(--aqua);transform:translateY(-2px);color:var(--ui)}
 
-  a { color: var(--accent); text-decoration: none; }
-  a:hover { text-decoration: underline; }
+/* ---------- cabeceras de seccion ----------------------------------------- */
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+.sec-num-row{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.sec-num{font-family:var(--f-mono);font-size:12px;color:var(--aqua);letter-spacing:1.4px}
+.sec-title{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(30px,4.4vw,50px);letter-spacing:-1.6px;text-transform:uppercase;color:var(--white)}
+.sec-note{margin:0;max-width:56ch;font-size:15px;color:var(--dim)}
+.click-hint{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);letter-spacing:1px;text-transform:uppercase}
 
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+/* ---------- tarjetas ------------------------------------------------------ */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px}
+.card{cursor:pointer;text-align:left;width:100%;display:block;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s ease,transform .2s ease}
+.card:hover{border-color:var(--aqua);transform:translateY(-3px)}
+.card-media{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-bottom:1px solid var(--border);overflow:hidden}
+.card-thumb{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;filter:grayscale(1) contrast(1.08);transition:filter .3s ease}
+.card:hover .card-thumb{filter:grayscale(0) contrast(1)}
+.card-tags{position:absolute;z-index:3;top:12px;left:12px;display:flex;flex-wrap:wrap;gap:5px;max-width:calc(100% - 24px);font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase}
+.card-tags div{padding:4px 8px;border-radius:4px;background:rgba(8,9,10,.82);border:1px solid rgba(255,255,255,.16);color:#e2e7e9;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.card-nomedia{position:absolute;inset:0;display:grid;place-items:center;background:repeating-linear-gradient(135deg,#0b0d0e 0 8px,#101314 8px 16px)}
+.card-nomedia div{font-family:var(--f-mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--ghost);text-align:center;padding:0 20px}
+.card-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.55))}
+.card-watch{position:absolute;z-index:2;bottom:12px;left:12px;display:flex;align-items:center;gap:8px;padding:6px 11px;border-radius:6px;background:rgba(8,9,10,.78);border:1px solid rgba(255,255,255,.18);font-family:var(--f-mono);font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ui)}
+.card-watch svg{width:12px;height:12px;fill:var(--aqua)}
+.card-body{padding:18px 20px 20px}
+.card-titlerow{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.card-title{margin:0;font-family:var(--f-display);font-weight:600;font-size:19px;line-height:1.22;letter-spacing:-.5px;color:var(--white)}
+.card-dates{font-family:var(--f-mono);font-size:11px;color:var(--faint);white-space:nowrap}
+.card-orgrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.card-org{font-family:var(--f-mono);font-size:11.5px;color:var(--aqua);letter-spacing:.4px}
+.card-short{margin:0;font-size:14px;line-height:1.55;color:var(--sec);text-wrap:pretty}
+.ai-badge{padding:2px 7px;border-radius:4px;border:1px solid var(--aqua-line);background:rgba(0,229,192,.07);font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:1.2px;color:var(--aqua)}
 
-  /* ---------------- nav ---------------- */
-  .nav {
-    position: sticky; top: 0; z-index: 50;
-    background: rgba(14,17,22,.82);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--line);
-  }
-  .nav-in {
-    max-width: var(--maxw); margin: 0 auto; padding: 12px 24px;
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-  }
-  .brand { font-weight: 700; letter-spacing: .2px; color: var(--ink); }
-  .brand span { color: var(--accent); }
-  .nav-links { display: flex; gap: 20px; font-size: 14px; }
-  .nav-links a { color: var(--muted); }
-  .nav-links a:hover { color: var(--ink); text-decoration: none; }
-  @media (max-width: 620px) { .nav-links { display: none; } }
+/* ---------- timeline ------------------------------------------------------ */
+.tl{display:flex;flex-direction:column}
+.tl-row{display:grid;grid-template-columns:minmax(0,180px) 30px minmax(0,1fr);gap:0;align-items:start}
+.tl-dates{font-family:var(--f-mono);font-size:12px;color:var(--dim);letter-spacing:.4px;padding:26px 20px 26px 0;text-align:right}
+.tl-rail{position:relative;align-self:stretch;display:flex;justify-content:center}
+.tl-rail i{width:1px;background:var(--border-ctrl);height:100%}
+.tl-dot{position:absolute;top:32px;width:9px;height:9px;border-radius:99px;background:var(--ghost);border:2px solid var(--bg-alt);box-shadow:0 0 0 3px var(--bg-alt)}
+.tl-dot.is-current{background:var(--aqua)}
+.tl-body{padding:26px 0 26px 24px}
+.tl-titlerow{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tl-org{margin:0;font-family:var(--f-display);font-weight:600;font-size:21px;letter-spacing:-.6px;color:var(--white)}
+.tl-kind{font-family:var(--f-mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--faint)}
+.tl-role{font-family:var(--f-mono);font-size:12.5px;color:var(--aqua);margin:7px 0 9px;letter-spacing:.2px}
+.tl-line{margin:0;max-width:70ch;font-size:15px;line-height:1.6;color:var(--sec);text-wrap:pretty}
 
-  /* ---------------- hero ---------------- */
-  .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); }
-  .eyebrow {
-    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--accent); font-weight: 600; margin-bottom: 14px;
-  }
-  h1 { margin: 0 0 8px; font-size: clamp(30px, 5.2vw, 46px); line-height: 1.12; letter-spacing: -.4px; }
-  .role { font-size: clamp(16px, 2.4vw, 20px); color: var(--muted); margin: 0 0 24px; font-weight: 500; }
-  .about { max-width: 68ch; color: var(--ink); font-size: 17px; }
-  .about p { margin: 0 0 14px; }
-  .about p:last-child { margin-bottom: 0; }
+/* ---------- educacion ----------------------------------------------------- */
+.edu{display:flex;flex-direction:column;gap:16px;max-width:900px}
+.edu-card{border:1px solid var(--border);border-left:2px solid var(--aqua);border-radius:10px;background:var(--card-inner);padding:24px 28px}
+.edu-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.edu-school{margin:0;font-family:var(--f-display);font-weight:600;font-size:20px;letter-spacing:-.5px;color:var(--white)}
+.edu-dates{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);letter-spacing:.4px}
+.edu-program{font-family:var(--f-mono);font-size:12.5px;color:var(--aqua);margin:8px 0 10px}
+.edu-line{margin:0;font-size:15px;line-height:1.6;color:var(--sec);text-wrap:pretty}
+.edu-note{display:inline-flex;align-items:center;gap:9px;margin-top:16px;padding:7px 13px;border:1px solid var(--aqua-line);border-radius:6px;background:rgba(0,229,192,.05);font-family:var(--f-mono);font-size:11.5px;letter-spacing:.6px;color:var(--aqua)}
+.edu-note svg{width:13px;height:13px;fill:currentColor;flex:none}
 
-  .meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 28px; }
-  .pill {
-    font-size: 13px; color: var(--muted);
-    border: 1px solid var(--line); background: var(--bg-soft);
-    padding: 5px 12px; border-radius: 999px;
-  }
+/* ---------- contacto y pie ------------------------------------------------ */
+.contact-inner{max-width:1240px;margin:0 auto;padding:92px 36px 60px}
+.email-link{display:inline-block;font-family:var(--f-mono);font-size:clamp(18px,3.2vw,34px);font-weight:500;letter-spacing:-.8px;color:var(--white);border-bottom:2px solid var(--aqua);padding-bottom:5px}
+.email-link:hover{color:var(--aqua)}
+.socials{display:flex;flex-wrap:wrap;gap:22px;margin-top:30px;font-family:var(--f-mono);font-size:12.5px}
+.socials a{color:var(--sec)}
+.socials a:hover{color:var(--aqua)}
+.footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:var(--f-mono);font-size:11px;color:var(--ghost);letter-spacing:.6px}
 
-  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 11px 18px; border-radius: 10px; font-size: 14px; font-weight: 600;
-    border: 1px solid var(--line); background: var(--bg-soft); color: var(--ink);
-    transition: border-color .15s ease, background .15s ease, transform .15s ease;
-  }
-  .btn:hover { text-decoration: none; border-color: var(--accent); transform: translateY(-1px); }
-  .btn-primary { background: var(--accent-dk); border-color: var(--accent-dk); color: #fff; }
-  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
-  .btn svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
+/* ---------- modal --------------------------------------------------------- */
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(4,5,6,.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:flex-start;justify-content:center;padding:88px 24px 40px;overflow-y:auto;overscroll-behavior:contain}
+.modal{width:100%;max-width:940px;background:var(--card-inner);border:1px solid var(--border-ctrl);border-radius:16px;overflow:hidden;box-shadow:0 40px 100px -30px rgba(0,0,0,.9)}
+.modal-head{position:relative;padding:34px 34px 26px;background-position:center;background-size:cover}
+.modal-head-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,9,10,.62),rgba(11,13,14,.94))}
+.modal-close{position:absolute;top:18px;right:18px;z-index:3;width:34px;height:34px;border-radius:8px;border:1px solid var(--border-hover);background:rgba(8,9,10,.7);display:grid;place-items:center;cursor:pointer;color:var(--sec);transition:border-color .16s ease,color .16s ease}
+.modal-close:hover{border-color:var(--aqua);color:var(--aqua)}
+.modal-close svg{width:15px;height:15px;fill:currentColor}
+.modal-headin{position:relative;z-index:2}
+.modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase}
+.modal-tags div{padding:4px 9px;border-radius:5px;border:1px solid var(--border-hover);background:rgba(8,9,10,.6);color:#c8cfd2}
+.modal-title{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(26px,4vw,40px);line-height:1.02;letter-spacing:-1.4px;color:var(--white)}
+.modal-meta{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:12px;font-family:var(--f-mono);font-size:12px}
+.modal-meta .org{color:var(--aqua)}
+.modal-meta .dates{color:var(--dim)}
+.modal-video{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.modal-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.modal-body{padding:30px 34px 34px;display:flex;flex-direction:column;gap:22px}
+.modal-label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.modal-role{font-family:var(--f-display);font-weight:500;font-size:17px;letter-spacing:-.2px;color:var(--ui)}
+.modal-desc{margin:0;font-size:15.5px;line-height:1.65;color:var(--body);text-wrap:pretty}
+.modal-bullets{display:flex;flex-direction:column;gap:10px}
+.bullet{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:start}
+.bullet-mark{font-family:var(--f-mono);font-size:12px;color:var(--aqua);line-height:1.7}
+.bullet-text{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.bullet-text .ai-badge{flex:none}
+.bullet-text span{flex:1 1 200px;font-size:14.5px;line-height:1.66;color:var(--sec);text-wrap:pretty}
+.modal-links{display:flex;flex-wrap:wrap;gap:10px;padding-top:4px}
+.modal-link{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:7px;border:1px solid #262b2e;font-family:var(--f-mono);font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--ui);transition:border-color .16s ease,color .16s ease}
+.modal-link:hover{border-color:var(--aqua);color:var(--aqua)}
 
-  /* ---------------- sections ---------------- */
-  section.block { padding: 64px 0; border-bottom: 1px solid var(--line); }
-  .sec-head { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
-  h2 { margin: 0; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; }
-  .sec-note { color: var(--dim); font-size: 14px; margin: 0 0 28px; }
-
-  /* ---------------- filters ---------------- */
-  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
-  .filter {
-    font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
-    padding: 7px 14px; border-radius: 999px;
-    background: transparent; color: var(--muted);
-    border: 1px solid var(--line);
-    transition: all .15s ease;
-  }
-  .filter:hover { color: var(--ink); border-color: var(--dim); }
-  .filter[aria-pressed="true"] { background: var(--accent-dk); border-color: var(--accent-dk); color: #fff; }
-
-  /* ---------------- project cards ---------------- */
-  .projects { display: flex; flex-direction: column; gap: 22px; }
-  .card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
-    transition: border-color .18s ease;
-  }
-  .card:hover { border-color: #33404f; }
-  .card.no-media { grid-template-columns: 1fr; }
-  @media (max-width: 780px) { .card { grid-template-columns: 1fr; } }
-
-  .card-body { padding: 24px 26px; }
-  .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-  .card h3 { margin: 0; font-size: 19px; line-height: 1.3; }
-  .card .org { color: var(--muted); font-weight: 500; }
-  .dates { font-size: 13px; color: var(--dim); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .role-line { margin: 6px 0 0; font-size: 13.5px; color: var(--accent); font-weight: 600; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 12px; }
-  .tag {
-    font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
-    padding: 3px 9px; border-radius: 5px; border: 1px solid;
-  }
-  .tag-professional { color: #52d3a2; border-color: #1f5a45; background: #10231d; }
-  .tag-prototype    { color: #7fb2ff; border-color: #234168; background: #101a28; }
-  .tag-freelance    { color: #f0b45e; border-color: #6a4d21; background: #241c10; }
-  .tag-personal     { color: #c79bf0; border-color: #4d3468; background: #1d1528; }
-  .tag-team         { color: #f28ba0; border-color: #6b2f3c; background: #251217; }
-
-  .card p.desc { margin: 0; color: var(--muted); font-size: 15px; }
-  .card ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 14.5px; }
-  .card li { margin: 5px 0; }
-  .card-links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; font-size: 14px; font-weight: 600; }
-
-  /* ---------------- youtube lite embed ---------------- */
-  .yt {
-    position: relative; width: 100%; aspect-ratio: 16 / 9;
-    background: #000 center/cover no-repeat;
-    border: 0; padding: 0; cursor: pointer; display: block;
-    border-right: 1px solid var(--line);
-  }
-  @media (max-width: 780px) { .yt { border-right: 0; border-bottom: 1px solid var(--line); } }
-  .yt::after {
-    content: ""; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.45));
-    transition: background .2s ease;
-  }
-  .yt:hover::after { background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.25)); }
-  .yt-play {
-    position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 62px; height: 44px; border-radius: 11px;
-    background: rgba(16,20,26,.78); border: 1px solid rgba(255,255,255,.22);
-    display: grid; place-items: center;
-    transition: background .2s ease, transform .2s ease;
-  }
-  .yt:hover .yt-play { background: var(--accent-dk); border-color: var(--accent); transform: translate(-50%,-50%) scale(1.06); }
-  .yt-play svg { width: 20px; height: 20px; fill: #fff; margin-left: 2px; }
-
-  /* una vez cargado el iframe, nada de overlay encima (bloquearia los controles) */
-  .yt-frame {
-    position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000;
-    border-right: 1px solid var(--line);
-  }
-  @media (max-width: 780px) { .yt-frame { border-right: 0; border-bottom: 1px solid var(--line); } }
-  .yt-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-
-  /* ---------------- contact ---------------- */
-  .contact-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
-  footer.foot { padding: 32px 0 44px; color: var(--dim); font-size: 13px; }
-  .foot-in { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-
-  .empty { color: var(--dim); font-size: 15px; padding: 20px 0; }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; scroll-behavior: auto !important; }
-  }
+/* ---------- responsive: solo colapsa rejillas, no cambia el diseno base --- */
+@media (max-width:900px){
+  .hero-cols{grid-template-columns:minmax(0,1fr);gap:26px}
+  .hero-side{border-left:0;border-top:1px solid var(--border);padding-left:0;padding-top:22px}
+  .ai-block{grid-template-columns:minmax(0,1fr);gap:12px}
+  .tl-row{grid-template-columns:24px minmax(0,1fr)}
+  .tl-rail{grid-row:1 / span 2}
+  .tl-dates{grid-column:2;text-align:left;padding:22px 0 0}
+  .tl-body{grid-column:2;padding:4px 0 26px 18px}
+  .nav{display:none}
+}
+@media (max-width:640px){
+  .sec-inner,.hero-inner,.topbar-inner,.contact-inner{padding-left:20px;padding-right:20px}
+  .sec-inner{padding-top:64px;padding-bottom:70px}
+  .hero-inner{padding-top:72px;padding-bottom:60px}
+  .hero h1{letter-spacing:-2px}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .overlay{padding:76px 12px 28px}
+  .modal-head,.modal-body{padding-left:20px;padding-right:20px}
+  .ai-toggle{padding:4px 6px}
+  .ai-toggle .ai-toggle-label{display:none}
+}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-in">
-    <a class="brand" href="#top">Andrés Ruiz<span>.</span></a>
-    <div class="nav-links">
-      <a href="#about">About</a>
-      <a href="#work">Work</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </div>
-</nav>
-
-<div id="top"></div>
-
-<!-- ============================ HERO / ABOUT ============================ -->
-<header class="hero" id="about">
-  <div class="wrap">
-    <div class="eyebrow">Gameplay Systems &amp; Tools Programmer · Unity / C#</div>
-    <h1>Andrés Ruiz Palomino</h1>
-    <p class="role">Gameplay systems, editor tooling and the feel layer on top of them.</p>
-
-    <div class="about">
-      <p>
-        I build gameplay systems and the editor tools designers use to iterate on them: ability
-        systems, state machines, cameras, and the feel layer that makes a hit land (hitstop,
-        knockback, feedback). The rule I work by is that adding content should mean adding data,
-        not writing code, so most of what I build ends up data-driven and authored in the editor.
-      </p>
-      <p>
-        I also design the systems I build. I run a Spanish-language YouTube channel about game
-        design, so I show up to a feature with an opinion on why it should feel a certain way and
-        I can argue the trade-off with a designer instead of just implementing the ticket. That
-        overlap, systems programmer with a technical designer's eye, is the useful part of my
-        profile.
-      </p>
-      <p>
-        Three years across small indie teams, wearing systems, tooling, tech art and production
-        hats. Currently a programmer on a live-service Unity 6 mobile title, and building a 3D
-        action combat prototype solo on nights and weekends.
-      </p>
-    </div>
-
-    <div class="meta">
-      <span class="pill">Peru · UTC-5</span>
-      <span class="pill">English: Advanced</span>
-      <span class="pill">Open to full-time remote</span>
-      <span class="pill">Full US-hours overlap</span>
-    </div>
-
-    <div class="cta">
-      <a class="btn btn-primary" href="mailto:andres.gp.ruiz@gmail.com">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4.24-8 4.76-8-4.76V6l8 4.76L20 6Z"/></svg>
-        Email me
-      </a>
-      <a class="btn" href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.75-1.95C21.4 8.75 22 11 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.1-3.4-2.1 0-2.4 1.6-2.4 3.3V21h-4V9Z"/></svg>
-        LinkedIn
-      </a>
-      <a class="btn" href="https://github.com/Arzpal" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.26.8-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.57A12 12 0 0 0 12 .5Z"/></svg>
-        GitHub
-      </a>
-      <a class="btn" href="Andres-Ruiz-Game-Programmer.pdf" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 16 6 10h4V3h4v7h4l-6 6Zm-8 2h16v3H4v-3Z"/></svg>
-        Download CV
-      </a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand" id="brand" role="button" tabindex="0">ARZPAL<span>.</span></div>
+    <div class="topbar-right">
+      <nav class="nav" id="nav"></nav>
+      <div class="hairline"></div>
+      <button class="ai-toggle" id="aiToggle" type="button">
+        <span class="ai-toggle-label" id="aiToggleLabel"></span>
+        <span class="switch"><span class="knob"></span></span>
+      </button>
+      <div class="langswitch" id="langSwitch">
+        <button type="button" data-lang="en">EN</button>
+        <button type="button" data-lang="es">ES</button>
+      </div>
     </div>
   </div>
 </header>
 
-<!-- ============================ WORK ============================ -->
-<section class="block" id="work">
-  <div class="wrap">
-    <div class="sec-head"><h2>Selected work</h2></div>
-    <p class="sec-note">Studio work, team projects and things I build on my own time. Filter by type.</p>
-
-    <div class="filters" id="filters" role="group" aria-label="Filter projects by type"></div>
-    <div class="projects" id="projects"></div>
-  </div>
-</section>
-
-<!-- ============================ CONTACT ============================ -->
-<section class="block" id="contact">
-  <div class="wrap">
-    <div class="sec-head"><h2>Get in touch</h2></div>
-    <p class="sec-note">Open to full-time remote roles and contract work. Usually replies within a day.</p>
-    <div class="contact-grid">
-      <a class="btn btn-primary" href="mailto:andres.gp.ruiz@gmail.com">andres.gp.ruiz@gmail.com</a>
-      <a class="btn" href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="btn" href="https://github.com/Arzpal" target="_blank" rel="noopener">github.com/Arzpal</a>
+<section class="hero" id="sec-hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="eyebrow-row">
+      <div class="eyebrow-dash"></div>
+      <div class="eyebrow" id="eyebrow"></div>
+    </div>
+    <h1>Andrés Ruiz Palomino</h1>
+    <p class="hero-role" id="heroRole"></p>
+    <div class="hero-cols">
+      <p class="hero-p1" id="heroP1"></p>
+      <div class="hero-side">
+        <p class="hero-p3" id="heroP3"></p>
+        <p class="hero-p2" id="heroP2"></p>
+      </div>
+    </div>
+    <div class="ai-block">
+      <div class="ai-block-label"><i></i><span id="aiLabel"></span></div>
+      <p id="aiBody"></p>
+    </div>
+    <div class="pills" id="pills"></div>
+    <div class="ctas">
+      <a class="btn btn-primary" href="mailto:andres.gp.ruiz@gmail.com">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4.24-8 4.76-8-4.76V6l8 4.76L20 6Z"></path></svg>
+        <span id="ctaEmail"></span>
+      </a>
+      <a class="btn btn-ghost" href="Andres-Ruiz-Game-Programmer.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 16 6 10h4V3h4v7h4l-6 6Zm-8 2h16v3H4v-3Z"></path></svg>
+        <span id="ctaCv"></span>
+      </a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.75-1.95C21.4 8.75 22 11 22 14v7h-4v-6.2c0-1.5-.03-3.4-2.1-3.4-2.1 0-2.4 1.6-2.4 3.3V21h-4V9Z"></path></svg>
+        LinkedIn
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/Arzpal" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.26.8-.57v-2c-3.34.72-4.04-1.6-4.04-1.6-.55-1.4-1.34-1.77-1.34-1.77-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.29-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .31.21.68.82.57A12 12 0 0 0 12 .5Z"></path></svg>
+        GitHub
+      </a>
     </div>
   </div>
 </section>
 
-<footer class="foot">
-  <div class="wrap foot-in">
-    <div>© <span id="year"></span> Andrés Ruiz Palomino</div>
-    <div>Built as a static page, hosted on GitHub Pages.</div>
+<section class="sec" id="sec-projects">
+  <div class="sec-inner">
+    <div class="sec-head">
+      <div>
+        <div class="sec-num-row"><div class="sec-num">01</div><h2 class="sec-title" id="secProjects"></h2></div>
+        <p class="sec-note" id="projectsNote"></p>
+      </div>
+      <div class="click-hint" id="clickHint"></div>
+    </div>
+    <div class="grid" id="projectsGrid"></div>
   </div>
-</footer>
+</section>
+
+<section class="sec sec--alt" id="sec-timeline">
+  <div class="sec-inner">
+    <div class="sec-num-row"><div class="sec-num">02</div><h2 class="sec-title" id="secTimeline"></h2></div>
+    <p class="sec-note" id="timelineNote" style="margin-bottom:44px"></p>
+    <div class="tl" id="timelineList"></div>
+  </div>
+</section>
+
+<section class="sec" id="sec-tools">
+  <div class="sec-inner">
+    <div class="sec-num-row"><div class="sec-num">03</div><h2 class="sec-title" id="secTools"></h2></div>
+    <p class="sec-note" id="toolsNote" style="max-width:60ch;margin-bottom:38px"></p>
+    <div class="grid" id="toolsGrid"></div>
+  </div>
+</section>
+
+<section class="sec sec--alt" id="sec-edu">
+  <div class="sec-inner">
+    <div class="sec-num-row"><div class="sec-num">04</div><h2 class="sec-title" id="secEdu"></h2></div>
+    <p class="sec-note" id="eduNote" style="margin-bottom:38px"></p>
+    <div class="edu" id="eduList"></div>
+  </div>
+</section>
+
+<section id="sec-contact" style="background:var(--bg)">
+  <div class="contact-inner">
+    <div class="sec-num-row" style="margin-bottom:10px"><div class="sec-num">05</div><h2 class="sec-title" id="contactTitle"></h2></div>
+    <p class="sec-note" id="contactNote" style="margin-bottom:28px"></p>
+    <a class="email-link" href="mailto:andres.gp.ruiz@gmail.com">andres.gp.ruiz@gmail.com</a>
+    <div class="socials">
+      <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">linkedin.com/in/arzpal &#8599;</a>
+      <a href="https://github.com/Arzpal" target="_blank" rel="noopener">github.com/Arzpal &#8599;</a>
+    </div>
+    <div class="footer">
+      <div id="copyright"></div>
+      <div id="footerNote"></div>
+    </div>
+  </div>
+</section>
+
+<div id="modalRoot"></div>
 
 <script>
 /* ==========================================================================
-   PROYECTOS — esto es lo único que necesitas editar para agregar trabajo.
+   CONTENIDO — es lo unico que se edita para agregar trabajo.
 
-   Campos:
-     title      texto obligatorio
-     org        estudio o cliente (opcional; se muestra despues del titulo)
-     role       QUE HICISTE TU en el proyecto (opcional pero recomendado).
-                Es lo que evita que te confundan de rol: "Solo programmer",
-                "Game design and environment art", "Gameplay systems".
-     tags       ["professional"] | ["prototype"] | ["freelance"] | ["personal"]
-                (puedes poner mas de uno)
-     dates      texto libre: "Mar 2026 – Present", "2023 – 2025", "Jul 2026"
-     youtubeId  el ID del video, NO la URL entera.
-                De https://www.youtube.com/watch?v=dQw4w9WgXcQ  ->  "dQw4w9WgXcQ"
-                Si todavia no tienes video, pon null y la tarjeta se ve bien igual.
-     desc       parrafo corto (1-3 frases)
-     bullets    lista opcional de logros tecnicos concretos
-     links      lista opcional: { label: "GitHub", url: "..." }
+   Cada campo de texto acepta "texto" (igual en los dos idiomas) o
+   { en: "...", es: "..." }. Si a una entrada le falta el par en/es, esa vista
+   queda vacia en el idioma que falte.
 
-   PLANTILLA para copiar y pegar:
+   PROJECTS[] -> seccion 01     TOOLS[] -> seccion 03
+   TIMELINE[] -> seccion 02     EDUCATION[] -> seccion 04
 
-   {
-     title: "Nombre del proyecto",
-     org: "Cliente o estudio",
-     tags: ["freelance"],
-     dates: "Ene 2026 – Mar 2026",
-     youtubeId: "PON_EL_ID_AQUI",
-     desc: "Que es el juego y que hiciste tu en una o dos frases.",
-     bullets: [
-       "Logro tecnico concreto y verificable.",
-     ],
-     links: [ { label: "GitHub", url: "https://github.com/..." } ]
-   },
+   Proyecto nuevo: copiar un bloque de PROJECTS, llenarlo y ponerlo en la
+   posicion donde debe salir (el orden del arreglo es el orden en pantalla).
+   Con youtubeId en null la tarjeta muestra el patron rayado y el aviso; en
+   cuanto haya video, se llena sola. Maximo 3 chips en roleTags.
+
+   Punto hecho con IA: cambiar el string por { t: "...", ai: true }. Eso pinta
+   el badge CON IA y lo controla el toggle de la barra. Cuando el toggle esta
+   apagado esos puntos se OCULTAN, no se atenuan.
+
+   Imagenes propias (ganan sobre el thumbnail de YouTube): agregar al proyecto
+   cover: "assets/lo-que-sea.jpg"   -> tarjeta, 16:9, ~640x360
+   image: "assets/lo-que-sea-big.jpg" -> fondo del modal, ~1280x720
    ========================================================================== */
+
+const COPY = {
+  en: {
+    navProjects: "Projects", navTimeline: "Timeline", navTools: "Tools", navEdu: "Education", navContact: "Contact",
+    eyebrow: "Gameplay Systems & Tools Programmer · Unity / C#",
+    role: "Gameplay systems, editor tooling and the feel layer on top of them.",
+    p1: "I build gameplay systems and the editor tools designers use to iterate on them: ability systems, state machines, cameras, and the feel layer that makes a hit land (hitstop, knockback, feedback). The rule I work by is that adding content should mean adding data, not writing code, so most of what I build ends up data-driven and authored in the editor.",
+    p2: "I also design the systems I build. I run a Spanish-language YouTube channel about game design, so I show up to a feature with an opinion on why it should feel a certain way and I can argue the trade-off with a designer instead of just implementing the ticket. That overlap, systems programmer with a technical designer's eye, is the useful part of my profile.",
+    p3: "Three years across small indie teams, wearing systems, tooling, tech art and production hats. Most recently a programmer on a live-service Unity 6 mobile title, and building a 3D action combat prototype solo on nights and weekends. Currently looking for new challenges.",
+    pills: ["Peru · UTC-5", "English: Advanced", "Looking for new challenges", "Full US-hours overlap"],
+    ctaEmail: "Email me", ctaCv: "Download CV",
+    secProjects: "Projects", projectsNote: "Games I have shipped or am shipping, in studios and on my own.",
+    clickHint: "Click a card for video and details",
+    watch: "Watch",
+    secTimeline: "Timeline", timelineNote: "Where I have worked and what the role actually was.",
+    secTools: "Tools & Prototypes", toolsNote: "Editor tooling and systems built to be authored by someone else, plus the prototypes I use to evaluate tech.",
+    secEdu: "Education", eduNote: "Formal training and the project it produced.",
+    contactTitle: "Get in touch",
+    contactNote: "Open to full-time remote roles and contract work. Usually replies within a day.",
+    footer: "Static page, hosted on GitHub Pages.",
+    myRole: "My role", about: "About the project", whatIBuilt: "What I built",
+    noFootage: "No public footage · under NDA",
+    noFootageTool: "No public footage",
+    aiTag: "CON IA", aiToggle: "AI-assisted",
+    aiLabel: "Working with AI",
+    aiBody: "I do not depend on it, but I have learned to use AI to greatly improve my productivity, the optimization of my work and the polish that comes from thinking through every part of the process I follow. If my head runs at a thousand miles an hour all the time, AI is the only thing that keeps up with me and, on the way, organizes what I plan better. To me AI is a useful tool, not my replacement."
+  },
+  es: {
+    navProjects: "Proyectos", navTimeline: "Trayectoria", navTools: "Herramientas", navEdu: "Educación", navContact: "Contacto",
+    eyebrow: "Programador de sistemas de gameplay y herramientas · Unity / C#",
+    role: "Sistemas de gameplay, herramientas de editor y la capa de feel encima de ellos.",
+    p1: "Construyo sistemas de gameplay y las herramientas de editor con las que los diseñadores iteran sobre ellos: sistemas de habilidades, máquinas de estados, cámaras y la capa de feel que hace que un golpe se sienta (hitstop, knockback, feedback). La regla con la que trabajo es que agregar contenido debería significar agregar datos, no escribir código, así que casi todo lo que construyo termina siendo data-driven y se autoriza desde el editor.",
+    p2: "También diseño los sistemas que programo. Llevo un canal de YouTube en español sobre diseño de juegos, así que llego a una feature con una opinión sobre por qué debería sentirse de cierta forma y puedo discutir el trade-off con un diseñador en lugar de solo implementar el ticket. Ese cruce, programador de sistemas con ojo de diseñador técnico, es la parte útil de mi perfil.",
+    p3: "Tres años en equipos indie pequeños, cubriendo sistemas, herramientas, arte técnico y producción. Recientemente programador en un título móvil live-service en Unity 6, y construyendo solo un prototipo de combate de acción 3D en noches y fines de semana. Actualmente buscando nuevos retos.",
+    pills: ["Perú · UTC-5", "Inglés: Avanzado", "Buscando nuevos retos", "Solape completo con horario US"],
+    ctaEmail: "Escríbeme", ctaCv: "Descargar CV",
+    secProjects: "Proyectos", projectsNote: "Juegos que he publicado o estoy publicando, en estudios y por mi cuenta.",
+    clickHint: "Haz clic en una tarjeta para ver video y detalles",
+    watch: "Ver",
+    secTimeline: "Trayectoria", timelineNote: "Dónde he trabajado y cuál era el rol de verdad.",
+    secTools: "Herramientas y prototipos", toolsNote: "Herramientas de editor y sistemas hechos para que los autorice otra persona, más los prototipos con los que evalúo tecnología.",
+    secEdu: "Educación", eduNote: "Formación formal y el proyecto que salió de ahí.",
+    contactTitle: "Hablemos",
+    contactNote: "Abierto a puestos remotos full-time y trabajo por contrato. Normalmente respondo en un día.",
+    footer: "Página estática, alojada en GitHub Pages.",
+    myRole: "Mi rol", about: "Sobre el proyecto", whatIBuilt: "Qué construí",
+    noFootage: "Sin material público · bajo NDA",
+    noFootageTool: "Sin material público",
+    aiTag: "CON IA", aiToggle: "Con IA",
+    aiLabel: "Trabajar con IA",
+    aiBody: "Si bien no dependo de ella, he aprendido a utilizar la IA para mejorar mucho mi productividad, la optimización de mi trabajo y el pulido al pensar en cada parte del proceso que hago. Si mi cabeza va a mil por hora todo el tiempo, la IA es la única que logra seguirme el ritmo y de paso organizar mejor lo que yo planeo. La IA para mí es una herramienta útil, no mi reemplazo."
+  }
+};
+
+const TAG_LABELS = {
+  en: { personal: "Personal", team: "Team project", professional: "Professional", prototype: "Prototype", freelance: "Freelance" },
+  es: { personal: "Personal", team: "Proyecto en equipo", professional: "Profesional", prototype: "Prototipo", freelance: "Freelance" }
+};
 
 const PROJECTS = [
   {
-    title: "Don't Chicken Out!",
-    org: "Raymi Games",
-    role: "Gameplay Programmer · lead programmer on the project",
-    tags: ["team"],
-    dates: "Sep 2025 – Present",
-    youtubeId: "U-nvo6fbJK0",
-    desc: "Local party game for 2 to 4 players: chickens climb a tower of falling blocks while the camera rises, and the last one standing wins the round. Unity 6 / URP, currently in production, targeting PC and console. I am the lead programmer, with roughly 70% of the game's code, and I support design as well, which is how the role ended up titled Gameplay Programmer.",
-    bullets: [
-      "Rubber-band block pooling: the lead designer raised the problem, I proposed and built the answer. Blocks are pooled per player rank (winning, neutral, losing), so what spawns tracks who is ahead. It worked from the first pass, with the round of tuning you would expect.",
-      "Platformer feel (jump buffering, coyote time, glide, fall multiplier) implemented and exposed through a ScriptableObject, so the lead designer tunes the game's handling without going through me.",
-      "Match flow as a Menu / Prepare / Game / Win state machine driving rounds and first-to-N matches, plus local join for 2 to 4 players across split keyboard and gamepads.",
-      "Vertical auto-rising camera rig on an acceleration curve, which is the pressure the whole match runs on.",
-      "Items and hazards (bombs, spring discs, capsules, spawners), and FMOD integrated from scratch with adaptive music transitions and the SFX layer."
-    ],
-    links: [
-      { label: "Play on itch.io", url: "https://raymi-games.itch.io/dont-chicken-out" }
-    ]
+    title: "Don't Chicken Out!", org: "Raymi Games", tags: ["team"], youtubeId: "U-nvo6fbJK0",
+    roleTags: { en: ["Gameplay Programmer","Lead Programmer","Design support"], es: ["Gameplay Programmer","Programador principal","Apoyo en diseño"] },
+    dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
+    role: { en: "Gameplay Programmer · lead programmer on the project", es: "Gameplay Programmer · programador principal del proyecto" },
+    short: { en: "Local party game for 2 to 4 players, Unity 6 / URP, in production for PC and console.", es: "Party game local para 2 a 4 jugadores, Unity 6 / URP, en producción para PC y consola." },
+    desc: {
+      en: "Local party game for 2 to 4 players: chickens climb a tower of falling blocks while the camera rises, and the last one standing wins the round. Unity 6 / URP, currently in production, targeting PC and console. I am the lead programmer, with roughly 70% of the game's code, and I support design as well, which is how the role ended up titled Gameplay Programmer.",
+      es: "Party game local para 2 a 4 jugadores: gallinas escalan una torre de bloques que caen mientras la cámara sube, y el último en pie gana la ronda. Unity 6 / URP, en producción, apuntando a PC y consola. Soy el programador principal, con cerca del 70% del código del juego, y también apoyo en diseño, que es cómo el rol terminó titulado Gameplay Programmer."
+    },
+    bullets: {
+      en: [
+        "Rubber-band block pooling: the lead designer raised the problem, I proposed and built the answer. Blocks are pooled per player rank (winning, neutral, losing), so what spawns tracks who is ahead. It worked from the first pass, with the round of tuning you would expect.",
+        "Platformer feel (jump buffering, coyote time, glide, fall multiplier) implemented and exposed through a ScriptableObject, so the lead designer tunes the game's handling without going through me.",
+        "Match flow as a Menu / Prepare / Game / Win state machine driving rounds and first-to-N matches, plus local join for 2 to 4 players across split keyboard and gamepads.",
+        "Vertical auto-rising camera rig on an acceleration curve, which is the pressure the whole match runs on.",
+        "Items and hazards (bombs, spring discs, capsules, spawners), and FMOD integrated from scratch with adaptive music transitions and the SFX layer."
+      ],
+      es: [
+        "Pooling de bloques con rubber-banding: el diseñador líder planteó el problema, yo propuse y construí la solución. Los bloques se agrupan por posición del jugador (ganando, neutral, perdiendo), así que lo que aparece sigue a quién va adelante. Funcionó desde la primera pasada, con la ronda de tuning que uno esperaría.",
+        "Feel de plataformas (jump buffering, coyote time, planeo, multiplicador de caída) implementado y expuesto en un ScriptableObject, para que el diseñador líder ajuste el manejo del juego sin pasar por mí.",
+        "Flujo de partida como máquina de estados Menu / Prepare / Game / Win que maneja rondas y partidas al mejor de N, más join local para 2 a 4 jugadores entre teclado partido y gamepads.",
+        "Rig de cámara vertical con ascenso automático sobre una curva de aceleración, que es la presión sobre la que corre toda la partida.",
+        "Ítems y hazards (bombas, discos de resorte, cápsulas, spawners), y FMOD integrado desde cero con transiciones de música adaptativa y la capa de SFX."
+      ]
+    },
+    links: [{ url: "https://raymi-games.itch.io/dont-chicken-out", label: { en: "Play on itch.io", es: "Jugar en itch.io" } }]
   },
   {
-    title: "Tatemis3D",
-    org: "Personal project",
-    role: "Solo programmer and designer",
-    tags: ["personal", "prototype"],
-    dates: "Jul 2026 – Present",
-    youtubeId: null,
-    desc: "A 3D monster-battling game built around the thing the Pokémon anime shows and the games never do: creativity and resourcefulness in a fight. You control the creature directly, and the terrain, your own kit and even the enemy's kit are all options you can turn against the fight. Built solo in Unity 6 / URP.",
-    bullets: [
-      "Composable ability system so that a creature is data, not code: abilities are lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
-      "Wrote the camera rig from scratch rather than using Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.",
-      "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. Terrain now accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.",
-      "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states.",
-      "Editor tooling: scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases)."
-    ],
-    links: [
-      { label: "GitHub repo", url: "https://github.com/Arzpal/Project_Tatemis3D" }
-    ]
+    title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: null, ai: true,
+    roleTags: { en: ["Solo","Programmer","Designer"], es: ["Solo","Programador","Diseñador"] },
+    dates: { en: "Jul 2026 – Present", es: "Jul 2026 – Presente" },
+    role: { en: "Solo programmer and designer", es: "Programador y diseñador solo" },
+    short: { en: "3D monster-battling game about creativity in a fight. Built solo in Unity 6 / URP.", es: "Juego 3D de combate de monstruos sobre creatividad en una pelea. Hecho solo en Unity 6 / URP." },
+    desc: {
+      en: "A 3D monster-battling game built around the thing the Pokémon anime shows and the games never do: creativity and resourcefulness in a fight. You control the creature directly, and the terrain, your own kit and even the enemy's kit are all options you can turn against the fight. Built solo in Unity 6 / URP.",
+      es: "Un juego 3D de combate de monstruos construido alrededor de lo que el anime de Pokémon muestra y los juegos nunca: creatividad e ingenio en una pelea. Controlas a la criatura directamente, y el terreno, tu propio kit e incluso el del enemigo son opciones que puedes usar a tu favor. Hecho solo en Unity 6 / URP."
+    },
+    bullets: {
+      en: [
+        "Composable ability system so that a creature is data, not code: abilities are lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
+        "Wrote the camera rig from scratch rather than using Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.",
+        "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. Terrain now accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.",
+        "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states."
+      ],
+      es: [
+        "Sistema de habilidades componible para que una criatura sea datos, no código: las habilidades son listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.",
+        "Escribí el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.",
+        "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Ahora el terreno acumula saturación y detona como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.",
+        "Capa de feel: hitstop, screen shake, flash de impacto y números de daño flotantes, todos escalados por el peso del golpe, encima de knockback, juggle aéreo y estados de stagger."
+      ]
+    },
+    links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
   },
   {
-    // Sin video ni capturas: NDA. youtubeId se queda en null a proposito.
-    // "Project Monster Shelter" es CODENAME. El titulo real no se publica en ningun sitio.
-    title: "Project Monster Shelter",
-    org: "DOB Studios",
-    role: "Game Programmer · tools, flow authoring and persistence",
-    tags: ["professional"],
-    dates: "Mar 2026 – Present",
-    youtubeId: null,
-    desc: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Shipped title, referred to here by codename. I work on the authoring tools, the tutorial and chapter flow, and the persistence layer.",
-    bullets: [
-      "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing (usually \"when my own events have finished\").",
-      "Built that idea into an in-Unity node-graph editor (EditorWindow + GraphView / UIElements, ~2,000 LOC), with polymorphic actions via [SerializeReference]. Three of us author with it now, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters (dialogue events plus missions), so shipping a new feature or chapter means adding steps instead of writing a new flow.",
-      "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
-      "Event-driven notification system with dual concurrency channels (instant plus FIFO queue), per-id de-duplication windows and pooled views."
-    ],
+    /* nda: true se queda hasta que llegue la autorizacion POR ESCRITO de DOB.
+       Mientras tanto: sin capturas, sin video y sin detalle tecnico nuevo.
+       El titulo comercial si va (el juego salio a tienda, el nombre es publico). */
+    title: "Runies Daycare: Merge & Pets", org: "DOB Studios", tags: ["professional"], youtubeId: null, nda: true, ai: true,
+    roleTags: { en: ["Game Programmer","Tools","Persistence"], es: ["Game Programmer","Herramientas","Persistencia"] },
+    dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
+    role: { en: "Game Programmer · tools, flow authoring and persistence", es: "Game Programmer · herramientas, autoría de flujos y persistencia" },
+    short: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código." },
+    desc: {
+      en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. A shipped title. I worked on the authoring tools, the tutorial and chapter flow, and the persistence layer.",
+      es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Título publicado. Trabajé en las herramientas de autoría, el flujo de tutorial y capítulos, y la capa de persistencia."
+    },
+    bullets: {
+      en: [
+        "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing.",
+        "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
+        "Event-driven notification system with dual concurrency channels (instant plus FIFO queue), per-id de-duplication windows and pooled views."
+      ],
+      es: [
+        "Encontré la causa raíz del grupo de bugs del primer vertical slice del proyecto. Los sistemas funcionaban; lo que los rompía era que el tutorial tenía que encender y apagar sistemas de gameplay en momentos exactos, y el runner del tutorial era lo que hacía eso frágil. Al mes de entrar propuse el reemplazo: bloques pequeños con una mini-acción cada uno, emitiendo sus propios eventos, y cada bloque declarando su propia condición para avanzar.",
+        "Capa de guardado y persistencia: escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura.",
+        "Sistema de notificaciones basado en eventos con dos canales de concurrencia (instantáneo más cola FIFO), ventanas de de-duplicación por id y vistas pooleadas."
+      ]
+    },
     links: []
   },
   {
-    title: "Prismonaut",
-    org: "Naked Dog",
-    role: "Founder · designer, environment artist and lead technical artist",
-    tags: ["team"],
-    dates: "Dec 2024 – May 2026 · on pause",
-    youtubeId: "dtM9pDWQxzI",
-    desc: "2D platformer, and the studio I founded to build it. We started at ten and settled into a core six who actually shipped it, from prototype through Game Jam Plus incubation to a Steam build. The project is on pause now, with the team pushing progressive updates when it decides to. I came in on design and art and ended up the most active contributor on the repository, which meant writing gameplay code too.",
-    bullets: [
-      "Designed and programmed the hazards: slimes, thorn roots, spikes, dirt-ball spawners and the lava sequence of the tutorial. Designing them and then implementing them myself meant the tuning loop had no handoff in it.",
-      "Lead technical artist on the project, and the one who introduced several of the game-feel corrections that made the character read better to play.",
-      "Level design and environment art: tilesets, level layouts and the visual language of the world.",
-      "Worked across the module-based player controller (movement, power, input and health modules), the camera manager and the screen-shake layer.",
-      "Windows and Linux builds through the project's release cycle."
-    ],
+    title: "Prismonaut", org: "Naked Dog", tags: ["team"], youtubeId: "dtM9pDWQxzI",
+    roleTags: { en: ["Founder","Lead Tech Art","Design"], es: ["Fundador","Lead Tech Art","Diseño"] },
+    dates: { en: "Dec 2024 – May 2026 · on pause", es: "Dic 2024 – May 2026 · en pausa" },
+    role: { en: "Founder · designer, environment artist and lead technical artist", es: "Fundador · diseñador, artista de entornos y lead technical artist" },
+    short: { en: "2D platformer, and the studio I founded to build it. Prototype to Steam build.", es: "Plataformas 2D, y el estudio que fundé para construirlo. De prototipo a build de Steam." },
+    desc: {
+      en: "2D platformer, and the studio I founded to build it. We started at ten and settled into a core six who actually shipped it, from prototype through Game Jam Plus incubation to a Steam build. The project is on pause now, with the team pushing progressive updates when it decides to. I came in on design and art and ended up the most active contributor on the repository, which meant writing gameplay code too.",
+      es: "Plataformas 2D, y el estudio que fundé para construirlo. Empezamos diez y nos asentamos en un core de seis que realmente lo sacó, desde prototipo pasando por la incubación de Game Jam Plus hasta una build de Steam. El proyecto está en pausa, con el equipo subiendo actualizaciones progresivas cuando lo decide. Entré en diseño y arte y terminé siendo el contribuidor más activo del repositorio, lo que significó escribir código de gameplay también."
+    },
+    bullets: {
+      en: [
+        "Designed and programmed the hazards: slimes, thorn roots, spikes, dirt-ball spawners and the lava sequence of the tutorial. Designing them and then implementing them myself meant the tuning loop had no handoff in it.",
+        "Lead technical artist on the project, and the one who introduced several of the game-feel corrections that made the character read better to play.",
+        "Level design and environment art: tilesets, level layouts and the visual language of the world.",
+        "Worked across the module-based player controller (movement, power, input and health modules), the camera manager and the screen-shake layer.",
+        "Windows and Linux builds through the project's release cycle."
+      ],
+      es: [
+        "Diseñé y programé los hazards: slimes, raíces de espinas, pinchos, spawners de bolas de tierra y la secuencia de lava del tutorial. Diseñarlos y luego implementarlos yo mismo significó que el loop de tuning no tenía handoff.",
+        "Lead technical artist del proyecto, y quien introdujo varias de las correcciones de game feel que hicieron que el personaje se leyera mejor al jugar.",
+        "Diseño de niveles y arte de entornos: tilesets, layouts de nivel y el lenguaje visual del mundo.",
+        "Trabajé en el controlador de jugador basado en módulos (movimiento, poder, input y salud), el manager de cámara y la capa de screen shake.",
+        "Builds de Windows y Linux a lo largo del ciclo de release del proyecto."
+      ]
+    },
+    links: [{ url: "https://naked-dog.itch.io/prismonaut", label: { en: "Play on itch.io", es: "Jugar en itch.io" } }]
+  },
+  {
+    /* PENDIENTE: el ID del video, si se graba uno. */
+    title: "Unseasoned", org: { en: "Takernal Game Jam 2026", es: "Takernal Game Jam 2026" }, tags: ["team"],
+    youtubeId: null, cover: "assets/unseasoned-cover.png", image: "assets/unseasoned-cover.png", ai: true,
+    roleTags: { en: ["Sole Programmer","Co-Director","Narrative Design"], es: ["Único programador","Co-director","Diseño narrativo"] },
+    dates: { en: "Aug 2026 · 9 days", es: "Ago 2026 · 9 días" },
+    role: { en: "Co-director, sole programmer, and gameplay and narrative designer", es: "Co-director, único programador, y diseñador de gameplay y narrativa" },
+    short: { en: "Cozy cooking game about reconciling people through food. Team of five, nine days, Unity 6.", es: "Juego de cocina cozy sobre reconciliar personas a través de la comida. Equipo de cinco, nueve días, Unity 6." },
+    desc: {
+      en: "A cook arrives in an unnamed city whose people forgot how to enjoy the moment. Each diner talks to you, you deduce from that conversation what they need to feel, translate it into a flavour profile, pick the dish and cook it. The structure is Papers, Please (a counter, a fixed camera, one case at a time) with its morality inverted: the same loop makes you an accomplice to a reconciliation instead of to cruelty. Built for the Takernal Game Jam 2026 on the theme \"unity through food\", by a team of five in nine days. I was the only programmer.",
+      es: "Un cocinero llega a una ciudad sin nombre cuya gente olvidó disfrutar el momento. Cada comensal conversa contigo, de esa conversación deduces qué necesita sentir, lo traduces a un perfil de sabores, eliges el plato y lo cocinas. La estructura es Papers, Please (un mostrador, cámara fija, un caso a la vez) con su moral invertida: el mismo bucle te vuelve cómplice de una reconciliación en vez de una crueldad. Hecho para la Takernal Game Jam 2026 sobre el tema \"la comida que nos une\", por un equipo de cinco en nueve días. Fui el único programador."
+    },
+    bullets: {
+      en: [
+        "Co-directed the project and designed the game: the inverted Papers, Please structure, cooking as a ritual that cannot fail, and no timer, no quota and no money, so the only tension in the game is understanding the person in front of you. The dishes are real fusion cuisine, which is how the theme lives inside the recipes rather than on top of them.",
+        "Spent two days moving the game out of IMGUI to sprites and Canvas, measured the result, and threw the branch away. The kitchen felt worse, because there the gesture places the props and not the layout, so the artists could not move anything either way. I wrote the conclusion down in the repository so nobody on the team would spend the same two days again.",
+        { t: "Sole programmer on a team of five: the cooking loop with nine gesture-driven preparation steps as interchangeable handlers, the dialogue and deduction system, and the recipe book. Dishes, clients and ingredients are ScriptableObjects, so the other four could author content on day two without waiting for me.", ai: true },
+        { t: "Integrated FMOD and verified it end to end in WebGL, which was the project's largest technical risk. The WebGL banks come from FMOD Studio's Desktop platform, not from an HTML5 one, and finding that out is most of the job.", ai: true },
+        { t: "Build tooling that applies the delivery settings by itself before every build. Without it the jam entry would have shipped as an executable named 2D_URP and with no decompression fallback.", ai: true }
+      ],
+      es: [
+        "Co-dirigí el proyecto y diseñé el juego: la estructura de Papers, Please invertida, la cocina como ritual que no puede fallar, y nada de cronómetro, cuota ni dinero, para que la única tensión del juego sea entender a la persona que tienes enfrente. Los platos son cocina de fusión real, que es como el tema vive dentro de las recetas y no encima de ellas.",
+        "Me pasé dos días sacando el juego de IMGUI a sprites y Canvas, medí el resultado y boté la rama. La cocina se sentía peor, porque ahí los props los coloca el gesto y no el layout, así que los artistas no podían mover nada de todos modos. Dejé la conclusión escrita en el repositorio para que nadie del equipo se comiera los mismos dos días.",
+        { t: "Único programador de un equipo de cinco: el bucle de cocina con nueve pasos de preparación por gestos como handlers intercambiables, el sistema de diálogo y deducción, y el recetario. Platos, clientes e ingredientes son ScriptableObjects, así que los otros cuatro pudieron cargar contenido el día dos sin esperarme.", ai: true },
+        { t: "Integré FMOD y lo verifiqué de punta a punta en WebGL, que era el mayor riesgo técnico del proyecto. Los banks de WebGL salen de la plataforma Desktop de FMOD Studio, no de una HTML5, y averiguar eso es la mayor parte del trabajo.", ai: true },
+        { t: "Herramienta de build que aplica sola los ajustes de entrega antes de cada compilación. Sin eso la entrega de la jam habría salido como un ejecutable llamado 2D_URP y sin fallback de descompresión.", ai: true }
+      ]
+    },
     links: [
-      { label: "Play on itch.io", url: "https://naked-dog.itch.io/prismonaut" }
+      { url: "https://arzpal.itch.io/unseasoned", label: { en: "Play on itch.io", es: "Jugar en itch.io" } },
+      { url: "https://github.com/Arzpal/Project-Food", label: { en: "GitHub repo", es: "Repo en GitHub" } }
     ]
   },
   {
-    title: "Hell Is Mine",
-    org: "Final degree project · Toulouse Lautrec",
-    role: "Game design, environment art and technical art",
-    tags: ["team"],
-    dates: "Mar – Dec 2022",
-    youtubeId: "9WE1rslrnqE",
-    desc: "Top-down action game set in a stylized underworld, built as my final degree project. Low-poly geometry under a pixelated post-process, with glowing liquid and emissive terrain doing most of the storytelling.",
-    bullets: [
-      "Owned the look of the game: I wrote the shader for the glowing lava that lights most of the world, and authored the material work, texture effects and particle systems throughout. The only thing I did not make is the pixelation post-process, which was a shader the team bought.",
-      "Environment art and world dressing across the game's areas.",
-      "The design was more ambitious than what shipped: every gameplay decision was meant to change the player's moveset, branching into two endings. As the team lost programmers I cut it down to one ending, with upgrades that scale speed and damage instead of adding mechanics. Knowing which half of your design is the load-bearing half, and cutting the rest in time, is the part of that project I still use."
-    ],
+    title: "Hell Is Mine", org: { en: "Final degree project · Toulouse Lautrec", es: "Proyecto final de carrera · Toulouse Lautrec" }, tags: ["team"], youtubeId: "9WE1rslrnqE",
+    roleTags: { en: ["Game Design","Environment Art","Technical Art"], es: ["Diseño","Arte de entornos","Arte técnico"] },
+    dates: { en: "Mar – Dec 2022", es: "Mar – Dic 2022" },
+    role: { en: "Game design, environment art and technical art", es: "Diseño de juego, arte de entornos y arte técnico" },
+    short: { en: "Top-down action game in a stylized underworld. Low-poly under a pixelated post-process.", es: "Acción top-down en un inframundo estilizado. Low-poly bajo un post-proceso pixelado." },
+    desc: {
+      en: "Top-down action game set in a stylized underworld, built as my final degree project. Low-poly geometry under a pixelated post-process, with glowing liquid and emissive terrain doing most of the storytelling.",
+      es: "Juego de acción top-down en un inframundo estilizado, hecho como mi proyecto final de carrera. Geometría low-poly bajo un post-proceso pixelado, con líquido brillante y terreno emisivo cargando la mayor parte de la narrativa."
+    },
+    bullets: {
+      en: [
+        "Owned the look of the game: I wrote the shader for the glowing lava that lights most of the world, and authored the material work, texture effects and particle systems throughout. The only thing I did not make is the pixelation post-process, which was a shader the team bought.",
+        "Environment art and world dressing across the game's areas.",
+        "The design was more ambitious than what shipped: every gameplay decision was meant to change the player's moveset, branching into two endings. As the team lost programmers I cut it down to one ending, with upgrades that scale speed and damage instead of adding mechanics. Knowing which half of your design is the load-bearing half, and cutting the rest in time, is the part of that project I still use."
+      ],
+      es: [
+        "Fui dueño del look del juego: escribí el shader de la lava brillante que ilumina casi todo el mundo, y autoré el trabajo de materiales, efectos de textura y sistemas de partículas. Lo único que no hice es el post-proceso de pixelado, que fue un shader que el equipo compró.",
+        "Arte de entornos y dressing del mundo en todas las áreas del juego.",
+        "El diseño era más ambicioso que lo que salió: cada decisión de gameplay iba a cambiar el moveset del jugador, ramificando en dos finales. Cuando el equipo perdió programadores lo recorté a un final, con mejoras que escalan velocidad y daño en vez de agregar mecánicas. Saber cuál mitad de tu diseño es la que carga el peso, y cortar el resto a tiempo, es la parte de ese proyecto que sigo usando."
+      ]
+    },
+    links: [{ url: "https://github.com/Antoneat/HellIsMine-2.0", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
+  },
+  {
+    title: "Crust and Conflict", org: "Game Jam Plus 2023", tags: ["team"], youtubeId: "x62QN_tkGs0",
+    roleTags: { en: ["Game Design","Technical Art"], es: ["Diseño","Arte técnico"] },
+    dates: { en: "Oct 2023 · about a month", es: "Oct 2023 · como un mes" },
+    role: { en: "Game designer and technical artist", es: "Diseñador de juego y artista técnico" },
+    short: { en: "Papers, Please-style game: a baker during the French Revolution decides who eats.", es: "Juego estilo Papers, Please: un panadero en la Revolución Francesa decide quién come." },
+    desc: {
+      en: "A Papers, Please-style game where you are a baker during the French Revolution. Who you choose to sell bread to, nobles or the poor, is the whole game, and the choices you accumulate decide which ending you get. Taken to Game Jam Plus with a pitch and a playable build. Most active contributor of a six-person team.",
+      es: "Un juego estilo Papers, Please donde eres un panadero durante la Revolución Francesa. A quién eliges venderle pan, nobles o pobres, es todo el juego, y las decisiones que acumulas deciden qué final obtienes. Llevado a Game Jam Plus con un pitch y una build jugable. Contribuidor más activo de un equipo de seis."
+    },
+    bullets: {
+      en: [
+        "The morality system was my idea, and it is the hook everything else hangs on: every sale is a side taken, and the game reads the pattern rather than any single choice.",
+        "Built the systems that carry it: bread inventory, item slots, drag-and-drop and the shop manager driving the sales loop, plus the sound controller, the menu and pause flow, and the playable scene assembly.",
+        "Environment and UI art (props, price tags, signage) alongside the design work.",
+        "Went back to the project on my own about a year later to clean up code that the jam deadline had left hardcoded. Nobody asked; it was bothering me."
+      ],
+      es: [
+        "El sistema de moralidad fue mi idea, y es el gancho del que cuelga todo lo demás: cada venta es un bando tomado, y el juego lee el patrón en vez de cualquier decisión aislada.",
+        "Construí los sistemas que lo cargan: inventario de pan, slots de ítems, drag-and-drop y el manager de tienda que mueve el loop de ventas, más el controlador de sonido, el flujo de menú y pausa, y el armado de la escena jugable.",
+        "Arte de entorno y de UI (props, etiquetas de precio, letreros) junto al trabajo de diseño.",
+        "Volví al proyecto por mi cuenta como un año después para limpiar código que el deadline de la jam había dejado hardcodeado. Nadie lo pidió; me estaba molestando."
+      ]
+    },
     links: [
-      { label: "GitHub repo", url: "https://github.com/Antoneat/HellIsMine-2.0" }
+      { url: "https://teamakii.itch.io/crust-and-conflict", label: { en: "Play on itch.io", es: "Jugar en itch.io" } },
+      { url: "https://github.com/Arzpal/GJPlus-23", label: { en: "GitHub repo", es: "Repo en GitHub" } }
     ]
   },
   {
-    title: "Space Invaders-like",
-    org: "Personal project · Godot",
-    role: "Solo: code, design and art",
-    tags: ["personal", "prototype"],
-    dates: "2024 · about two weeks",
-    youtubeId: "xrlycDqKVsw",
-    desc: "A roguelike bullet-hell built alone in Godot and GDScript, around the time of the Unity licensing controversy. The game was not really the point: I wanted to evaluate another engine first-hand, in enough depth to have an opinion, in case I ever had to move off Unity.",
-    bullets: [
-      "The verdict, which is what the exercise was for: Godot is genuinely intuitive and fast to work in, but its scene-based architecture is simple enough that I would expect it to strain on something the size of my current project. Worth knowing before you need to know it.",
-      "Designed the hitbox / hurtbox layer myself, from the engine documentation and experimentation rather than from a tutorial, so bullets, asteroids and the player all share one damage contract.",
-      "Debugged the projectile model end to end: bullets were passing through targets, sometimes colliding with the player that fired them, and the firing angle did not reliably follow the ship. Normalizing projectile speed and separating the collision layers made it predictable, and the charged shot builds on top of that.",
-      "Aim-assisted targeting, a camera rig on the Phantom Camera addon, and lighting passes for readability on a busy screen.",
-      "Ships, asteroids and explosions drawn by me in Photoshop and Aseprite. Only the background came from reference."
-    ],
-    links: [
-      { label: "GitHub repo", url: "https://github.com/Arzpal/SpaceInvadersLike" }
-    ]
-  },
-  {
-    title: "Crust and Conflict",
-    org: "Game Jam Plus 2023",
-    role: "Game designer and technical artist",
-    tags: ["team"],
-    dates: "Oct 2023 · about a month",
-    youtubeId: "x62QN_tkGs0",
-    desc: "A Papers, Please-style game where you are a baker during the French Revolution. Who you choose to sell bread to, nobles or the poor, is the whole game, and the choices you accumulate decide which ending you get. Taken to Game Jam Plus with a pitch and a playable build. Most active contributor of a six-person team.",
-    bullets: [
-      "The morality system was my idea, and it is the hook everything else hangs on: every sale is a side taken, and the game reads the pattern rather than any single choice.",
-      "Built the systems that carry it: bread inventory, item slots, drag-and-drop and the shop manager driving the sales loop, plus the sound controller, the menu and pause flow, and the playable scene assembly.",
-      "Environment and UI art (props, price tags, signage) alongside the design work.",
-      "Went back to the project on my own about a year later to clean up code that the jam deadline had left hardcoded. Nobody asked; it was bothering me."
-    ],
-    links: [
-      { label: "Play on itch.io", url: "https://teamakii.itch.io/crust-and-conflict" },
-      { label: "GitHub repo", url: "https://github.com/Arzpal/GJPlus-23" }
-    ]
-  },
-  {
-    // Sin video: son juegos de casino fisico, publicados por GMW.
-    title: "Casino cabinet games",
-    org: "GDP Studios · published under GMW",
-    role: "Unity developer · multi-cabinet layout and optimization",
-    tags: ["professional"],
-    dates: "Jul 2025 – Mar 2026",
-    youtubeId: null,
-    desc: "Unity games that run on physical casino cabinets. Four titles: the Clownfish / Lionfish / Parrotfish Treasure family (one game behind three different art sets), Triple Bananas, the Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe family, and Ravin' Hot Deluxe.",
-    bullets: [
-      "The constraint that shaped everything: one Unity project had to run on three cabinet models with completely different screen arrangements. S4 stacks three 16:9 displays vertically, S5 runs 16:9 then 9:16 then 16:9, S8 is a 9:16 below a 16:9. Every layout is different and the game logic has to stay identical across all three.",
-      "Reskin pipeline for the cloned titles: same logic, different face, so the work was swapping the art scene by scene without the logic ever drifting between versions.",
-      "Proposed and drove optimization work across the projects, including cutting mini-features back to what they were actually worth.",
-      "Changed how the studio worked, not just my own tasks: researched font optimization for their output formats and proposed a workflow with the art and UX teams that removed friction for everyone."
-    ],
+    title: "Casino cabinet games", org: { en: "GDP Studios · published under GMW", es: "GDP Studios · publicado bajo GMW" }, tags: ["professional"], youtubeId: null,
+    roleTags: { en: ["Unity Developer","Technical Art","Optimization"], es: ["Desarrollador Unity","Arte técnico","Optimización"] },
+    dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
+    role: { en: "Unity developer · multi-cabinet layout and optimization", es: "Desarrollador Unity · layout multi-cabinet y optimización" },
+    short: { en: "Four Unity titles running on physical casino cabinets, three screen arrangements.", es: "Cuatro títulos en Unity corriendo en cabinas físicas de casino, tres arreglos de pantalla." },
+    desc: {
+      en: "Unity games that run on physical casino cabinets. Four titles: the Clownfish / Lionfish / Parrotfish Treasure family (one game behind three different art sets), Triple Bananas, the Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe family, and Ravin' Hot Deluxe.",
+      es: "Juegos en Unity que corren en cabinas físicas de casino. Cuatro títulos: la familia Clownfish / Lionfish / Parrotfish Treasure (un juego detrás de tres sets de arte distintos), Triple Bananas, la familia Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe, y Ravin' Hot Deluxe."
+    },
+    bullets: {
+      en: [
+        "The constraint that shaped everything: one Unity project had to run on three cabinet models with completely different screen arrangements. S4 stacks three 16:9 displays vertically, S5 runs 16:9 then 9:16 then 16:9, S8 is a 9:16 below a 16:9. Every layout is different and the game logic has to stay identical across all three.",
+        "Reskin pipeline for the cloned titles: same logic, different face, so the work was swapping the art scene by scene without the logic ever drifting between versions.",
+        "Proposed and drove optimization work across the projects, including cutting mini-features back to what they were actually worth.",
+        "Changed how the studio worked, not just my own tasks: researched font optimization for their output formats and proposed a workflow with the art and UX teams that removed friction for everyone."
+      ],
+      es: [
+        "La restricción que le dio forma a todo: un solo proyecto de Unity tenía que correr en tres modelos de cabina con arreglos de pantalla completamente distintos. La S4 apila tres pantallas 16:9 verticalmente, la S5 va 16:9, luego 9:16, luego 16:9, la S8 es una 9:16 debajo de una 16:9. Cada layout es distinto y la lógica del juego tiene que quedar idéntica en las tres.",
+        "Pipeline de reskin para los títulos clonados: misma lógica, cara distinta, así que el trabajo era cambiar el arte escena por escena sin que la lógica se desviara nunca entre versiones.",
+        "Propuse e impulsé trabajo de optimización en los proyectos, incluyendo recortar mini-features a lo que realmente valían.",
+        "Cambié cómo trabajaba el estudio, no solo mis propias tareas: investigué optimización de fuentes para sus formatos de salida y propuse un flujo con los equipos de arte y UX que quitó fricción para todos."
+      ]
+    },
     links: []
   },
   {
-    title: "Zarzilla Games",
-    org: null,
-    role: "Technical Artist → Lead Technical Artist → Studio Manager",
-    tags: ["professional"],
-    dates: "2023 – 2025",
-    youtubeId: "SERw7aExaIU",
-    desc: "Came in as a technical artist, was promoted to Lead Technical Artist, and about a year later to Studio Manager, running a studio of around 15 people across five areas: technical art, development, UI and raster art, animation and concept art.",
-    bullets: [
-      "Redefined what the technical art area was for. It had been art implementation and nothing else; I turned it into a group that also took on the technical work sitting next to art, and we built tools that sped up the animation team's workflow.",
-      "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. I kept my hands on the work while leading, which is the only reason the leading part went well.",
-      "Supervised development on Gin Rummy Super and on two projects I cannot talk about yet.",
-      "Defined the technical pipelines the teams worked through, and optimized runtime performance and resource usage.",
-      "Designed and implemented interactive behaviors, camera systems and visual-feedback systems.",
-      "As Studio Manager: coordinated schedules and sprint planning across the five areas and reworked how they handed work to each other."
-    ],
+    title: "Treasure Mines · Gin Rummy Super", org: "Zarzilla Games", tags: ["professional"], youtubeId: "bcCz_zDc9t8",
+    roleTags: { en: ["Technical Artist","Visual Logic"], es: ["Artista técnico","Lógica visual"] },
+    dates: { en: "2023 – 2025", es: "2023 – 2025" },
+    role: { en: "Technical artist · entire visual logic of the minigame", es: "Artista técnico · toda la lógica visual del minijuego" },
+    short: { en: "Minigame inside Gin Rummy Super. I built its entire visual logic while leading the area.", es: "Minijuego dentro de Gin Rummy Super. Construí toda su lógica visual mientras lideraba el área." },
+    desc: {
+      en: "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. I kept my hands on the work while leading, which is the only reason the leading part went well.",
+      es: "Construí toda la lógica visual de Treasure Mines, un minijuego dentro de Gin Rummy Super. Mantuve las manos en el trabajo mientras lideraba, que es la única razón por la que la parte de liderar salió bien."
+    },
+    bullets: {
+      en: [
+        "Designed and implemented interactive behaviors, camera systems and visual-feedback systems.",
+        "Defined the technical pipelines the teams worked through, and optimized runtime performance and resource usage."
+      ],
+      es: [
+        "Diseñé e implementé comportamientos interactivos, sistemas de cámara y sistemas de feedback visual.",
+        "Definí los pipelines técnicos con los que trabajaban los equipos, y optimicé rendimiento en runtime y uso de recursos."
+      ]
+    },
     links: [
-      { label: "Gin Rummy Super trailer", url: "https://www.youtube.com/watch?v=SERw7aExaIU" },
-      { label: "Treasure Mines trailer (minigame)", url: "https://www.youtube.com/watch?v=bcCz_zDc9t8" }
-    ]
-  },
-  {
-    title: "Multiplayer sandbox: Photon Fusion 2 + PlayFab",
-    org: null,
-    role: "Learning exercise",
-    tags: ["prototype"],
-    dates: "Jul 2026",
-    youtubeId: null,
-    desc: "A small sandbox built over a weekend to get hands-on with networked state authority in Fusion 2 Shared Mode and PlayFab-backed player data. Networked spawn and movement, verified with an editor client and a standalone build in the same room. Not production experience, just the shortest path from reading about it to running it.",
-    bullets: [],
-    links: [
-      { label: "GitHub repo", url: "https://github.com/Arzpal/SandboxPlaytest" }
+      { url: "https://www.youtube.com/watch?v=SERw7aExaIU", label: { en: "Gin Rummy Super trailer", es: "Trailer de Gin Rummy Super" } }
     ]
   }
 ];
 
-const TAG_LABELS = {
-  personal:     "Personal",
-  team:         "Team project",
-  professional: "Professional",
-  prototype:    "Prototype",
-  freelance:    "Freelance"
-};
+const TOOLS = [
+  {
+    title: { en: "Node-graph flow editor for Unity", es: "Editor de flujos node-graph para Unity" },
+    kind: { en: "Editor tooling", es: "Herramienta de editor" },
+    meta: "DOB Studios · ~2,000 LOC",
+    youtubeId: null, nda: true,
+    roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
+    body: {
+      en: "An in-Unity node-graph editor (EditorWindow + GraphView / UIElements) with polymorphic actions via [SerializeReference]. Three of us authored with it, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters (dialogue events plus missions), so shipping a new feature or chapter means adding steps instead of writing a new flow.",
+      es: "Un editor de node-graph dentro de Unity (EditorWindow + GraphView / UIElements) con acciones polimórficas vía [SerializeReference]. Tres personas autorizábamos con él, un programador, una diseñadora y yo, y todo tutorial de mecánica independiente del juego se construye ahí. Después bifurqué una variación para capítulos de historia (eventos de diálogo más misiones), así que publicar una feature o un capítulo nuevo significa agregar pasos en vez de escribir un flujo nuevo."
+    },
+    links: []
+  },
+  {
+    title: { en: "Composable ability system", es: "Sistema de habilidades componible" },
+    kind: { en: "Data-driven architecture", es: "Arquitectura data-driven" },
+    meta: "Tatemis3D · Unity 6", youtubeId: null,
+    roleTags: { en: ["Systems Programmer","Architecture"], es: ["Programador de sistemas","Arquitectura"] },
+    body: {
+      en: "Abilities are lists of small reusable effects authored on ScriptableObjects, so a creature is data, not code. I designed it to survive design churn, and it did: the design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
+      es: "Las habilidades son listas de efectos pequeños y reutilizables autorizados en ScriptableObjects, así que una criatura es datos, no código. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo: el diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito."
+    },
+    links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
+  },
+  {
+    title: { en: "Combat lab tooling and type-chart validator", es: "Tooling del laboratorio de combate y validador de tabla de tipos" },
+    kind: { en: "Editor tooling", es: "Herramienta de editor" },
+    meta: "Tatemis3D · Unity 6", youtubeId: null,
+    roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
+    body: {
+      en: "Scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases).",
+      es: "Builders de escena para el laboratorio de combate, generadores de contenido, un property drawer SubclassSelector propio, y un validador que revisa la tabla de tipos elementales (52 de 52 casos)."
+    },
+    links: []
+  },
+  {
+    title: { en: "Save and persistence layer", es: "Capa de guardado y persistencia" },
+    kind: { en: "Systems", es: "Sistemas" },
+    meta: "DOB Studios · Unity 6", youtubeId: null, nda: true,
+    roleTags: { en: ["Systems Programmer"], es: ["Programador de sistemas"] },
+    body: {
+      en: "Atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
+      es: "Escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura."
+    },
+    links: []
+  },
+  {
+    title: "Space Invaders-like",
+    kind: { en: "Prototype · engine evaluation", es: "Prototipo · evaluación de motor" },
+    meta: { en: "Godot · about two weeks, 2024", es: "Godot · unas dos semanas, 2024" }, youtubeId: "xrlycDqKVsw",
+    roleTags: { en: ["Solo","Code","Design","Art"], es: ["Solo","Código","Diseño","Arte"] },
+    body: {
+      en: "A roguelike bullet-hell built alone in Godot and GDScript, around the time of the Unity licensing controversy. The verdict, which is what the exercise was for: Godot is genuinely intuitive and fast to work in, but its scene-based architecture is simple enough that I would expect it to strain on something the size of my current project.",
+      es: "Un bullet-hell roguelike hecho solo en Godot y GDScript, por la época de la controversia de licencias de Unity. El veredicto, que es para lo que sirvió el ejercicio: Godot es genuinamente intuitivo y rápido para trabajar, pero su arquitectura basada en escenas es lo bastante simple como para que esperaría que se tensara en algo del tamaño de mi proyecto actual."
+    },
+    links: [
+      { url: "https://www.youtube.com/watch?v=xrlycDqKVsw", label: { en: "Gameplay video", es: "Video de gameplay" } },
+      { url: "https://github.com/Arzpal/SpaceInvadersLike", label: { en: "GitHub repo", es: "Repo en GitHub" } }
+    ]
+  },
+  {
+    title: "Photon Fusion 2 + PlayFab sandbox",
+    kind: { en: "Prototype · networking", es: "Prototipo · networking" },
+    meta: { en: "Unity · Jul 2026", es: "Unity · Jul 2026" }, youtubeId: null,
+    roleTags: { en: ["Learning exercise"], es: ["Ejercicio de aprendizaje"] },
+    body: {
+      en: "A small sandbox built over a weekend to get hands-on with networked state authority in Fusion 2 Shared Mode and PlayFab-backed player data. Networked spawn and movement, verified with an editor client and a standalone build in the same room. Not production experience, just the shortest path from reading about it to running it.",
+      es: "Un sandbox pequeño hecho en un fin de semana para meter mano en autoridad de estado en red con Fusion 2 Shared Mode y datos de jugador respaldados por PlayFab. Spawn y movimiento en red, verificados con un cliente del editor y una build standalone en la misma sala. No es experiencia de producción, solo el camino más corto entre leer sobre eso y hacerlo correr."
+    },
+    links: [{ url: "https://github.com/Arzpal/SandboxPlaytest", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
+  }
+];
 
-/* ---------- render ---------- */
-const projectsEl = document.getElementById("projects");
-const filtersEl  = document.getElementById("filters");
+const TIMELINE = [
+  {
+    org: "DOB Studios", dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
+    kind: { en: "Studio", es: "Estudio" },
+    role: { en: "Game Programmer · tools, flow authoring and persistence", es: "Game Programmer · herramientas, autoría de flujos y persistencia" },
+    line: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. I worked on the authoring tools, the tutorial and chapter flow, and the persistence layer.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Trabajé en las herramientas de autoría, el flujo de tutorial y capítulos, y la capa de persistencia." }
+  },
+  {
+    org: "Raymi Games", dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
+    kind: { en: "Studio", es: "Estudio" },
+    role: { en: "Gameplay Programmer · lead programmer on the project", es: "Gameplay Programmer · programador principal del proyecto" },
+    line: { en: "Lead programmer on Don't Chicken Out!, with roughly 70% of the game's code, and support on design.", es: "Programador principal en Don't Chicken Out!, con cerca del 70% del código del juego, y apoyo en diseño." },
+    current: true
+  },
+  {
+    org: "GDP Studios", dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
+    kind: { en: "Studio · published under GMW", es: "Estudio · publicado bajo GMW" },
+    role: { en: "Unity developer · multi-cabinet layout and optimization", es: "Desarrollador Unity · layout multi-cabinet y optimización" },
+    line: { en: "Four Unity titles for physical casino cabinets, one project running on three cabinet models with completely different screen arrangements.", es: "Cuatro títulos en Unity para cabinas físicas de casino, un solo proyecto corriendo en tres modelos de cabina con arreglos de pantalla completamente distintos." }
+  },
+  {
+    org: "Naked Dog", dates: { en: "Dec 2024 – May 2026", es: "Dic 2024 – May 2026" },
+    kind: { en: "Studio I founded", es: "Estudio que fundé" },
+    role: { en: "Founder · designer, environment artist and lead technical artist", es: "Fundador · diseñador, artista de entornos y lead technical artist" },
+    line: { en: "Founded the studio to build Prismonaut. Started at ten, settled into a core six, took it from prototype through Game Jam Plus incubation to a Steam build.", es: "Fundé el estudio para construir Prismonaut. Empezamos diez, nos asentamos en un core de seis, y lo llevamos de prototipo a la incubación de Game Jam Plus y a una build de Steam." }
+  },
+  {
+    org: "Zarzilla Games", dates: { en: "2023 – 2025", es: "2023 – 2025" },
+    kind: { en: "Studio", es: "Estudio" },
+    role: { en: "Technical Artist → Lead Technical Artist → Studio Manager", es: "Technical Artist → Lead Technical Artist → Studio Manager" },
+    line: { en: "Came in as a technical artist, was promoted to lead, and about a year later to Studio Manager, running around 15 people across five areas: technical art, development, UI and raster art, animation and concept art.", es: "Entré como artista técnico, fui promovido a lead, y como un año después a Studio Manager, dirigiendo unas 15 personas en cinco áreas: arte técnico, desarrollo, UI y arte raster, animación y concept art." }
+  }
+];
 
-const esc = s => String(s).replace(/[&<>"']/g, c =>
-  ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const EDUCATION = [
+  {
+    school: "Toulouse Lautrec",
+    dates: { en: "Graduated 2023", es: "Egresado 2023" },
+    program: { en: "Game Design & Digital Entertainment · final degree project: Hell Is Mine", es: "Diseño de Videojuegos y Entretenimiento Digital · proyecto final: Hell Is Mine" },
+    line: { en: "Hell Is Mine was the final degree project: a top-down action game in a stylized underworld, where I owned game design, environment art and technical art, including the shader for the glowing lava that lights most of the world.", es: "Hell Is Mine fue el proyecto final de carrera: un juego de acción top-down en un inframundo estilizado, donde fui dueño del diseño de juego, el arte de entornos y el arte técnico, incluyendo el shader de la lava brillante que ilumina casi todo el mundo." },
+    note: { en: "Pronabec scholarship, 2021 · a year and a half of the degree", es: "Becado Pronabec 2021 · un año y medio de la carrera" }
+  },
+  {
+    school: { en: "Game Jam Plus · incubation", es: "Game Jam Plus · incubación" },
+    dates: { en: "2023 – 2025", es: "2023 – 2025" },
+    program: { en: "Crust and Conflict (2023) and Prismonaut (incubation)", es: "Crust and Conflict (2023) y Prismonaut (incubación)" },
+    line: { en: "Two projects taken to Game Jam Plus with a pitch and a playable build, and Prismonaut carried through the program's incubation stage on the way to a Steam build.", es: "Dos proyectos llevados a Game Jam Plus con pitch y build jugable, y Prismonaut llevado por la etapa de incubación del programa camino a una build de Steam." }
+  }
+];
 
-function playIcon() {
-  return '<span class="yt-play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"/></svg></span>';
+/* ==========================================================================
+   RENDER — de aqui para abajo no hace falta tocar nada para agregar contenido.
+   ========================================================================== */
+
+var SECTIONS = [
+  { key: "projects", el: "sec-projects", label: "navProjects" },
+  { key: "timeline", el: "sec-timeline", label: "navTimeline" },
+  { key: "tools",    el: "sec-tools",    label: "navTools" },
+  { key: "edu",      el: "sec-edu",      label: "navEdu" }
+];
+
+var state = { lang: "en", active: "projects", open: null, showAI: true };
+
+try {
+  var savedLang = localStorage.getItem("arzpal-lang");
+  if (savedLang === "es" || savedLang === "en") state.lang = savedLang;
+  if (localStorage.getItem("arzpal-showai") === "0") state.showAI = false;
+} catch (e) {}
+
+function $(id) { return document.getElementById(id); }
+
+function pick(v) {
+  if (v && typeof v === "object" && !Array.isArray(v)) return v[state.lang];
+  return v;
 }
 
-function mediaHTML(p) {
-  if (!p.youtubeId) return "";
-  const id = esc(p.youtubeId);
-  return `<button class="yt" type="button" data-id="${id}"
-            aria-label="Play gameplay video for ${esc(p.title)}"
-            style="background-image:url('https://i.ytimg.com/vi/${id}/hqdefault.jpg')">
-            ${playIcon()}
-          </button>`;
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
-function cardHTML(p) {
-  const media   = mediaHTML(p);
-  const org     = p.org ? ` <span class="org">· ${esc(p.org)}</span>` : "";
-  const tags    = (p.tags || []).map(t =>
-                    `<span class="tag tag-${esc(t)}">${esc(TAG_LABELS[t] || t)}</span>`).join("");
-  const bullets = (p.bullets && p.bullets.length)
-                    ? `<ul>${p.bullets.map(b => `<li>${esc(b)}</li>`).join("")}</ul>` : "";
-  const links   = (p.links && p.links.length)
-                    ? `<div class="card-links">${p.links.map(l =>
-                        `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("")}</div>`
-                    : "";
-
-  return `<article class="card${media ? "" : " no-media"}" data-tags="${esc((p.tags || []).join(" "))}">
-    ${media}
-    <div class="card-body">
-      <div class="card-top">
-        <h3>${esc(p.title)}${org}</h3>
-        <span class="dates">${esc(p.dates || "")}</span>
-      </div>
-      ${p.role ? `<p class="role-line">${esc(p.role)}</p>` : ""}
-      <div class="tags">${tags}</div>
-      <p class="desc">${esc(p.desc || "")}</p>
-      ${bullets}
-      ${links}
-    </div>
-  </article>`;
+function firstSentence(s) {
+  var m = String(s || "").match(/^[\s\S]*?[.!?](\s|$)/);
+  return (m ? m[0] : String(s || "")).trim();
 }
 
-function render(filter) {
-  const list = filter === "all"
-    ? PROJECTS
-    : PROJECTS.filter(p => (p.tags || []).includes(filter));
-
-  projectsEl.innerHTML = list.length
-    ? list.map(cardHTML).join("")
-    : `<p class="empty">Nothing here yet.</p>`;
+/* Un punto puede ser "texto" o { t: "texto", ai: true }. Los marcados con IA
+   se OCULTAN cuando el toggle de la barra esta apagado. */
+function bulletList(raw) {
+  return (raw || [])
+    .map(function (b) {
+      return typeof b === "string" ? { text: b, ai: false } : { text: b.t, ai: !!b.ai };
+    })
+    .filter(function (b) { return b.ai ? state.showAI : true; });
 }
 
-/* ---------- filters (solo muestra las que existen de verdad) ---------- */
-const used = ["all", ...Object.keys(TAG_LABELS).filter(t =>
-  PROJECTS.some(p => (p.tags || []).includes(t)))];
+/* cover (imagen propia) gana sobre el thumbnail de YouTube; image gana sobre
+   maxresdefault en el fondo del modal. */
+function thumbUrl(item) {
+  if (item.cover) return item.cover;
+  if (item.youtubeId) return "https://i.ytimg.com/vi/" + item.youtubeId + "/hqdefault.jpg";
+  return null;
+}
+function bigUrl(item) {
+  if (item.image) return item.image;
+  if (item.youtubeId) return "https://i.ytimg.com/vi/" + item.youtubeId + "/maxresdefault.jpg";
+  return null;
+}
+function cssUrl(u) { return "url(&#39;" + esc(u) + "&#39;)"; }
 
-filtersEl.innerHTML = used.map((t, i) =>
-  `<button class="filter" type="button" data-filter="${t}" aria-pressed="${i === 0}">
-     ${t === "all" ? "All" : TAG_LABELS[t]}
-   </button>`).join("");
+/* ---------- tarjeta (misma para proyectos y herramientas) ---------------- */
+function cardHtml(item, group, index, opts) {
+  var t = COPY[state.lang];
+  var url = thumbUrl(item);
+  var hasVideo = !!item.youtubeId;
+  var tags = (pick(item.roleTags) || []).slice(0, 3);
+  var aiBadge = !!item.ai && state.showAI;
+  var h = '<button type="button" class="card" data-g="' + group + '" data-i="' + index + '">';
 
-filtersEl.addEventListener("click", e => {
-  const btn = e.target.closest(".filter");
-  if (!btn) return;
-  filtersEl.querySelectorAll(".filter").forEach(b =>
-    b.setAttribute("aria-pressed", String(b === btn)));
-  render(btn.dataset.filter);
+  h += '<div class="card-media">';
+  h += '<div class="card-thumb" style="background-image:' + (url ? cssUrl(url) : "none") + '"></div>';
+  if (!url) {
+    h += '<div class="card-nomedia"><div>' + esc(item.nda ? t.noFootage : t.noFootageTool) + '</div></div>';
+  } else {
+    h += '<div class="card-scrim"></div>';
+  }
+  if (tags.length) {
+    h += '<div class="card-tags">' + tags.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join("") + '</div>';
+  }
+  if (hasVideo) {
+    h += '<div class="card-watch"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"></path></svg>' + esc(t.watch) + '</div>';
+  }
+  h += '</div>';
+
+  h += '<div class="card-body">';
+  h += '<div class="card-titlerow"><h3 class="card-title">' + esc(pick(item.title)) + '</h3>'
+     + '<div class="card-dates">' + esc(pick(opts.dates)) + '</div></div>';
+  h += '<div class="card-orgrow"><div class="card-org">' + esc(pick(opts.orgLine) || "—") + '</div>'
+     + (aiBadge ? '<div class="ai-badge">' + esc(t.aiTag) + '</div>' : '') + '</div>';
+  h += '<p class="card-short">' + esc(pick(opts.short)) + '</p>';
+  h += '</div></button>';
+  return h;
+}
+
+/* ---------- modal -------------------------------------------------------- */
+function modalHtml() {
+  var o = state.open;
+  if (!o) return "";
+  var isTool = o.g === "t";
+  var p = isTool ? TOOLS[o.i] : PROJECTS[o.i];
+  if (!p) return "";
+
+  var t = COPY[state.lang];
+  var labels = TAG_LABELS[state.lang];
+  var big = bigUrl(p);
+  var bg = big ? cssUrl(big) : "repeating-linear-gradient(135deg,#0b0d0e 0 10px,#101314 10px 20px)";
+  var tags = (p.tags || []).map(function (tg) { return labels[tg] || tg; });
+  var bullets = bulletList(pick(p.bullets));
+  var links = p.links || [];
+  var aiBadge = !!p.ai && state.showAI;
+
+  var h = '<div class="overlay" id="overlay"><div class="modal">';
+
+  h += '<div class="modal-head" style="background-image:' + bg + '">';
+  h += '<div class="modal-head-scrim"></div>';
+  h += '<button type="button" class="modal-close" id="modalClose" aria-label="Close">'
+     + '<svg viewBox="0 0 24 24"><path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.3 19.71 2.88 18.3 9.17 12 2.88 5.71 4.3 4.29l6.29 6.3 6.3-6.3 1.41 1.42Z"></path></svg></button>';
+  h += '<div class="modal-headin">';
+  if (tags.length) {
+    h += '<div class="modal-tags">' + tags.map(function (x) { return '<div>' + esc(x) + '</div>'; }).join("") + '</div>';
+  }
+  h += '<h3 class="modal-title">' + esc(pick(p.title)) + '</h3>';
+  h += '<div class="modal-meta">'
+     + '<div class="org">' + esc(pick(isTool ? p.kind : p.org) || "") + '</div>'
+     + '<div class="dates">' + esc(pick(isTool ? p.meta : p.dates)) + '</div>'
+     + (aiBadge ? '<div class="ai-badge">' + esc(t.aiTag) + '</div>' : '')
+     + '</div>';
+  h += '</div></div>';
+
+  /* lite embed: el iframe solo existe cuando el modal esta abierto */
+  if (p.youtubeId) {
+    h += '<div class="modal-video"><iframe src="https://www.youtube-nocookie.com/embed/'
+       + encodeURIComponent(p.youtubeId) + '?autoplay=1&amp;rel=0" title="Gameplay video" '
+       + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" '
+       + 'allowfullscreen></iframe></div>';
+  }
+
+  h += '<div class="modal-body">';
+  if (!isTool) {
+    h += '<div><div class="modal-label">' + esc(t.myRole) + '</div>'
+       + '<div class="modal-role">' + esc(pick(p.role) || "") + '</div></div>';
+  }
+  h += '<div><div class="modal-label">' + esc(t.about) + '</div>'
+     + '<p class="modal-desc">' + esc(pick(isTool ? p.body : p.desc)) + '</p></div>';
+  if (bullets.length) {
+    h += '<div><div class="modal-label" style="margin-bottom:12px">' + esc(t.whatIBuilt) + '</div>';
+    h += '<div class="modal-bullets">' + bullets.map(function (b) {
+      return '<div class="bullet"><div class="bullet-mark">&#8250;</div><div class="bullet-text">'
+        + (b.ai ? '<div class="ai-badge">' + esc(t.aiTag) + '</div>' : '')
+        + '<span>' + esc(b.text) + '</span></div></div>';
+    }).join("") + '</div></div>';
+  }
+  if (links.length) {
+    h += '<div class="modal-links">' + links.map(function (l) {
+      return '<a class="modal-link" href="' + esc(l.url) + '" target="_blank" rel="noopener">'
+        + esc(pick(l.label)) + ' &#8599;</a>';
+    }).join("") + '</div>';
+  }
+  h += '</div></div></div>';
+  return h;
+}
+
+/* ---------- render completo ---------------------------------------------- */
+function render() {
+  var t = COPY[state.lang];
+  document.documentElement.lang = state.lang;
+
+  $("nav").innerHTML = SECTIONS.map(function (s) {
+    return '<button type="button" data-key="' + s.key + '"'
+      + (state.active === s.key ? ' class="is-active"' : '') + '>' + esc(t[s.label]) + '</button>';
+  }).join("");
+
+  $("aiToggleLabel").textContent = t.aiToggle;
+  $("aiToggle").className = "ai-toggle" + (state.showAI ? " is-on" : "");
+  Array.prototype.forEach.call($("langSwitch").children, function (b) {
+    b.className = b.getAttribute("data-lang") === state.lang ? "is-active" : "";
+  });
+
+  $("eyebrow").textContent = t.eyebrow;
+  $("heroRole").textContent = t.role;
+  $("heroP1").textContent = t.p1;
+  $("heroP3").textContent = t.p3;
+  $("heroP2").textContent = t.p2;
+  $("aiLabel").textContent = t.aiLabel;
+  $("aiBody").textContent = t.aiBody;
+  $("ctaEmail").textContent = t.ctaEmail;
+  $("ctaCv").textContent = t.ctaCv;
+  $("pills").innerHTML = (t.pills || []).map(function (p) { return '<div>' + esc(p) + '</div>'; }).join("");
+
+  $("secProjects").textContent = t.secProjects;
+  $("projectsNote").textContent = t.projectsNote;
+  $("clickHint").textContent = t.clickHint;
+  $("projectsGrid").innerHTML = PROJECTS.map(function (p, i) {
+    return cardHtml(p, "p", i, { dates: p.dates, orgLine: p.org, short: p.short });
+  }).join("");
+
+  $("secTimeline").textContent = t.secTimeline;
+  $("timelineNote").textContent = t.timelineNote;
+  $("timelineList").innerHTML = TIMELINE.map(function (e) {
+    return '<div class="tl-row">'
+      + '<div class="tl-dates">' + esc(pick(e.dates)) + '</div>'
+      + '<div class="tl-rail"><i></i><div class="tl-dot' + (e.current ? ' is-current' : '') + '"></div></div>'
+      + '<div class="tl-body">'
+      + '<div class="tl-titlerow"><h3 class="tl-org">' + esc(pick(e.org)) + '</h3>'
+      + '<div class="tl-kind">' + esc(pick(e.kind)) + '</div></div>'
+      + '<div class="tl-role">' + esc(pick(e.role)) + '</div>'
+      + '<p class="tl-line">' + esc(pick(e.line)) + '</p>'
+      + '</div></div>';
+  }).join("");
+
+  $("secTools").textContent = t.secTools;
+  $("toolsNote").textContent = t.toolsNote;
+  $("toolsGrid").innerHTML = TOOLS.map(function (x, i) {
+    return cardHtml(x, "t", i, { dates: x.meta, orgLine: x.kind, short: firstSentence(pick(x.body)) });
+  }).join("");
+
+  $("secEdu").textContent = t.secEdu;
+  $("eduNote").textContent = t.eduNote;
+  $("eduList").innerHTML = EDUCATION.map(function (e) {
+    var h = '<div class="edu-card">';
+    h += '<div class="edu-head"><h3 class="edu-school">' + esc(pick(e.school)) + '</h3>'
+       + '<div class="edu-dates">' + esc(pick(e.dates)) + '</div></div>';
+    h += '<div class="edu-program">' + esc(pick(e.program)) + '</div>';
+    h += '<p class="edu-line">' + esc(pick(e.line)) + '</p>';
+    if (e.note) {
+      h += '<div class="edu-note"><svg viewBox="0 0 24 24"><path d="M12 3 1 8l11 5 9-4.09V15h2V8L12 3ZM5 13.18v2.94l7 3.82 7-3.82v-2.94l-7 3.82-7-3.82Z"></path></svg>'
+         + esc(pick(e.note)) + '</div>';
+    }
+    return h + '</div>';
+  }).join("");
+
+  $("contactTitle").textContent = t.contactTitle;
+  $("contactNote").textContent = t.contactNote;
+  $("footerNote").textContent = t.footer;
+  $("copyright").textContent = "© " + new Date().getFullYear() + " Andrés Ruiz Palomino";
+
+  renderModal();
+}
+
+function renderModal() {
+  $("modalRoot").innerHTML = modalHtml();
+}
+
+function setNavActive() {
+  Array.prototype.forEach.call($("nav").children, function (b) {
+    b.className = b.getAttribute("data-key") === state.active ? "is-active" : "";
+  });
+}
+
+/* ---------- eventos ------------------------------------------------------ */
+/* La nav hace scroll por JS y NO cambia la URL: nada de hashes. */
+function scrollToKey(key) {
+  var s = SECTIONS.filter(function (x) { return x.key === key; })[0];
+  var el = s && $(s.el);
+  if (!el) return;
+  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 60, behavior: "smooth" });
+}
+
+function onScroll() {
+  var probe = window.innerHeight * 0.3;
+  var active = "";
+  SECTIONS.forEach(function (s) {
+    var el = $(s.el);
+    if (el && el.getBoundingClientRect().top <= probe) active = s.key;
+  });
+  if (active !== state.active) { state.active = active; setNavActive(); }
+}
+
+$("nav").addEventListener("click", function (e) {
+  var b = e.target.closest("button[data-key]");
+  if (b) scrollToKey(b.getAttribute("data-key"));
 });
 
-/* ---------- click en la miniatura: recien ahi carga el iframe de YouTube ---------- */
-projectsEl.addEventListener("click", e => {
-  const box = e.target.closest(".yt");
-  if (!box) return;
-  const id = box.dataset.id;
-  const frame = document.createElement("iframe");
-  frame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
-  frame.title = "Gameplay video";
-  frame.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-  frame.allowFullscreen = true;
-  const holder = document.createElement("div");
-  holder.className = "yt-frame";
-  holder.appendChild(frame);
-  box.replaceWith(holder);
+$("brand").addEventListener("click", function () {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-render("all");
-document.getElementById("year").textContent = new Date().getFullYear();
+$("langSwitch").addEventListener("click", function (e) {
+  var b = e.target.closest("button[data-lang]");
+  if (!b) return;
+  state.lang = b.getAttribute("data-lang");
+  try { localStorage.setItem("arzpal-lang", state.lang); } catch (err) {}
+  render();
+});
+
+$("aiToggle").addEventListener("click", function () {
+  state.showAI = !state.showAI;
+  try { localStorage.setItem("arzpal-showai", state.showAI ? "1" : "0"); } catch (err) {}
+  render();
+});
+
+document.addEventListener("click", function (e) {
+  var card = e.target.closest(".card");
+  if (card) {
+    state.open = { g: card.getAttribute("data-g"), i: Number(card.getAttribute("data-i")) };
+    renderModal();
+    return;
+  }
+  if (e.target.closest("#modalClose")) { state.open = null; renderModal(); return; }
+  /* clic en el backdrop cierra; dentro del panel no se propaga */
+  if (e.target.id === "overlay") { state.open = null; renderModal(); }
+});
+
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" && state.open) { state.open = null; renderModal(); }
+});
+
+window.addEventListener("scroll", onScroll, { passive: true });
+
+render();
+onScroll();
 </script>
-
 </body>
 </html>
