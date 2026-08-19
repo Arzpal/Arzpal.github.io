@@ -13,9 +13,10 @@ Se sirve gratis desde GitHub Pages en `https://arzpal.github.io`.
 
 > El bundle del rediseño v2 (`newREADME.md`, `reference-design-v2.dc.html`,
 > `current-site-before.html`) se borró el 18-ago-2026: solo queda viva la versión final.
-> El sitio anterior al rediseño sigue recuperable con `git show HEAD:index.html` mientras no se
-> comitee el rediseño. La paleta exacta vive en las variables de `:root` de `index.html`, y el
-> modelo de datos y las reglas del diseño están en este archivo.
+> **El sitio anterior al rediseño se recupera con `git show 590abbe:index.html`** (el commit
+> `69b8346 Portfolio Visual Update` es el que trajo el rediseño). La paleta exacta vive en las
+> variables de `:root` de `index.html`, y el modelo de datos y las reglas del diseño están en
+> este archivo.
 
 ## Estructura de la página
 

@@ -173,6 +173,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0}
 .modal-label{font-family:var(--f-mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
 .modal-role{font-family:var(--f-display);font-weight:500;font-size:17px;letter-spacing:-.2px;color:var(--ui)}
 .modal-desc{margin:0;font-size:15.5px;line-height:1.65;color:var(--body);text-wrap:pretty}
+.modal-ainote{margin:-4px 0 14px;padding:9px 13px;border:1px solid var(--aqua-line);border-left-width:2px;border-radius:6px;background:rgba(0,229,192,.05);font-size:13px;line-height:1.55;color:var(--dim)}
 .modal-bullets{display:flex;flex-direction:column;gap:10px}
 .bullet{display:grid;grid-template-columns:16px minmax(0,1fr);gap:10px;align-items:start}
 .bullet-mark{font-family:var(--f-mono);font-size:12px;color:var(--aqua);line-height:1.7}
@@ -369,6 +370,7 @@ const COPY = {
     contactNote: "Open to full-time remote roles and contract work. Usually replies within a day.",
     footer: "Static page, hosted on GitHub Pages.",
     myRole: "My role", about: "About the project", whatIBuilt: "What I built",
+    aiNote: "Marked items: I planned and directed these, and used AI to help me implement them.",
     noFootage: "No public footage · under NDA",
     noFootageTool: "No public footage",
     aiTag: "CON IA", aiToggle: "AI-assisted",
@@ -394,6 +396,7 @@ const COPY = {
     contactNote: "Abierto a puestos remotos full-time y trabajo por contrato. Normalmente respondo en un día.",
     footer: "Página estática, alojada en GitHub Pages.",
     myRole: "Mi rol", about: "Sobre el proyecto", whatIBuilt: "Qué construí",
+    aiNote: "Lo marcado: lo planeé y lo dirigí yo, y usé IA como apoyo para implementarlo.",
     noFootage: "Sin material público · bajo NDA",
     noFootageTool: "Sin material público",
     aiTag: "CON IA", aiToggle: "Con IA",
@@ -448,16 +451,18 @@ const PROJECTS = [
     },
     bullets: {
       en: [
-        "Composable ability system so that a creature is data, not code: abilities are lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
-        "Wrote the camera rig from scratch rather than using Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.",
-        "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. Terrain now accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.",
-        "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states."
+        "The design and the direction are entirely mine, with no assistance of any kind: the creature roster, the elemental type chart, how a fight should feel, and which mechanic earns its place and which one gets cut. The game exists because I wanted to build the monster battler the Pokémon games never made, so every design call in it is a call I made and can argue.",
+        { t: "Composable ability system so that a creature is data, not code: I designed abilities as lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.", ai: true },
+        { t: "Decided to write the camera rig from scratch rather than use Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.", ai: true },
+        { t: "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. I changed it so terrain accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.", ai: true },
+        { t: "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states. The tuning of what each hit is worth is mine.", ai: true }
       ],
       es: [
-        "Sistema de habilidades componible para que una criatura sea datos, no código: las habilidades son listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.",
-        "Escribí el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.",
-        "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Ahora el terreno acumula saturación y detona como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.",
-        "Capa de feel: hitstop, screen shake, flash de impacto y números de daño flotantes, todos escalados por el peso del golpe, encima de knockback, juggle aéreo y estados de stagger."
+        "El diseño y la dirección son enteramente míos, sin asistencia de ningún tipo: el roster de criaturas, la tabla de tipos elementales, cómo debe sentirse una pelea, y qué mecánica se gana su lugar y cuál se corta. El juego existe porque quise construir el juego de combate de monstruos que los Pokémon nunca hicieron, así que cada decisión de diseño ahí es una decisión mía y la puedo defender.",
+        { t: "Sistema de habilidades componible para que una criatura sea datos, no código: diseñé las habilidades como listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.", ai: true },
+        { t: "Decidí escribir el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.", ai: true },
+        { t: "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Lo cambié para que el terreno acumule saturación y detone como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.", ai: true },
+        { t: "Capa de feel: hitstop, screen shake, flash de impacto y números de daño flotantes, todos escalados por el peso del golpe, encima de knockback, juggle aéreo y estados de stagger. El tuning de cuánto vale cada golpe es mío.", ai: true }
       ]
     },
     links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
@@ -477,14 +482,20 @@ const PROJECTS = [
     },
     bullets: {
       en: [
-        "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing.",
-        "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
-        "Event-driven notification system with dual concurrency channels (instant plus FIFO queue), per-id de-duplication windows and pooled views."
+        "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing. The diagnosis and that design are mine.",
+        "Built the game's heavier UI by hand, before I was using AI at all: the Monsterpedia, a filterable creature compendium with its own multi-select dropdown and its info and detail popups, and the exploration map with its locations, explorer states and popups. Both were redesigned and extended later, but the versions they grew out of are mine. The UIManager every screen in the game routes through and the UI scale manager under it are mine too, along with the asset implementation across the interface. This is the part of my work here I can reconstruct on a whiteboard without notes.",
+        { t: "Built that design into an in-Unity node-graph editor (EditorWindow plus GraphView and UIElements) with polymorphic actions via [SerializeReference]. Three of us author with it now, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters, so shipping a new feature or chapter means adding steps instead of writing a new flow.", ai: true },
+        { t: "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes. I also migrated seven legacy managers onto it.", ai: true },
+        { t: "Toast concurrency layer of the notification system: two channels running side by side (an instant one plus a FIFO queue), de-duplication windows per id so the same alert cannot stack on itself, and pooled views. The notification centre that later grew on top of it is a teammate's work, not mine.", ai: true },
+        { t: "Standardised the game's text: a central typographic scale with semantic levels, styles that work like CSS classes, and a batch pass that re-applies them across every prefab and scene, so a typography decision costs one edit instead of hundreds. Plus the polish layer around it, press and scale feedback on buttons and arrow highlighting, which is individually trivial and collectively the difference between a screen that works and one that feels good to touch.", ai: true }
       ],
       es: [
-        "Encontré la causa raíz del grupo de bugs del primer vertical slice del proyecto. Los sistemas funcionaban; lo que los rompía era que el tutorial tenía que encender y apagar sistemas de gameplay en momentos exactos, y el runner del tutorial era lo que hacía eso frágil. Al mes de entrar propuse el reemplazo: bloques pequeños con una mini-acción cada uno, emitiendo sus propios eventos, y cada bloque declarando su propia condición para avanzar.",
-        "Capa de guardado y persistencia: escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura.",
-        "Sistema de notificaciones basado en eventos con dos canales de concurrencia (instantáneo más cola FIFO), ventanas de de-duplicación por id y vistas pooleadas."
+        "Encontré la causa raíz del grupo de bugs del primer vertical slice del proyecto. Los sistemas funcionaban; lo que los rompía era que el tutorial tenía que encender y apagar sistemas de gameplay en momentos exactos, y el runner del tutorial era lo que hacía eso frágil. Al mes de entrar propuse el reemplazo: bloques pequeños con una mini-acción cada uno, emitiendo sus propios eventos, y cada bloque declarando su propia condición para avanzar. El diagnóstico y ese diseño son míos.",
+        "Construí a mano la UI pesada del juego, antes de que usara IA para nada: la Monsterpedia, un compendio de criaturas filtrable con su propio dropdown de selección múltiple y sus popups de info y detalle, y el mapa de exploración con sus ubicaciones, estados del explorador y popups. Los dos se rediseñaron y ampliaron después, pero las versiones de las que salieron son mías. El UIManager por el que pasa cada pantalla del juego y el manager de escala de UI que va debajo también son míos, junto con la implementación de assets en toda la interfaz. Es la parte de mi trabajo aquí que puedo reconstruir en pizarra sin apuntes.",
+        { t: "Construí ese diseño como un editor de node-graph dentro de Unity (EditorWindow más GraphView y UIElements) con acciones polimórficas vía [SerializeReference]. Tres personas autorizamos con él, un programador, una diseñadora y yo, y todo tutorial de mecánica independiente del juego se construye ahí. Después bifurqué una variación para capítulos de historia, así que publicar una feature o un capítulo nuevo significa agregar pasos en vez de escribir un flujo nuevo.", ai: true },
+        { t: "Capa de guardado y persistencia: escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura. También migré siete managers legacy a esa capa.", ai: true },
+        { t: "Capa de concurrencia de toasts del sistema de notificaciones: dos canales corriendo en paralelo (uno instantáneo más una cola FIFO), ventanas de de-duplicación por id para que la misma alerta no se apile sobre sí misma, y vistas pooleadas. El centro de notificaciones que creció encima después es trabajo de un compañero, no mío.", ai: true },
+        { t: "Estandaricé el texto del juego: una escala tipográfica central con niveles semánticos, estilos que funcionan como clases CSS, y una pasada por lote que los reaplica en cada prefab y escena, así una decisión de tipografía cuesta una sola edición en vez de cientos. Más la capa de pulido alrededor, feedback de presión y escala en los botones y resaltado de flechas, que individualmente es trivial y en conjunto es la diferencia entre una pantalla que funciona y una que da gusto tocar.", ai: true }
       ]
     },
     links: []
@@ -502,25 +513,24 @@ const PROJECTS = [
     bullets: {
       en: [
         "Designed and programmed the hazards: slimes, thorn roots, spikes, dirt-ball spawners and the lava sequence of the tutorial. Designing them and then implementing them myself meant the tuning loop had no handoff in it.",
-        "Lead technical artist on the project, and the one who introduced several of the game-feel corrections that made the character read better to play.",
-        "Level design and environment art: tilesets, level layouts and the visual language of the world.",
         "Worked across the module-based player controller (movement, power, input and health modules), the camera manager and the screen-shake layer.",
+        "Lead technical artist as well, which is where several of the game-feel corrections that made the character read better to play came from, plus the level design and environment art (tilesets, layouts and the visual language of the world).",
         "Windows and Linux builds through the project's release cycle."
       ],
       es: [
         "Diseñé y programé los hazards: slimes, raíces de espinas, pinchos, spawners de bolas de tierra y la secuencia de lava del tutorial. Diseñarlos y luego implementarlos yo mismo significó que el loop de tuning no tenía handoff.",
-        "Lead technical artist del proyecto, y quien introdujo varias de las correcciones de game feel que hicieron que el personaje se leyera mejor al jugar.",
-        "Diseño de niveles y arte de entornos: tilesets, layouts de nivel y el lenguaje visual del mundo.",
         "Trabajé en el controlador de jugador basado en módulos (movimiento, poder, input y salud), el manager de cámara y la capa de screen shake.",
+        "También fui lead technical artist, que es de donde salieron varias de las correcciones de game feel que hicieron que el personaje se leyera mejor al jugar, más el diseño de niveles y el arte de entornos (tilesets, layouts y el lenguaje visual del mundo).",
         "Builds de Windows y Linux a lo largo del ciclo de release del proyecto."
       ]
     },
     links: [{ url: "https://naked-dog.itch.io/prismonaut", label: { en: "Play on itch.io", es: "Jugar en itch.io" } }]
   },
   {
-    /* PENDIENTE: el ID del video, si se graba uno. */
+    /* La tarjeta usa la portada del juego (cover) y no la miniatura de YouTube, pero el
+       chip "Watch" y el video del modal salen del youtubeId igual. */
     title: "Unseasoned", org: { en: "Takernal Game Jam 2026", es: "Takernal Game Jam 2026" }, tags: ["team"],
-    youtubeId: null, cover: "assets/unseasoned-cover.png", image: "assets/unseasoned-cover.png", ai: true,
+    youtubeId: "FsBLrasEyio", cover: "assets/unseasoned-cover.png", image: "assets/unseasoned-cover.png", ai: true,
     roleTags: { en: ["Sole Programmer","Co-Director","Narrative Design"], es: ["Único programador","Co-director","Diseño narrativo"] },
     dates: { en: "Aug 2026 · 9 days", es: "Ago 2026 · 9 días" },
     role: { en: "Co-director, sole programmer, and gameplay and narrative designer", es: "Co-director, único programador, y diseñador de gameplay y narrativa" },
@@ -562,13 +572,11 @@ const PROJECTS = [
     },
     bullets: {
       en: [
-        "Owned the look of the game: I wrote the shader for the glowing lava that lights most of the world, and authored the material work, texture effects and particle systems throughout. The only thing I did not make is the pixelation post-process, which was a shader the team bought.",
-        "Environment art and world dressing across the game's areas.",
+        "Owned the look of the game: I wrote the shader for the glowing lava that lights most of the world, and authored the material work, texture effects, particle systems and environment art throughout. The only thing I did not make is the pixelation post-process, which was a shader the team bought.",
         "The design was more ambitious than what shipped: every gameplay decision was meant to change the player's moveset, branching into two endings. As the team lost programmers I cut it down to one ending, with upgrades that scale speed and damage instead of adding mechanics. Knowing which half of your design is the load-bearing half, and cutting the rest in time, is the part of that project I still use."
       ],
       es: [
-        "Fui dueño del look del juego: escribí el shader de la lava brillante que ilumina casi todo el mundo, y autoré el trabajo de materiales, efectos de textura y sistemas de partículas. Lo único que no hice es el post-proceso de pixelado, que fue un shader que el equipo compró.",
-        "Arte de entornos y dressing del mundo en todas las áreas del juego.",
+        "Fui dueño del look del juego: escribí el shader de la lava brillante que ilumina casi todo el mundo, y autoré el trabajo de materiales, efectos de textura, sistemas de partículas y arte de entornos. Lo único que no hice es el post-proceso de pixelado, que fue un shader que el equipo compró.",
         "El diseño era más ambicioso que lo que salió: cada decisión de gameplay iba a cambiar el moveset del jugador, ramificando en dos finales. Cuando el equipo perdió programadores lo recorté a un final, con mejoras que escalan velocidad y daño en vez de agregar mecánicas. Saber cuál mitad de tu diseño es la que carga el peso, y cortar el resto a tiempo, es la parte de ese proyecto que sigo usando."
       ]
     },
@@ -587,14 +595,12 @@ const PROJECTS = [
     bullets: {
       en: [
         "The morality system was my idea, and it is the hook everything else hangs on: every sale is a side taken, and the game reads the pattern rather than any single choice.",
-        "Built the systems that carry it: bread inventory, item slots, drag-and-drop and the shop manager driving the sales loop, plus the sound controller, the menu and pause flow, and the playable scene assembly.",
-        "Environment and UI art (props, price tags, signage) alongside the design work.",
+        "Built the systems that carry it: bread inventory, item slots, drag-and-drop and the shop manager driving the sales loop, plus the sound controller, the menu and pause flow, the playable scene assembly, and the environment and UI art (props, price tags, signage).",
         "Went back to the project on my own about a year later to clean up code that the jam deadline had left hardcoded. Nobody asked; it was bothering me."
       ],
       es: [
         "El sistema de moralidad fue mi idea, y es el gancho del que cuelga todo lo demás: cada venta es un bando tomado, y el juego lee el patrón en vez de cualquier decisión aislada.",
-        "Construí los sistemas que lo cargan: inventario de pan, slots de ítems, drag-and-drop y el manager de tienda que mueve el loop de ventas, más el controlador de sonido, el flujo de menú y pausa, y el armado de la escena jugable.",
-        "Arte de entorno y de UI (props, etiquetas de precio, letreros) junto al trabajo de diseño.",
+        "Construí los sistemas que lo cargan: inventario de pan, slots de ítems, drag-and-drop y el manager de tienda que mueve el loop de ventas, más el controlador de sonido, el flujo de menú y pausa, el armado de la escena jugable, y el arte de entorno y de UI (props, etiquetas de precio, letreros).",
         "Volví al proyecto por mi cuenta como un año después para limpiar código que el deadline de la jam había dejado hardcodeado. Nadie lo pidió; me estaba molestando."
       ]
     },
@@ -660,7 +666,7 @@ const TOOLS = [
     title: { en: "Node-graph flow editor for Unity", es: "Editor de flujos node-graph para Unity" },
     kind: { en: "Editor tooling", es: "Herramienta de editor" },
     meta: "DOB Studios · ~2,000 LOC",
-    youtubeId: null, nda: true,
+    youtubeId: null, nda: true, ai: true,
     roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
     body: {
       en: "An in-Unity node-graph editor (EditorWindow + GraphView / UIElements) with polymorphic actions via [SerializeReference]. Three of us authored with it, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters (dialogue events plus missions), so shipping a new feature or chapter means adding steps instead of writing a new flow.",
@@ -669,9 +675,21 @@ const TOOLS = [
     links: []
   },
   {
+    title: { en: "Typography and text style system", es: "Sistema de tipografía y estilos de texto" },
+    kind: { en: "Editor tooling · design system", es: "Herramienta de editor · design system" },
+    meta: { en: "DOB Studios · 12 files", es: "DOB Studios · 12 archivos" },
+    youtubeId: null, nda: true, ai: true,
+    roleTags: { en: ["Tools Programmer","Standardization"], es: ["Programador de herramientas","Estandarización"] },
+    body: {
+      en: "A design system for text inside Unity. A central scale defines six semantic size levels (caption through display) instead of magic numbers scattered across prefabs, and a text style works like a CSS class: an id, a font, a level, a fill and an outline. The part worth explaining is the calibration. Outline thickness and dilate are stored per font and per level, because the same value from 0 to 1 renders differently depending on each font asset's gradient scale, so one number cannot serve two fonts. Fill goes through vertex colour so styling never breaks batching. Editor windows author the scale and the style library, and a batch pass walks every prefab and scene in the project to re-apply styles after the scale changes, which turns a typography decision into one edit instead of hundreds.",
+      es: "Un design system de texto dentro de Unity. Una escala central define seis niveles semánticos de tamaño (de caption a display) en vez de números mágicos repartidos por los prefabs, y un estilo de texto funciona como una clase CSS: un id, una fuente, un nivel, un relleno y un outline. La parte que vale la pena explicar es la calibración. El grosor de outline y el dilate se guardan por fuente y por nivel, porque el mismo valor de 0 a 1 se renderiza distinto según el gradient scale de cada font asset, así que un solo número no puede servir a dos fuentes. El relleno va por vertex color para que aplicar estilos nunca rompa batching. Hay ventanas de editor para autorar la escala y la librería de estilos, y una pasada por lote recorre cada prefab y escena del proyecto para reaplicar los estilos cuando la escala cambia, lo que convierte una decisión de tipografía en una sola edición en vez de cientos."
+    },
+    links: []
+  },
+  {
     title: { en: "Composable ability system", es: "Sistema de habilidades componible" },
     kind: { en: "Data-driven architecture", es: "Arquitectura data-driven" },
-    meta: "Tatemis3D · Unity 6", youtubeId: null,
+    meta: "Tatemis3D · Unity 6", youtubeId: null, ai: true,
     roleTags: { en: ["Systems Programmer","Architecture"], es: ["Programador de sistemas","Arquitectura"] },
     body: {
       en: "Abilities are lists of small reusable effects authored on ScriptableObjects, so a creature is data, not code. I designed it to survive design churn, and it did: the design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
@@ -682,7 +700,7 @@ const TOOLS = [
   {
     title: { en: "Combat lab tooling and type-chart validator", es: "Tooling del laboratorio de combate y validador de tabla de tipos" },
     kind: { en: "Editor tooling", es: "Herramienta de editor" },
-    meta: "Tatemis3D · Unity 6", youtubeId: null,
+    meta: "Tatemis3D · Unity 6", youtubeId: null, ai: true,
     roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
     body: {
       en: "Scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases).",
@@ -693,11 +711,23 @@ const TOOLS = [
   {
     title: { en: "Save and persistence layer", es: "Capa de guardado y persistencia" },
     kind: { en: "Systems", es: "Sistemas" },
-    meta: "DOB Studios · Unity 6", youtubeId: null, nda: true,
+    meta: "DOB Studios · Unity 6", youtubeId: null, nda: true, ai: true,
     roleTags: { en: ["Systems Programmer"], es: ["Programador de sistemas"] },
     body: {
       en: "Atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
       es: "Escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura."
+    },
+    links: []
+  },
+  {
+    title: "Crazynema",
+    kind: { en: "Networked gameplay · production", es: "Gameplay en red · producción" },
+    meta: { en: "DOB Studios · Unity 6 / PurrNet", es: "DOB Studios · Unity 6 / PurrNet" },
+    youtubeId: null, nda: true, ai: true,
+    roleTags: { en: ["Gameplay Programmer","Networking","Tech Art"], es: ["Gameplay Programmer","Networking","Arte técnico"] },
+    body: {
+      en: "The second DOB title: an asymmetric social deduction game set in a cinema, where three police officers hunt one infiltrator who is indistinguishable from around fifty civilian NPCs, so they have to read behaviour instead of models. I worked on the networked match logic (the role draw, the infiltrator's recording objective and the vigilante rules), pulled the match decisions out into plain testable units and covered them with 81 tests, and built the lighting bake tooling for the level.",
+      es: "El segundo título de DOB: un juego de deducción social asimétrica en un cine, donde tres policías buscan a un infiltrado que es indistinguible de unos cincuenta NPCs civiles, así que tienen que leer comportamiento en vez de modelos. Trabajé en la lógica de partida en red (el sorteo de roles, el objetivo de grabación del infiltrado y las reglas del vigilante), saqué las decisiones de partida a unidades planas testeables y las cubrí con 81 tests, y construí las herramientas de bake de iluminación del nivel."
     },
     links: []
   },
@@ -718,7 +748,7 @@ const TOOLS = [
   {
     title: "Photon Fusion 2 + PlayFab sandbox",
     kind: { en: "Prototype · networking", es: "Prototipo · networking" },
-    meta: { en: "Unity · Jul 2026", es: "Unity · Jul 2026" }, youtubeId: null,
+    meta: { en: "Unity · Jul 2026", es: "Unity · Jul 2026" }, youtubeId: null, ai: true,
     roleTags: { en: ["Learning exercise"], es: ["Ejercicio de aprendizaje"] },
     body: {
       en: "A small sandbox built over a weekend to get hands-on with networked state authority in Fusion 2 Shared Mode and PlayFab-backed player data. Networked spawn and movement, verified with an editor client and a standalone build in the same room. Not production experience, just the shortest path from reading about it to running it.",
@@ -925,6 +955,10 @@ function modalHtml() {
      + '<p class="modal-desc">' + esc(pick(isTool ? p.body : p.desc)) + '</p></div>';
   if (bullets.length) {
     h += '<div><div class="modal-label" style="margin-bottom:12px">' + esc(t.whatIBuilt) + '</div>';
+    /* la nota solo aparece si hay algo marcado y el toggle esta encendido */
+    if (bullets.some(function (b) { return b.ai; })) {
+      h += '<div class="modal-ainote">' + esc(t.aiNote) + '</div>';
+    }
     h += '<div class="modal-bullets">' + bullets.map(function (b) {
       return '<div class="bullet"><div class="bullet-mark">&#8250;</div><div class="bullet-text">'
         + (b.ai ? '<div class="ai-badge">' + esc(t.aiTag) + '</div>' : '')
