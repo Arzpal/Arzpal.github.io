@@ -276,10 +276,16 @@ h1,h2,h3{margin:0}
    con el color de la tarjeta que se abrio. */
 .overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-start;justify-content:center;
   padding:52px 40px;overflow-y:auto;overscroll-behavior:contain;
-  background:rgba(10,9,8,.55);
-  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  /* Dos capas del propio elemento, no un pseudo: el fondo de un contenedor con
+     scroll no se mueve con su contenido, un hijo posicionado si. */
+  background-color:rgba(10,9,8,.58);
+  /* el color-mix va aqui, no en una variable de :root: una variable declarada
+     arriba resuelve su var(--acc) alli y hereda ya resuelta, siempre en ambar */
+  background-image:linear-gradient(
+    color-mix(in srgb,var(--acc) 16%,transparent),
+    color-mix(in srgb,var(--acc) 16%,transparent));
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
   animation:ovIn .22s ease both}
-.overlay::before{content:"";position:fixed;inset:0;background:var(--acc);opacity:.15;pointer-events:none}
 .overlay.is-out{animation:ovOut .2s ease both;pointer-events:none}
 .panel{position:relative;z-index:1;width:100%;max-width:940px;background:var(--ink-800);
   border:1px solid var(--ink-500);border-radius:14px;overflow:hidden;box-shadow:0 50px 110px -40px #000;
@@ -353,21 +359,58 @@ h1,h2,h3{margin:0}
   background-image:radial-gradient(var(--dg-grid) 1px,transparent 1px);background-size:34px 34px;
   animation:gridDrift 140s linear infinite}
 @keyframes gridDrift{to{transform:translate(34px,34px)}}
-.bgi{position:absolute;color:var(--ink-300);opacity:var(--bg-glyph);will-change:transform}
-.bgi svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.1;
+/* Sin will-change: el navegador promociona solo los transform animados, y 20
+   capas forzadas gastan VRAM de mas. El recorrido es de 80-130px en 45-75s:
+   se nota si lo miras, no distrae si no. */
+.bgi{position:absolute;color:var(--ink-300);opacity:var(--bg-glyph)}
+.bgi svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.4;
   stroke-linecap:round;stroke-linejoin:round}
-.bgi.b1{top:6vh;left:4vw;width:190px;height:190px;animation:d1 74s ease-in-out infinite}
-.bgi.b2{top:34vh;right:6vw;width:150px;height:150px;animation:d2 91s ease-in-out infinite}
-.bgi.b3{top:62vh;left:16vw;width:220px;height:220px;animation:d3 83s ease-in-out infinite}
-.bgi.b4{top:12vh;right:24vw;width:130px;height:130px;animation:d4 68s ease-in-out infinite}
-.bgi.b5{top:78vh;right:12vw;width:175px;height:175px;animation:d5 97s ease-in-out infinite}
-.bgi.b6{top:46vh;left:44vw;width:145px;height:145px;animation:d6 79s ease-in-out infinite}
-@keyframes d1{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(26px,-34px) rotate(7deg)}}
-@keyframes d2{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-32px,26px) rotate(-9deg)}}
-@keyframes d3{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(20px,30px) rotate(5deg)}}
-@keyframes d4{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-24px,-22px) rotate(11deg)}}
-@keyframes d5{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(30px,-18px) rotate(-6deg)}}
-@keyframes d6{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(-18px,28px) rotate(8deg)}}
+.bgi.s1{top:3vh;left:4vw;width:56px;height:56px;animation:f1 47s linear infinite alternate}
+@keyframes f1{to{transform:translate(120px,-70px) rotate(10deg)}}
+.bgi.s2{top:7vh;left:26vw;width:44px;height:44px;animation:f2 61s linear infinite alternate}
+@keyframes f2{to{transform:translate(-100px,92px) rotate(-8deg)}}
+.bgi.s3{top:2vh;left:48vw;width:72px;height:72px;animation:f3 53s linear infinite alternate}
+@keyframes f3{to{transform:translate(86px,118px) rotate(14deg)}}
+.bgi.s4{top:9vh;left:69vw;width:48px;height:48px;animation:f4 68s linear infinite alternate}
+@keyframes f4{to{transform:translate(-132px,-60px) rotate(-6deg)}}
+.bgi.s5{top:5vh;left:89vw;width:60px;height:60px;animation:f5 44s linear infinite alternate}
+@keyframes f5{to{transform:translate(94px,86px) rotate(12deg)}}
+.bgi.s6{top:26vh;left:13vw;width:66px;height:66px;animation:f6 57s linear infinite alternate}
+@keyframes f6{to{transform:translate(-110px,74px) rotate(-9deg)}}
+.bgi.s7{top:31vh;left:34vw;width:46px;height:46px;animation:f7 72s linear infinite alternate}
+@keyframes f7{to{transform:translate(128px,-96px) rotate(7deg)}}
+.bgi.s8{top:24vh;left:57vw;width:58px;height:58px;animation:f8 49s linear infinite alternate}
+@keyframes f8{to{transform:translate(-88px,-112px) rotate(-13deg)}}
+.bgi.s9{top:30vh;left:78vw;width:78px;height:78px;animation:f9 63s linear infinite alternate}
+@keyframes f9{to{transform:translate(106px,68px) rotate(5deg)}}
+.bgi.s10{top:27vh;left:95vw;width:42px;height:42px;animation:f10 51s linear infinite alternate}
+@keyframes f10{to{transform:translate(-124px,90px) rotate(-11deg)}}
+.bgi.s11{top:51vh;left:6vw;width:50px;height:50px;animation:f11 66s linear infinite alternate}
+@keyframes f11{to{transform:translate(98px,-84px) rotate(9deg)}}
+.bgi.s12{top:56vh;left:28vw;width:62px;height:62px;animation:f12 45s linear infinite alternate}
+@keyframes f12{to{transform:translate(-116px,106px) rotate(-7deg)}}
+.bgi.s13{top:49vh;left:51vw;width:44px;height:44px;animation:f13 74s linear infinite alternate}
+@keyframes f13{to{transform:translate(84px,94px) rotate(15deg)}}
+.bgi.s14{top:55vh;left:72vw;width:70px;height:70px;animation:f14 58s linear infinite alternate}
+@keyframes f14{to{transform:translate(-102px,-78px) rotate(-5deg)}}
+.bgi.s15{top:52vh;left:92vw;width:54px;height:54px;animation:f15 69s linear infinite alternate}
+@keyframes f15{to{transform:translate(130px,62px) rotate(8deg)}}
+.bgi.s16{top:76vh;left:16vw;width:58px;height:58px;animation:f16 50s linear infinite alternate}
+@keyframes f16{to{transform:translate(-92px,-104px) rotate(-12deg)}}
+.bgi.s17{top:81vh;left:39vw;width:46px;height:46px;animation:f17 64s linear infinite alternate}
+@keyframes f17{to{transform:translate(112px,80px) rotate(6deg)}}
+.bgi.s18{top:74vh;left:60vw;width:66px;height:66px;animation:f18 55s linear infinite alternate}
+@keyframes f18{to{transform:translate(-86px,98px) rotate(-10deg)}}
+.bgi.s19{top:80vh;left:83vw;width:52px;height:52px;animation:f19 71s linear infinite alternate}
+@keyframes f19{to{transform:translate(124px,-72px) rotate(11deg)}}
+.bgi.s20{top:88vh;left:97vw;width:44px;height:44px;animation:f20 48s linear infinite alternate}
+@keyframes f20{to{transform:translate(-96px,88px) rotate(-9deg)}}
+
+/* Con el inspector abierto no tiene sentido animar lo que esta detras del
+   desenfoque: obliga a recomputar el backdrop-filter a pantalla completa en
+   cada frame. Pausarlas es lo que devuelve la fluidez. */
+html.modal-open #bgGrid,
+html.modal-open .bgi{animation-play-state:paused}
 
 /* ---------- reveal al scroll --------------------------------------------- */
 .rv{opacity:0;transform:translateY(14px)}
@@ -453,12 +496,26 @@ h1,h2,h3{margin:0}
 <!-- fondo: glifos del vocabulario del sitio, muy tenues y a la deriva -->
 <div id="bg" aria-hidden="true">
   <div id="bgGrid"></div>
-  <div class="bgi b1"><svg viewBox="0 0 100 100"><path d="M6 30V6h24M70 6h24v24M94 70v24H70M30 94H6V70"/></svg></div>
-  <div class="bgi b2"><svg viewBox="0 0 100 100"><rect x="26" y="34" width="48" height="32" rx="3"/><path d="M26 44H10M26 56H10M74 50h16"/><circle cx="8" cy="44" r="3"/><circle cx="8" cy="56" r="3"/><circle cx="92" cy="50" r="3"/></svg></div>
-  <div class="bgi b3"><svg viewBox="0 0 100 100"><path d="M50 8v84M8 50h84"/><circle cx="50" cy="50" r="22"/><path d="M50 22v10M50 68v10M22 50h10M68 50h10"/></svg></div>
-  <div class="bgi b4"><svg viewBox="0 0 100 100"><path d="M50 10 86 30v40L50 90 14 70V30Z"/><path d="M50 10v80M14 30l72 40M86 30 14 70"/></svg></div>
-  <div class="bgi b5"><svg viewBox="0 0 100 100"><path d="M6 78C30 78 30 22 54 22M54 22c20 0 20 40 40 40"/><circle cx="6" cy="78" r="4"/><circle cx="54" cy="22" r="4"/><circle cx="94" cy="62" r="4"/></svg></div>
-  <div class="bgi b6"><svg viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="2"/><path d="M12 37h76M12 63h76M37 12v76M63 12v76"/></svg></div>
+  <div class="bgi s1"><svg viewBox="0 0 100 100"><path d="M6 30V6h24M70 6h24v24M94 70v24H70M30 94H6V70"/></svg></div>
+  <div class="bgi s2"><svg viewBox="0 0 100 100"><path d="M50 8v84M8 50h84"/><circle cx="50" cy="50" r="22"/><path d="M50 22v10M50 68v10M22 50h10M68 50h10"/></svg></div>
+  <div class="bgi s3"><svg viewBox="0 0 100 100"><path d="M50 10 86 30v40L50 90 14 70V30Z"/><path d="M50 10v80M14 30l72 40M86 30 14 70"/></svg></div>
+  <div class="bgi s4"><svg viewBox="0 0 100 100"><rect x="26" y="34" width="48" height="32" rx="3"/><path d="M26 44H10M26 56H10M74 50h16"/><circle cx="8" cy="44" r="3"/><circle cx="8" cy="56" r="3"/><circle cx="92" cy="50" r="3"/></svg></div>
+  <div class="bgi s5"><svg viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="2"/><path d="M12 37h76M12 63h76M37 12v76M63 12v76"/></svg></div>
+  <div class="bgi s6"><svg viewBox="0 0 100 100"><path d="M6 78C30 78 30 22 54 22M54 22c20 0 20 40 40 40"/><circle cx="6" cy="78" r="4"/><circle cx="54" cy="22" r="4"/><circle cx="94" cy="62" r="4"/></svg></div>
+  <div class="bgi s7"><svg viewBox="0 0 100 100"><path d="M6 30V6h24M70 6h24v24M94 70v24H70M30 94H6V70"/></svg></div>
+  <div class="bgi s8"><svg viewBox="0 0 100 100"><path d="M50 8v84M8 50h84"/><circle cx="50" cy="50" r="22"/><path d="M50 22v10M50 68v10M22 50h10M68 50h10"/></svg></div>
+  <div class="bgi s9"><svg viewBox="0 0 100 100"><path d="M50 10 86 30v40L50 90 14 70V30Z"/><path d="M50 10v80M14 30l72 40M86 30 14 70"/></svg></div>
+  <div class="bgi s10"><svg viewBox="0 0 100 100"><rect x="26" y="34" width="48" height="32" rx="3"/><path d="M26 44H10M26 56H10M74 50h16"/><circle cx="8" cy="44" r="3"/><circle cx="8" cy="56" r="3"/><circle cx="92" cy="50" r="3"/></svg></div>
+  <div class="bgi s11"><svg viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="2"/><path d="M12 37h76M12 63h76M37 12v76M63 12v76"/></svg></div>
+  <div class="bgi s12"><svg viewBox="0 0 100 100"><path d="M50 10 86 30v40L50 90 14 70V30Z"/><path d="M50 10v80M14 30l72 40M86 30 14 70"/></svg></div>
+  <div class="bgi s13"><svg viewBox="0 0 100 100"><path d="M6 78C30 78 30 22 54 22M54 22c20 0 20 40 40 40"/><circle cx="6" cy="78" r="4"/><circle cx="54" cy="22" r="4"/><circle cx="94" cy="62" r="4"/></svg></div>
+  <div class="bgi s14"><svg viewBox="0 0 100 100"><path d="M6 30V6h24M70 6h24v24M94 70v24H70M30 94H6V70"/></svg></div>
+  <div class="bgi s15"><svg viewBox="0 0 100 100"><path d="M50 8v84M8 50h84"/><circle cx="50" cy="50" r="22"/><path d="M50 22v10M50 68v10M22 50h10M68 50h10"/></svg></div>
+  <div class="bgi s16"><svg viewBox="0 0 100 100"><rect x="26" y="34" width="48" height="32" rx="3"/><path d="M26 44H10M26 56H10M74 50h16"/><circle cx="8" cy="44" r="3"/><circle cx="8" cy="56" r="3"/><circle cx="92" cy="50" r="3"/></svg></div>
+  <div class="bgi s17"><svg viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="2"/><path d="M12 37h76M12 63h76M37 12v76M63 12v76"/></svg></div>
+  <div class="bgi s18"><svg viewBox="0 0 100 100"><path d="M6 78C30 78 30 22 54 22M54 22c20 0 20 40 40 40"/><circle cx="6" cy="78" r="4"/><circle cx="54" cy="22" r="4"/><circle cx="94" cy="62" r="4"/></svg></div>
+  <div class="bgi s19"><svg viewBox="0 0 100 100"><path d="M50 10 86 30v40L50 90 14 70V30Z"/><path d="M50 10v80M14 30l72 40M86 30 14 70"/></svg></div>
+  <div class="bgi s20"><svg viewBox="0 0 100 100"><path d="M6 30V6h24M70 6h24v24M94 70v24H70M30 94H6V70"/></svg></div>
 </div>
 
 <div class="shell">
@@ -1493,6 +1550,8 @@ function closeModal() {
   ov.classList.add("is-out");
   setTimeout(function () {
     if ($("modalRoot").firstChild === ov) $("modalRoot").innerHTML = "";
+    /* el fondo se reanuda recien al final, para que la salida tampoco tironee */
+    if (!state.open) document.documentElement.classList.remove("modal-open");
   }, 210);
 }
 
@@ -1500,6 +1559,7 @@ function renderModal() {
   $("modalRoot").innerHTML = modalHtml();
   modalShown = modalKey();
   document.body.style.overflow = state.open ? "hidden" : "";
+  if (state.open) document.documentElement.classList.add("modal-open");
 }
 
 function refreshModal() {
