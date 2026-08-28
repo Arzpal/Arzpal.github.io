@@ -1282,8 +1282,14 @@ a{color:var(--mark);text-decoration:none}
           aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuTop"></button>
         <div class="cvmenu" id="cvMenuTop" hidden>
           <p class="cvnote" data-cvnote></p>
-          <a href="Andres-Ruiz-Technical-Designer.pdf" download><b data-cvd></b><span data-cvds></span></a>
-          <a href="Andres-Ruiz-Unity-Developer.pdf" download><b data-cvv></b><span data-cvvs></span></a>
+          <!-- 🔑 target="_blank" y NO download: con el atributo download el
+               navegador se saltaba el visor y bajaba el PDF de una, asi que no
+               se podia MIRAR el CV sin guardarlo primero. Abriendolo en pestana
+               nueva, el visor del navegador lo muestra Y trae su propio boton de
+               descarga, o sea que no se pierde nada y se gana poder ojearlo.
+               No repongas download. -->
+          <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
+          <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
         </div>
       </div>
       <button type="button" class="burger" id="burger" aria-label="Menu" aria-expanded="false"
@@ -1381,8 +1387,8 @@ a{color:var(--mark);text-decoration:none}
             aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuEnd"></button>
           <div class="cvmenu" id="cvMenuEnd" hidden>
             <p class="cvnote" data-cvnote></p>
-            <a href="Andres-Ruiz-Technical-Designer.pdf" download><b data-cvd></b><span data-cvds></span></a>
-            <a href="Andres-Ruiz-Unity-Developer.pdf" download><b data-cvv></b><span data-cvvs></span></a>
+            <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
+            <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
           </div>
         </span>
         <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
