@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Andrés Ruiz Palomino · Technical Designer</title>
-<meta name="description" content="Technical designer in Unity and C#. I decide how a system should work, then build the prototype that proves it.">
+<title>Andrés Ruiz Palomino · Technical Designer &amp; Unity Developer</title>
+<meta name="description" content="Technical designer and Unity developer, C#. I decide how a system should work, then build the prototype that proves it.">
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,15 @@
   /* ---- el pizarrón y la tiza (artboard 10, hoja de tokens) ---- */
   --board:#080909; --board-hi:#101312;
   --chalk:#F0F2ED; --chalk-2:#B3BAB4; --chalk-3:#7E8781;
-  --paper:#EDEAE0; --paper-2:#E1DDD0; --ink:#1F2422; --ink-2:#454C49; --ink-3:#727975;
+  --paper:#EDEAE0; --paper-2:#E1DDD0; --ink:#1F2422; --ink-2:#454C49;
+  /* --ink-3 se oscurecio de #727975 a #656B68 el 27-ago-2026. El valor viejo
+     daba 3.71 de contraste sobre el papel, por debajo del 4.5 que pide WCAG AA
+     para texto pequeno, y lo usan 9 elementos que NO son adorno: la cabecera de
+     cada tarjeta, las etiquetas ROL y STACK, los sellos, los pies de figura y
+     las fechas. Este es el valor MAS CLARO que cruza el 4.5 conservando el tono,
+     asi que la jerarquia de tres grises del papel no se aplana. Si se vuelve a
+     tocar, medirlo: no basta con que "se vea bien" en un monitor bueno. */
+  --ink-3:#656B68;
   --rule:#D5D1C4; --graphite:#2B3230;
   --mark:#D9E36B;
   /* Calibrados a mano por Andrés en la Prueba de Tiza. No reinventarlos. */
@@ -464,6 +472,52 @@ a{color:var(--mark);text-decoration:none}
   letter-spacing:.09em;text-transform:uppercase}
 .closelinks a{color:var(--chalk);border-bottom:1px solid rgba(240,242,237,.3);transition:.18s ease}
 .closelinks a:hover{color:var(--mark);border-bottom-color:var(--mark)}
+
+/* =========================================================================
+   ELEGIR CV — dos CVs, un solo enlace. Mismo componente arriba y abajo.
+   Son 2 VISTAS DE UN CUERPO (kit v3): uno dice lo que decide y el otro lo que
+   construye. Dos enlaces sueltos y sin explicar invitan a leerlos como
+   versiones (una vieja y una nueva) o, peor, como dos personas, que es justo
+   la fragmentacion que el kit marca como EL riesgo. El popover pone la
+   eleccion y el porque en el mismo sitio, y solo cuando hace falta.
+   Va en PAPEL y no en tiza: en este diseno el papel es "una cosa que hiciste",
+   y un CV lo es.
+   ========================================================================= */
+.cvpick{position:relative;display:inline-flex}
+.cvpick > button{font:inherit;background:none;border:0;padding:0;cursor:pointer;
+  color:var(--chalk);border-bottom:1px solid rgba(240,242,237,.3);transition:.18s ease}
+.cvpick > button:hover,
+.cvpick > button[aria-expanded="true"]{color:var(--mark);border-bottom-color:var(--mark)}
+/* La flecha avisa que esto abre algo en vez de descargar de una. */
+.cvpick > button::after{content:"";display:inline-block;width:5px;height:5px;margin-left:7px;
+  border-right:1px solid currentColor;border-bottom:1px solid currentColor;
+  transform:rotate(45deg) translateY(-2px);transition:transform .18s ease}
+.cvpick > button[aria-expanded="true"]::after{transform:rotate(225deg) translateY(-2px)}
+.cvpick.up > button::after{transform:rotate(225deg) translateY(1px)}
+.cvpick.up > button[aria-expanded="true"]::after{transform:rotate(45deg) translateY(-2px)}
+.cvmenu{position:absolute;z-index:50;top:calc(100% + 12px);right:0;
+  width:min(310px,78vw);background:var(--paper);color:var(--ink);
+  border:1px solid var(--rule);border-radius:3px;padding:13px 15px 5px;
+  box-shadow:0 16px 40px rgba(0,0,0,.45);text-align:left;
+  display:flex;flex-direction:column}
+.cvmenu[hidden]{display:none}
+/* --ink-2 y NO --ink-3: medido sobre el papel, --ink-3 da 3.71 de contraste,
+   por debajo del 4.5 que pide WCAG AA para texto pequeno. En el resto del
+   diseno --ink-3 viste rotulos en versalitas y mono (.seal, .rows span), que
+   es otro caso; esto son frases de 12.5px que la gente lee de verdad. */
+.cvmenu .cvnote{margin:0 0 9px;font-family:var(--f-ui);font-size:12.5px;line-height:1.45;
+  color:var(--ink-2);text-transform:none;letter-spacing:0;text-wrap:pretty}
+.cvmenu a{display:flex;flex-direction:column;gap:2px;padding:9px 0;
+  border-bottom:1px solid var(--rule);color:var(--ink)}
+.cvmenu a:last-child{border-bottom:0}
+.cvmenu a b{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:400}
+.cvmenu a span{font-family:var(--f-ui);font-size:12.5px;line-height:1.4;color:var(--ink-2);
+  text-transform:none;letter-spacing:0}
+.cvmenu a:hover b,.cvmenu a:focus-visible b{text-decoration:underline}
+/* Abajo el enlace vive centrado en una fila, asi que el panel abre hacia
+   ARRIBA y centrado con el: hacia abajo se saldria de la pagina. */
+.cvpick.up .cvmenu{top:auto;bottom:calc(100% + 12px);right:auto;left:50%;transform:translateX(-50%)}
 .stamp{font-family:var(--f-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
   color:var(--chalk-3)}
 .foot{padding:34px 0 56px;border-top:1px solid rgba(240,242,237,.12);
@@ -569,6 +623,13 @@ a{color:var(--mark);text-decoration:none}
   .close-row{gap:28px}
 }
 @media (max-width:760px){
+  /* 🐛 En movil el enlace "CV" cae cerca del borde izquierdo de su fila, y
+     centrar el panel sobre el lo sacaba 8px fuera de la pantalla (medido a
+     375px). En pantallas estrechas deja de colgar del disparador y pasa a ir
+     FIJO y centrado en la ventana, que es la unica posicion que no se puede
+     recortar pase lo que pase con el wrap de la fila. */
+  .cvpick.up .cvmenu{position:fixed;left:50%;right:auto;top:auto;bottom:22px;
+    transform:translateX(-50%);width:min(320px,88vw)}
   .wrap{--pad:18px}
   .barwrap{margin:0 -18px;padding:0 18px}
   /* Los garabatos cuelgan por fuera de la nota: en una pantalla angosta hay que
@@ -588,7 +649,7 @@ a{color:var(--mark);text-decoration:none}
   .bar nav{display:none}
   .bar{flex-wrap:nowrap}
   .acts{gap:14px}
-  .acts .cta-cv{display:none}
+  .acts .cvpick{display:none}
   .burger{display:block}
   .drawer{display:block}
   .hero{padding:30px 0 0;gap:18px}
@@ -1214,7 +1275,17 @@ a{color:var(--mark);text-decoration:none}
         <button type="button" data-lang="es">ES</button>
       </div>
       <a id="ctaEmail" href="mailto:andres.gp.ruiz@gmail.com"></a>
-      <a class="cta-cv" id="ctaCv" href="Andres-Ruiz-Technical-Designer.pdf" download></a>
+      <!-- Dos CVs, un solo enlace. Los data-cv* se llenan en los DOS popovers
+           a la vez desde render(), asi el texto se escribe una sola vez. -->
+      <div class="cvpick" id="cvPickTop">
+        <button type="button" class="cta-cv" id="ctaCv"
+          aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuTop"></button>
+        <div class="cvmenu" id="cvMenuTop" hidden>
+          <p class="cvnote" data-cvnote></p>
+          <a href="Andres-Ruiz-Technical-Designer.pdf" download><b data-cvd></b><span data-cvds></span></a>
+          <a href="Andres-Ruiz-Unity-Developer.pdf" download><b data-cvv></b><span data-cvvs></span></a>
+        </div>
+      </div>
       <button type="button" class="burger" id="burger" aria-label="Menu" aria-expanded="false"
         aria-controls="drawer"><i></i><i></i><i></i></button>
     </div>
@@ -1305,8 +1376,15 @@ a{color:var(--mark);text-decoration:none}
 
       <div class="closelinks">
         <a href="mailto:andres.gp.ruiz@gmail.com" id="lnkEmail"></a>
-        <a href="Andres-Ruiz-Technical-Designer.pdf" download id="lnkCv"></a>
-        <a href="Andres-Ruiz-Unity-Developer.pdf" download id="lnkCv2"></a>
+        <span class="cvpick up" id="cvPickEnd">
+          <button type="button" id="lnkCv"
+            aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuEnd"></button>
+          <div class="cvmenu" id="cvMenuEnd" hidden>
+            <p class="cvnote" data-cvnote></p>
+            <a href="Andres-Ruiz-Technical-Designer.pdf" download><b data-cvd></b><span data-cvds></span></a>
+            <a href="Andres-Ruiz-Unity-Developer.pdf" download><b data-cvv></b><span data-cvvs></span></a>
+          </div>
+        </span>
         <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
         <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
         <a href="https://www.youtube.com/@arzpal" target="_blank" rel="noopener">YouTube &#8599;</a>
@@ -1335,7 +1413,14 @@ const COPY = {
   en: {
     navProjects: "PROJECTS", navTimeline: "TIMELINE", navTools: "TOOLS", navEdu: "EDUCATION", navContact: "CONTACT",
 
-    eyebrow: "TECHNICAL DESIGNER · UNITY · C#",
+    /* ⚠️ TIENE QUE COINCIDIR CON LINKEDIN, palabra por palabra. Es la regla que
+       el kit marca como EL riesgo: dos piezas publicas que se contradicen.
+       El 27-ago se corrigio aqui, no alla: LinkedIn ya decia "Technical Designer
+       & Unity Developer" y el sitio decia "Technical Designer · Unity · C#".
+       Nombrar los dos oficios NO es tener dos identidades: es lo que el
+       portafolio ya ofrece, dos vistas de un cuerpo, y es como se llaman los
+       dos CVs. Ademas "Unity Developer" es el termino que la gente busca. */
+    eyebrow: "TECHNICAL DESIGNER & UNITY DEVELOPER · C#",
     claim: "I decide how a system should work, then build the prototype that proves it.",
     claimSub: "I also run a Spanish-language channel taking game design apart, which is where I argue the trade-offs out loud. You can watch me reason before you decide to hire me.",
     /* v4.1 (27-ago-2026): AQUI VIVIAN pillars / diffTitle / diffBody. Se
@@ -1353,14 +1438,32 @@ const COPY = {
     /* "9 projects" y no "9 projects shipped": Tatemis3D está en curso, Don't
        Chicken Out en producción y Prismonaut en pausa. El verbo sobra-reclama,
        y es justo el tipo de línea que después hay que defender. */
-    notes: ["3 years in games", "game design degree", "9 projects", "6 tools & systems", "Unity · C#", "Perú · UTC-5", "advanced English", "full US-hours overlap", "open to work"],
+    /* ⚠️ SON 8 Y TIENEN QUE SEGUIR SIENDO 8, por dos motivos que se suman:
+       1) CABEN EN 2 FILAS. Medido el 27-ago con 9: la segunda fila daba 919px
+          contra 960 disponibles, o sea 41px de margen, y en cualquier ventana
+          mas angosta se caia a una TERCERA fila. Con 8 el margen sube a ~175px.
+       2) CADA GARABATO ESTA EMPAREJADO CON SU CHIP POR INDICE, en NOTE_STYLE:
+          el engranaje, la banderita de Peru, el reloj de las horas y el "!!"
+          circulado de "open to work" NO son decoracion, significan lo que dice
+          su chip. Anadir o quitar uno los corre a todos y el reloj termina
+          sobre "ingles". Si tocas este arreglo, TOCA NOTE_STYLE en el mismo
+          movimiento, y notesAside tambien (va en paralelo, mismo largo).
+       ✂️ El 27-ago salio "6 tools & systems" para hacerle sitio a la carrera:
+          bajo el perfil Technical Designer, presumir un conteo de HERRAMIENTAS
+          es vocabulario del pitch v1, que es justo el que se cayo. Y la seccion
+          de Tools esta tres pantallas mas abajo diciendo lo mismo. */
+    notes: ["3 years in games", "game design degree", "9 projects", "Unity · C#", "Perú · UTC-5", "advanced English", "full US-hours overlap", "open to work"],
     /* La aclaración escrita a mano. Va en paralelo a notes: una sola, y vacía
        en el resto. Traducirla cuesta esta línea. */
-    notesAside: ["", "", "", "", "", "", "fluent", "", ""],
+    notesAside: ["", "", "", "", "", "fluent", "", ""],
     ctaEmail: "EMAIL ME", ctaCv: "DOWNLOAD CV", openToWork: "OPEN TO WORK · UTC-5",
     /* Dos CVs, publicos y leidos juntos: uno dice lo que decide, el otro lo que
        construye. Misma evidencia, distinto orden. Ver kit-posicionamiento v3. */
     cvDesign: "CV · TECHNICAL DESIGNER", cvDev: "CV · UNITY DEVELOPER",
+    cvLabel: "CV",
+    cvNote: "Same projects, two readings of them. Take whichever sits closer to the role.",
+    cvDesignSub: "What I decide: systems, combat and progression.",
+    cvDevSub: "What I build: gameplay, UI and tooling, in C#.",
 
     secProjects: "Projects", projectsNote: "Games I have shipped or am shipping, in studios and on my own.",
     secTimeline: "Timeline", timelineNote: "Where I have worked and what the role actually was.",
@@ -1426,14 +1529,21 @@ const COPY = {
   es: {
     navProjects: "PROYECTOS", navTimeline: "TRAYECTORIA", navTools: "HERRAMIENTAS", navEdu: "EDUCACIÓN", navContact: "CONTACTO",
 
-    eyebrow: "DISEÑADOR TÉCNICO · UNITY · C#",
+    /* "Unity Developer" no se traduce: es como se publica el puesto tambien en
+       español, y traducirlo lo alejaria del titular de LinkedIn. */
+    eyebrow: "DISEÑADOR TÉCNICO Y UNITY DEVELOPER · C#",
     claim: "Decido cómo debe funcionar un sistema y después construyo el prototipo que lo demuestra.",
     claimSub: "También llevo un canal en español que desarma diseño de juegos, que es donde discuto los trade-offs en voz alta. Puedes verme razonar antes de decidir si me contratas.",
     /* v4.1: ver la nota en el bloque EN. pillars/diffTitle/diffBody borrados. */
-    notes: ["3 años en videojuegos", "carrera en game design", "9 proyectos", "6 herramientas y sistemas", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
-    notesAside: ["", "", "", "", "", "", "fluido", "", ""],
+    /* Ver la nota del bloque EN: son 8, y NOTE_STYLE va emparejado por indice. */
+    notes: ["3 años en videojuegos", "carrera en game design", "9 proyectos", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
+    notesAside: ["", "", "", "", "", "fluido", "", ""],
     ctaEmail: "ESCRÍBEME", ctaCv: "DESCARGAR CV", openToWork: "DISPONIBLE · UTC-5",
     cvDesign: "CV · DISEÑADOR TÉCNICO", cvDev: "CV · UNITY DEVELOPER",
+    cvLabel: "CV",
+    cvNote: "Los mismos proyectos, dos lecturas de ellos. Llévate la que quede más cerca del puesto.",
+    cvDesignSub: "Lo que decido: sistemas, combate y progresión.",
+    cvDevSub: "Lo que construyo: gameplay, UI y tooling, en C#.",
 
     secProjects: "Proyectos", projectsNote: "Juegos que he publicado o estoy publicando, en estudios y por mi cuenta.",
     secTimeline: "Trayectoria", timelineNote: "Dónde he trabajado y cuál era el rol de verdad.",
@@ -1873,8 +1983,8 @@ const PROJECTS = [
     role: { en: "Technical artist · entire visual logic of the minigame", es: "Artista técnico · toda la lógica visual del minijuego" },
     short: { en: "Minigame inside Gin Rummy Super. I built its entire visual logic while leading the area.", es: "Minijuego dentro de Gin Rummy Super. Construí toda su lógica visual mientras lideraba el área." },
     desc: {
-      en: "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. I kept my hands on the work while leading, which is the only reason the leading part went well.",
-      es: "Construí toda la lógica visual de Treasure Mines, un minijuego dentro de Gin Rummy Super. Mantuve las manos en el trabajo mientras lideraba, que es la única razón por la que la parte de liderar salió bien."
+      en: "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. It is still live in the shipped app, so this is the one piece of my studio work you can open and play instead of taking on trust. I kept my hands on the work while leading, which is the only reason the leading part went well.",
+      es: "Construí toda la lógica visual de Treasure Mines, un minijuego dentro de Gin Rummy Super. Sigue vivo en la app publicada, así que es la única pieza de mi trabajo en estudio que se puede abrir y jugar en vez de creerme. Mantuve las manos en el trabajo mientras lideraba, que es la única razón por la que la parte de liderar salió bien."
     },
     bullets: {
       en: [
@@ -1886,7 +1996,13 @@ const PROJECTS = [
         "Definí los pipelines técnicos con los que trabajaban los equipos, y optimicé rendimiento en runtime y uso de recursos."
       ]
     },
+    /* 🔎 El enlace de tienda entro el 27-ago-2026, y no es un enlace mas: Andres
+       confirmo que el "Mines Mode" que describe la ficha de Play Store ES este
+       minijuego. Lo convierte en el UNICO logro de su experiencia de empleo que
+       cualquiera puede verificar por su cuenta, instalando la app. Todo lo demas
+       (DOB, GDP) esta detras de un NDA o no tiene ficha publica. */
     links: [
+      { url: "https://play.google.com/store/apps/details?id=com.zarzilla.GinRummy", label: { en: "Play it on Google Play", es: "Jugarlo en Google Play" } },
       { url: "https://www.youtube.com/watch?v=SERw7aExaIU", label: { en: "Gin Rummy Super trailer", es: "Trailer de Gin Rummy Super" } }
     ]
   },
@@ -2507,6 +2623,20 @@ function render() {
      son su hueco: la nota se ensancha ese tanto para alojarlo por dentro.
      core/thick suben el grosor de tiza cuando el dibujo lo pide — la bandera
      necesita trazo gordo para que las franjas se lean llenas. */
+  /* 🔑 ESTE ARREGLO VA EMPAREJADO CON COPY.notes POR INDICE, y los garabatos
+     NO son decoracion: cada uno significa lo que dice su chip.
+       0  dooStar   -> "3 years in games"        la estrella abre
+       1  uline1    -> "game design degree"
+       2  dooGear   -> "9 projects"              engranaje = cosas construidas
+       3  uline2    -> "Unity . C#"
+       4  dooFlag   -> "Peru . UTC-5"            BANDERA = pais
+       5  uline1    -> "advanced English"        (lleva el aside "fluent")
+       6  dooClock  -> "full US-hours overlap"   RELOJ = horas
+       7  dooBang   -> "open to work"            "!!" y circulado: es el remate
+     ⚠️ Se indexa con % , asi que aceptar mas chips NO da error: los CORRE a
+     todos en silencio. Paso el 27-ago al meter un chip noveno, y el reloj
+     acabo sobre "ingles" y la bandera sobre "Unity". Si cambias COPY.notes,
+     cambia este arreglo en el mismo movimiento. */
   var NOTE_STYLE = [
     { rot: "-1.7deg", dy: "2px",  fs: "24px",
       doo: "dooStar", pos: "l", dr: "-14deg", dmx: "-2px", dmy: "-4px", dw: "31px", dh: "31px" },
@@ -2633,8 +2763,16 @@ function render() {
   $("contactTitle").textContent = t.contactTitle;
   $("contactNote").textContent = t.contactNote;
   $("lnkEmail").textContent = t.ctaEmail;
-  $("lnkCv").textContent = t.cvDesign;
-  $("lnkCv2").textContent = t.cvDev;
+  $("lnkCv").textContent = t.cvLabel;
+  /* Un solo texto para los dos popovers: se llenan por data-attribute. */
+  function fill(sel, txt) {
+    document.querySelectorAll(sel).forEach(function (el) { el.textContent = txt; });
+  }
+  fill("[data-cvnote]", t.cvNote);
+  fill("[data-cvd]",  t.cvDesign);
+  fill("[data-cvds]", t.cvDesignSub);
+  fill("[data-cvv]",  t.cvDev);
+  fill("[data-cvvs]", t.cvDevSub);
   $("contactHand").innerHTML = esc(t.contactHand[0])
     + ' <span class="dashx">&#183; ' + esc(t.contactHand[1]) + '</span>';
   $("contactHead").textContent = t.contactHead;
@@ -2668,6 +2806,22 @@ function playVideo() {
 
 /* Cierre en dos tiempos: primero la animacion de salida, y recien despues se
    saca del DOM. Si se vuelve a abrir algo mientras tanto, no se lo lleva. */
+/* ---- el selector de CV: mismo par de funciones para los dos popovers ---- */
+function closeCvMenus(salvo) {
+  document.querySelectorAll(".cvpick > button").forEach(function (btn) {
+    if (btn === salvo) return;
+    btn.setAttribute("aria-expanded", "false");
+    var m = document.getElementById(btn.getAttribute("aria-controls"));
+    if (m) m.hidden = true;
+  });
+}
+function toggleCvMenu(btn, abrir) {
+  closeCvMenus(abrir ? btn : null);
+  btn.setAttribute("aria-expanded", abrir ? "true" : "false");
+  var m = document.getElementById(btn.getAttribute("aria-controls"));
+  if (m) m.hidden = !abrir;
+}
+
 function closeModal() {
   var ov = $("overlay");
   state.open = null; state.playing = false; modalShown = "";
@@ -2858,6 +3012,16 @@ function closeDrawer() {
 document.addEventListener("click", function (e) {
   var b;
 
+  /* Selector de CV. Va primero porque el clic fuera tiene que cerrarlo aunque
+     el clic caiga sobre otra cosa que si se maneja abajo. */
+  if ((b = e.target.closest(".cvpick > button"))) {
+    toggleCvMenu(b, b.getAttribute("aria-expanded") !== "true");
+    return;
+  }
+  /* Elegir un CV descarga y cierra: sin preventDefault, la descarga sigue. */
+  if (e.target.closest(".cvmenu a")) { closeCvMenus(); return; }
+  if (!e.target.closest(".cvmenu")) closeCvMenus();
+
   if ((b = e.target.closest("button[data-key]"))) { scrollToKey(b.getAttribute("data-key")); return; }
 
   if ((b = e.target.closest("button[data-lang]"))) {
@@ -2896,6 +3060,10 @@ document.addEventListener("click", function (e) {
 
 document.addEventListener("keydown", function (e) {
   if (e.key === "Escape") {
+    /* El popover se cierra primero y devuelve el foco a su boton: es lo mas
+       cercano que hay abierto, y cerrar el modal por debajo desorienta. */
+    var cv = document.querySelector('.cvpick > button[aria-expanded="true"]');
+    if (cv) { toggleCvMenu(cv, false); cv.focus(); return; }
     if (state.open) { closeModal(); }
     else closeDrawer();
   }
