@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Andrés Ruiz Palomino · Tools / Systems Programmer</title>
-<meta name="description" content="Tools and systems programmer in Unity and C#. Gameplay systems, editor tooling and the feel layer on top of them.">
+<title>Andrés Ruiz Palomino · Technical Designer</title>
+<meta name="description" content="Technical designer in Unity and C#. I decide how a system should work, then build the prototype that proves it.">
 <meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,6 +205,10 @@ a{color:var(--mark);text-decoration:none}
 .oname svg{display:block;width:100%;height:auto}
 .osent{max-width:54ch;color:var(--chalk-2);font-size:19px;text-wrap:pretty}
 .osent strong{color:var(--chalk)}
+/* v4.1: la linea del canal. Va debajo del claim porque el canal es el #2 de la
+   escalera de defensa (evidencia publica de criterio) y hasta ahora no tenia
+   ni una frase en toda la pagina, solo el icono del cierre. */
+.osub{max-width:54ch;color:var(--chalk-2);opacity:.72;font-size:15px;text-wrap:pretty;margin:-4px 0 0}
 
 /* ---- las anotaciones al margen del hero ----
    Escritas a mano, en tiza de colores: son notas de pizarrón, no chips con
@@ -367,6 +371,17 @@ a{color:var(--mark);text-decoration:none}
 .seal{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:9.5px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
   border:1px solid var(--rule);padding:2px 6px}
+/* 🎨 v4.1 (27-ago-2026): la marca de IA va en el COLOR DE IDENTIDAD de la
+   tarjeta, no en gris. --ki es la tiza densificada, la version que se lee sobre
+   el papel, y es la misma con la que se dibuja el diagrama de esa ficha.
+   Por que solo esta y no NDA ni VER: esos dos son ESTADO (hay acuerdo, hay
+   video) y el gris les queda bien. La marca de IA es AUTORIA, que es materia
+   de la ficha, y en gris de borde se leia como advertencia al pie. En el color
+   de la tarjeta se lee como parte de lo que la ficha cuenta, que es el encuadre
+   de la banda: dirigir no es una deuda que confesar.
+   currentColor para el borde y no color-mix, porque este archivo no usa
+   color-mix en ningun sitio y no vale estrenarlo por un borde. */
+.seal-ai{color:var(--ki);border-color:currentColor;opacity:.82}
 .seals{display:flex;flex-wrap:wrap;gap:6px}
 
 /* =========================================================================
@@ -506,9 +521,11 @@ a{color:var(--mark);text-decoration:none}
 .ibulmark{display:block;width:15px;height:15px;margin-top:3px}
 .ibul li b{font-weight:400}
 /* La marca de IA va POR PUNTO, no por proyecto: esa es la granularidad honesta. */
+/* Mismo criterio que .seal-ai: el color de identidad de la tarjeta. El modal
+   tambien recibe accVars(), asi que --ki esta disponible aqui dentro. */
 .aitag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:9.5px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--rule);
-  padding:2px 6px;margin-left:6px;white-space:nowrap}
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ki);border:1px solid currentColor;
+  opacity:.82;padding:2px 6px;margin-left:6px;white-space:nowrap}
 .iside{display:flex;flex-direction:column;gap:16px}
 .irows{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:14px;
   border-top:1px solid var(--rule);padding-top:12px}
@@ -1197,7 +1214,7 @@ a{color:var(--mark);text-decoration:none}
         <button type="button" data-lang="es">ES</button>
       </div>
       <a id="ctaEmail" href="mailto:andres.gp.ruiz@gmail.com"></a>
-      <a class="cta-cv" id="ctaCv" href="Andres-Ruiz-Game-Programmer.pdf" download></a>
+      <a class="cta-cv" id="ctaCv" href="Andres-Ruiz-Technical-Designer.pdf" download></a>
       <button type="button" class="burger" id="burger" aria-label="Menu" aria-expanded="false"
         aria-controls="drawer"><i></i><i></i><i></i></button>
     </div>
@@ -1212,6 +1229,7 @@ a{color:var(--mark);text-decoration:none}
   <header class="hero">
     <div class="oname" id="oname"></div>
     <p class="osent" id="claim"></p>
+    <p class="osub" id="claimSub"></p>
     <div class="notes" id="heroNotes"></div>
   </header>
 
@@ -1287,7 +1305,8 @@ a{color:var(--mark);text-decoration:none}
 
       <div class="closelinks">
         <a href="mailto:andres.gp.ruiz@gmail.com" id="lnkEmail"></a>
-        <a href="Andres-Ruiz-Game-Programmer.pdf" download id="lnkCv"></a>
+        <a href="Andres-Ruiz-Technical-Designer.pdf" download id="lnkCv"></a>
+        <a href="Andres-Ruiz-Unity-Developer.pdf" download id="lnkCv2"></a>
         <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
         <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
         <a href="https://www.youtube.com/@arzpal" target="_blank" rel="noopener">YouTube &#8599;</a>
@@ -1316,15 +1335,15 @@ const COPY = {
   en: {
     navProjects: "PROJECTS", navTimeline: "TIMELINE", navTools: "TOOLS", navEdu: "EDUCATION", navContact: "CONTACT",
 
-    eyebrow: "TOOLS / SYSTEMS PROGRAMMER · UNITY · C#",
-    claim: "I build gameplay systems, and the editor tools other people use to make the content.",
-    pillars: [
-      ["DATA-DRIVEN ARCHITECTURE", "Adding content means adding data, not writing code."],
-      ["EDITOR TOOLING", "Tools that let a designer iterate without waiting on me."],
-      ["GAME FEEL", "Hitstop, knockback, cameras: the layer that makes a hit land."]
-    ],
-    diffTitle: "I design the systems I program.",
-    diffBody: "A game design channel in Spanish is where I argue the trade-offs out loud.",
+    eyebrow: "TECHNICAL DESIGNER · UNITY · C#",
+    claim: "I decide how a system should work, then build the prototype that proves it.",
+    claimSub: "I also run a Spanish-language channel taking game design apart, which is where I argue the trade-offs out loud. You can watch me reason before you decide to hire me.",
+    /* v4.1 (27-ago-2026): AQUI VIVIAN pillars / diffTitle / diffBody. Se
+       borraron, no se reescribieron. Eran el pitch v1 (authoring tools) y el v2
+       (systems / data-driven architecture), y los dos se cayeron el 26-ago por
+       lo mismo: se apoyaban en el editor node-graph y en la arquitectura, que
+       es justo donde la IA cargo mas. NO REVIVIRLOS. El pitch vigente es
+       Technical Designer y vive en claim + eyebrow. Ver kit-posicionamiento v3. */
     /* Anotaciones de tiza bajo el nombre. Eran los 8 chips con borde de la v3
        — el tipo de componente de stock que este rediseño existe para eliminar.
        Ahora son notas al margen, escritas a mano y en tiza de colores.
@@ -1334,11 +1353,14 @@ const COPY = {
     /* "9 projects" y no "9 projects shipped": Tatemis3D está en curso, Don't
        Chicken Out en producción y Prismonaut en pausa. El verbo sobra-reclama,
        y es justo el tipo de línea que después hay que defender. */
-    notes: ["3 years in games", "9 projects", "8 tools & systems", "Unity · C#", "Perú · UTC-5", "advanced English", "full US-hours overlap", "open to work"],
+    notes: ["3 years in games", "game design degree", "9 projects", "6 tools & systems", "Unity · C#", "Perú · UTC-5", "advanced English", "full US-hours overlap", "open to work"],
     /* La aclaración escrita a mano. Va en paralelo a notes: una sola, y vacía
        en el resto. Traducirla cuesta esta línea. */
-    notesAside: ["", "", "", "", "", "fluent", "", ""],
+    notesAside: ["", "", "", "", "", "", "fluent", "", ""],
     ctaEmail: "EMAIL ME", ctaCv: "DOWNLOAD CV", openToWork: "OPEN TO WORK · UTC-5",
+    /* Dos CVs, publicos y leidos juntos: uno dice lo que decide, el otro lo que
+       construye. Misma evidencia, distinto orden. Ver kit-posicionamiento v3. */
+    cvDesign: "CV · TECHNICAL DESIGNER", cvDev: "CV · UNITY DEVELOPER",
 
     secProjects: "Projects", projectsNote: "Games I have shipped or am shipping, in studios and on my own.",
     secTimeline: "Timeline", timelineNote: "Where I have worked and what the role actually was.",
@@ -1350,15 +1372,40 @@ const COPY = {
     footer: "Static page, hosted on GitHub Pages.",
     updated: "LAST UPDATED",
 
-    aiToggle: "SHOW AI-ASSISTED WORK",
-    aiHelp: "I mark every point where I used AI to help me implement. Turn it off to see only unassisted work.",
-    aiCount: "{n} SHOWN · SWITCH ON = VISIBLE (DEFAULT)",
+    /* v4.1 (27-ago-2026): AQUI VIVIAN aiToggle / aiHelp / aiCount. EL TOGGLE
+       MURIO en la v4: la marca va por punto y siempre visible, sin poder
+       apagarse (artboard 09: "no toggle, no asterisk: the label is in the
+       text"). Las 3 claves sobrevivieron sin que nada las renderizara hasta que
+       Andres confirmo el borrado. NO REVIVIRLAS: la banda ya explica la
+       granularidad en su punto 2, y un interruptor que esconde el trabajo
+       asistido contradice el punto 3. */
     /* v4: es un título de sección, no un rótulo en versalitas. */
     aiLabel: "How I work with AI",
-    aiSub: "Marked on every card and bullet where it applies",
-    aiNote: "Marked items: I planned and directed these, and used AI to help me implement them.",
+    aiSub: "what AI does not decide",
+    aiNote: "Marked: I decided and directed this, and used AI to help me implement it.",
     aiTag: "WITH AI",
-    aiBody: "AI makes me faster on the parts I already know how to write, and it keeps up when my head is running at a thousand miles an hour. What it does not do is decide. The diagnosis, the design and the plan are mine, I read every line before it lands, and anything I could not explain in an interview does not ship.",
+    /* v4.1 (27-ago-2026): la banda pasa de UN parrafo a CUATRO puntos, y cambia
+       de encuadre. El texto viejo abria por la velocidad ("AI makes me faster on
+       the parts I already know how to write"), que es la postura defensiva de un
+       programador: ahi "dirigi y la IA implemento" es algo que gestionar. Bajo
+       Technical Designer se da vuelta, porque LA DECISION ES EL PRODUCTO, y
+       dirigir deja de ser una deuda para ser la habilidad que vende.
+       Cada punto es un par [entradilla, resto]; el render pone la entradilla en
+       <strong>. Escapa los dos, asi que no metas HTML aqui.
+       🚫 Del borrador del artboard 09 se DESCARTO su punto 04 ("what it has not
+       touched: this page drawings"): los diagramas de tiza de esta pagina los
+       dibujo la IA, asi que ese punto era falso. Habria sido una sobreatribucion
+       nueva, justo el error que memoria/no-atribuir-trabajo-ia-cv.md prohibe. */
+    aiPoints: [
+      ["Design is the job of deciding, and the deciding is mine.",
+       "What a system is for, what it has to survive, which half of it carries the weight, and which idea gets cut. Nothing on this page got past that stage without me choosing it."],
+      ["On the implementation side I use AI, and I mark it per bullet rather than per project.",
+       "A project is never all one thing, so that is the honest granularity. AI writes faster than I do on the things I already know how to write. What it does not do is decide what to write, and I read every line before it lands."],
+      ["The bar is whether I can defend it at a whiteboard months later, without notes.",
+       "Work that fails that bar is not here. I have pulled things off this page and out of my CV for exactly that reason, including some I liked."],
+      ["Where that line is easiest to check is Tatemis3D.",
+       "Every ruling in its design docs is dated and attributed, open questions are marked as undecided instead of quietly assumed, and a superseded rule records what it replaced and when. The decisions are auditable, not just claimed."]
+    ],
 
     tProject: "PROJECT", tTool: "TOOL", tSystem: "SYSTEM", tPrototype: "PROTOTYPE",
     rOrg: "ORG", rDates: "DATES", rRole: "ROLE", rStack: "STACK", rTeam: "TEAM",
@@ -1371,7 +1418,7 @@ const COPY = {
     capTrailer: "Cover · trailer on click",
     contactHand: ["Contact", "same-day reply"],
     contactHead: "Contact · Lima, Perú",
-    contactBody: "Gameplay and tools programmer. Unity 6, C#, editor tooling and the systems other people build features on.",
+    contactBody: "Technical designer who programs. I specify combat, progression and the systems underneath, then build the prototype that proves the design holds. Unity 6, C#.",
     rBased: "Based in", based: "Lima, Perú · remote",
     stamp: "Content updated by hand, on purpose"
   },
@@ -1379,18 +1426,14 @@ const COPY = {
   es: {
     navProjects: "PROYECTOS", navTimeline: "TRAYECTORIA", navTools: "HERRAMIENTAS", navEdu: "EDUCACIÓN", navContact: "CONTACTO",
 
-    eyebrow: "PROGRAMADOR DE HERRAMIENTAS Y SISTEMAS · UNITY · C#",
-    claim: "Construyo sistemas de gameplay y las herramientas de editor con las que otros crean el contenido.",
-    pillars: [
-      ["ARQUITECTURA DATA-DRIVEN", "Agregar contenido es agregar datos, no escribir código."],
-      ["HERRAMIENTAS DE EDITOR", "Herramientas para que un diseñador itere sin esperarme."],
-      ["GAME FEEL", "Hitstop, knockback, cámaras: la capa que hace que un golpe se sienta."]
-    ],
-    diffTitle: "Diseño los sistemas que programo.",
-    diffBody: "Llevo un canal de diseño de juegos en español; ahí discuto los trade-offs en voz alta.",
-    notes: ["3 años en videojuegos", "9 proyectos", "8 herramientas y sistemas", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
-    notesAside: ["", "", "", "", "", "fluido", "", ""],
+    eyebrow: "DISEÑADOR TÉCNICO · UNITY · C#",
+    claim: "Decido cómo debe funcionar un sistema y después construyo el prototipo que lo demuestra.",
+    claimSub: "También llevo un canal en español que desarma diseño de juegos, que es donde discuto los trade-offs en voz alta. Puedes verme razonar antes de decidir si me contratas.",
+    /* v4.1: ver la nota en el bloque EN. pillars/diffTitle/diffBody borrados. */
+    notes: ["3 años en videojuegos", "carrera en game design", "9 proyectos", "6 herramientas y sistemas", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
+    notesAside: ["", "", "", "", "", "", "fluido", "", ""],
     ctaEmail: "ESCRÍBEME", ctaCv: "DESCARGAR CV", openToWork: "DISPONIBLE · UTC-5",
+    cvDesign: "CV · DISEÑADOR TÉCNICO", cvDev: "CV · UNITY DEVELOPER",
 
     secProjects: "Proyectos", projectsNote: "Juegos que he publicado o estoy publicando, en estudios y por mi cuenta.",
     secTimeline: "Trayectoria", timelineNote: "Dónde he trabajado y cuál era el rol de verdad.",
@@ -1402,14 +1445,22 @@ const COPY = {
     footer: "Página estática, alojada en GitHub Pages.",
     updated: "ÚLTIMA ACTUALIZACIÓN",
 
-    aiToggle: "MOSTRAR LO HECHO CON AYUDA DE IA",
-    aiHelp: "Marco cada punto donde usé IA como apoyo de implementación. Apágalo y verás solo lo que hice sin asistencia.",
-    aiCount: "{n} A LA VISTA · ENCENDIDO = VISIBLE (POR DEFECTO)",
+    /* v4.1: ver la nota del bloque EN. aiToggle/aiHelp/aiCount borradas. */
     aiLabel: "Cómo trabajo con IA",
-    aiSub: "Marcado en cada tarjeta y punto donde aplica",
-    aiNote: "Lo marcado: lo planeé y lo dirigí yo, y usé IA como apoyo para implementarlo.",
+    aiSub: "lo que la IA no decide",
+    aiNote: "Marcado: yo lo decidí y lo dirigí, y usé IA como apoyo para implementarlo.",
     aiTag: "CON IA",
-    aiBody: "La IA me hace más rápido en las partes que ya sé escribir, y me sigue el ritmo cuando la cabeza me va a mil por hora. Lo que no hace es decidir. El diagnóstico, el diseño y el plan son míos, leo cada línea antes de que entre, y lo que no podría explicar en una entrevista no se publica.",
+    /* v4.1: ver la nota del bloque EN. */
+    aiPoints: [
+      ["Diseñar es decidir, y las decisiones son mías.",
+       "Para qué existe un sistema, qué tiene que aguantar, qué mitad carga el peso y qué idea se corta. Nada de lo que hay en esta página pasó esa etapa sin que yo lo eligiera."],
+      ["En la implementación uso IA, y la marco por punto y no por proyecto.",
+       "Un proyecto nunca es una sola cosa, así que esa es la granularidad honesta. La IA escribe más rápido que yo lo que ya sé escribir. Lo que no hace es decidir qué escribir, y leo cada línea antes de que entre."],
+      ["La vara es si lo puedo defender en pizarra meses después y sin apuntes.",
+       "Lo que no pasa esa vara no está acá. He sacado cosas de esta página y de mi CV por exactamente eso, incluidas algunas que me gustaban."],
+      ["Donde esa línea es más fácil de comprobar es en Tatemis3D.",
+       "Cada decisión en sus documentos de diseño va fechada y atribuida, las preguntas abiertas están marcadas como no dictadas en vez de asumirse en silencio, y una regla derogada registra qué reemplazó y cuándo. Las decisiones se pueden auditar, no solo afirmar."]
+    ],
 
     tProject: "PROYECTO", tTool: "HERRAMIENTA", tSystem: "SISTEMA", tPrototype: "PROTOTIPO",
     rOrg: "ORG", rDates: "FECHAS", rRole: "ROL", rStack: "STACK", rTeam: "EQUIPO",
@@ -1422,7 +1473,7 @@ const COPY = {
     capTrailer: "Portada · tráiler al hacer clic",
     contactHand: ["Contacto", "respondo el mismo día"],
     contactHead: "Contacto · Lima, Perú",
-    contactBody: "Programador de gameplay y herramientas. Unity 6, C#, tooling de editor y los sistemas sobre los que otros construyen features.",
+    contactBody: "Diseñador técnico que programa. Especifico combate, progresión y los sistemas de abajo, y después construyo el prototipo que demuestra que el diseño aguanta. Unity 6, C#.",
     rBased: "Desde", based: "Lima, Perú · remoto",
     stamp: "Contenido actualizado a mano, a propósito"
   }
@@ -1472,8 +1523,8 @@ const DIAGRAMS = {
   },
   "casino-cabinets": {
     g: "dgCabinet",
-    aria: "One core game feeding three physical cabinets with different screen arrangements.",
-    cap: { en: "One project, three screen arrangements", es: "Un proyecto, tres disposiciones de pantalla" },
+    aria: "One codebase feeding three physical cabinets with different screen arrangements.",
+    cap: { en: "One codebase, three screen arrangements", es: "Un codebase, tres disposiciones de pantalla" },
     nodes: [[47, 92, "CORE"], [142, 154, "1×"], [214, 154, "2×"], [286, 154, "1+"]],
     note: { x: 112, y: 176, anchor: "start",
             en: "same build, different cabinet", es: "el mismo build, otro mueble" }
@@ -1566,8 +1617,11 @@ const DIAGRAMS = {
    ========================================================================= */
 const HANDS = {
   p: [
-    ["Unseasoned",         { en: "9 days · 5 people",      es: "9 días · 5 personas" }],
+    /* ⚠️ ESTE ARREGLO ES POSICIONAL: cada fila anota la tarjeta del mismo
+       indice en PROJECTS. Si reordenas PROJECTS, reordena tambien aqui o cada
+       hoja sale firmada con el nombre de otra. Paso el 27-ago al subir Tatemis. */
     ["Tatemis3D",          { en: "solo · in progress",     es: "solo · en curso" }],
+    ["Unseasoned",         { en: "9 days · 5 people",      es: "9 días · 5 personas" }],
     ["Runies Daycare",     { en: "~118k LOC · 12 people",  es: "~118k LOC · 12 personas" }],
     ["Don't Chicken Out",  { en: "~70% of the code",       es: "~70% del código" }],
     ["Casino cabinets",    { en: "4 titles · 3 layouts",   es: "4 títulos · 3 disposiciones" }],
@@ -1577,11 +1631,14 @@ const HANDS = {
     ["Hell Is Mine",       { en: "final degree project",   es: "proyecto final de carrera" }]
   ],
   t: [
-    ["Node-graph editor",  { en: "~2,000 LOC",             es: "~2,000 LOC" }],
-    ["Type system",        { en: "6 levels, no magic numbers", es: "6 niveles, sin números mágicos" }],
+    /* ⚠️ POSICIONAL igual que p. El 27-ago salieron las filas de "Type system"
+       y "Save layer" porque sus tarjetas se retiraron (lista negra de autoria).
+       Y el "~2,000 LOC" del editor node-graph tambien: presumir lineas de codigo
+       asistido invita justo a la pregunta que peor se defiende. Es la misma
+       decision que ya se habia tomado en el CV el 26-ago. */
+    ["Node-graph editor",  { en: "3 of us author with it", es: "lo usamos 3 personas" }],
     ["Ability system",     { en: "data, not code",         es: "data, no código" }],
     ["Combat lab",         { en: "52 of 52 cases",         es: "52 de 52 casos" }],
-    ["Save layer",         { en: "survives a crash mid-write", es: "sobrevive a un corte a mitad" }],
     ["Crazynema",          { en: "baked light + post",     es: "luz horneada + post" }],
     ["Space Invaders-like",{ en: "Godot · 2 weeks",        es: "Godot · 2 semanas" }],
     ["Fusion 2 sandbox",   { en: "a weekend, 2 clients",   es: "un fin de semana, 2 clientes" }]
@@ -1589,6 +1646,45 @@ const HANDS = {
 };
 
 const PROJECTS = [
+  {
+    acc: "tatemis", diag: "tatemis-terrain", stack: "Unity 6 · URP", team: { en: "Solo", es: "Solo" },
+    title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: null, ai: true,
+    roleTags: { en: ["Solo","Programmer","Designer"], es: ["Solo","Programador","Diseñador"] },
+    dates: { en: "Jul 2026 – Present", es: "Jul 2026 – Presente" },
+    role: { en: "Solo programmer and designer", es: "Programador y diseñador solo" },
+    short: { en: "3D monster-battling game about creativity in a fight. Built solo in Unity 6 / URP.", es: "Juego 3D de combate de monstruos sobre creatividad en una pelea. Hecho solo en Unity 6 / URP." },
+    desc: {
+      en: "A 3D monster-battling game built around the thing the Pokémon anime shows and the games never do: creativity and resourcefulness in a fight. You control the creature directly, and the terrain, your own kit and even the enemy's kit are all options you can turn against the fight. Built solo in Unity 6 / URP.",
+      es: "Un juego 3D de combate de monstruos construido alrededor de lo que el anime de Pokémon muestra y los juegos nunca: creatividad e ingenio en una pelea. Controlas a la criatura directamente, y el terreno, tu propio kit e incluso el del enemigo son opciones que puedes usar a tu favor. Hecho solo en Unity 6 / URP."
+    },
+    bullets: {
+      en: [
+        "The design and the direction are entirely mine, with no assistance of any kind: the creature roster, the elemental type chart, how a fight should feel, and which mechanic earns its place and which one gets cut. The game exists because I wanted to build the monster battler the Pokémon games never made, so every design call in it is a call I made and can argue.",
+        "The decision I would defend first: six elements reacting with each other, plus terrain, plus status effects, is a combinatorial explosion nobody can balance and nobody can teach. Two rules kill it. Each element carries a single verb instead of a list of effects, and when two elements meet, the dominant one supplies the verb while the other supplies only the material. The matrix stays six by six no matter how much content I add, and a player can predict a reaction they have never seen without opening a wiki.",
+        "The roster is five archetypes whose counters close in a pentagon, and each one is defined by three things: how it wins, how it is beaten, and a generating question that decides whether a raw creature idea belongs in it or not. I validated the framework against an existing class taxonomy before committing to it, which costs an afternoon and is far cheaper than finding the hole after forty creatures are designed.",
+        "Every ruling in the design docs is dated and attributed. Ratified rules carry the date they were ratified, open questions are marked as undecided instead of quietly assumed, and a superseded rule records what it replaced and when. It is the habit that lets me answer why a rule exists months later, and it lets a rule be reversed without unpicking everything built on top of it.",
+        { t: "Composable ability system so that a creature is data, not code: I designed abilities as lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.", ai: true },
+        { t: "Decided to write the camera rig from scratch rather than use Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.", ai: true },
+        { t: "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. I changed it so terrain accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.", ai: true },
+        { t: "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states. The tuning of what each hit is worth is mine.", ai: true }
+      ],
+      es: [
+        "El diseño y la dirección son enteramente míos, sin asistencia de ningún tipo: el roster de criaturas, la tabla de tipos elementales, cómo debe sentirse una pelea, y qué mecánica se gana su lugar y cuál se corta. El juego existe porque quise construir el juego de combate de monstruos que los Pokémon nunca hicieron, así que cada decisión de diseño ahí es una decisión mía y la puedo defender.",
+        "La decisión que defendería primero: seis elementos reaccionando entre sí, más el terreno, más los estados alterados, es una explosión combinatoria que nadie puede balancear y nadie puede enseñar. Dos reglas la matan. Cada elemento carga un solo verbo en vez de una lista de efectos, y cuando dos elementos se encuentran, el dominante pone el verbo y el otro pone solo la materia. La matriz se queda en seis por seis por más contenido que agregue, y un jugador puede predecir una reacción que nunca vio sin abrir una wiki.",
+        "El roster son cinco arquetipos cuyos counters cierran en un pentágono, y cada uno se define por tres cosas: cómo gana, cómo se le gana, y una pregunta generadora que decide si una idea cruda de criatura pertenece ahí o no. Validé el marco contra una taxonomía de clases existente antes de comprometerme con él, que cuesta una tarde y sale mucho más barato que encontrar el hueco cuando ya hay cuarenta criaturas diseñadas.",
+        "Cada decisión en los documentos de diseño va fechada y atribuida. Las reglas ratificadas llevan la fecha en que se ratificaron, las preguntas abiertas se marcan como no dictadas en vez de asumirse en silencio, y una regla derogada registra qué reemplazó y cuándo. Es el hábito que me deja responder meses después por qué existe una regla, y que deja revertir una sin descoser todo lo que se construyó encima.",
+        { t: "Sistema de habilidades componible para que una criatura sea datos, no código: diseñé las habilidades como listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.", ai: true },
+        { t: "Decidí escribir el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.", ai: true },
+        { t: "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Lo cambié para que el terreno acumule saturación y detone como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.", ai: true },
+        { t: "Capa de feel: hitstop, screen shake, flash de impacto y números de daño flotantes, todos escalados por el peso del golpe, encima de knockback, juggle aéreo y estados de stagger. El tuning de cuánto vale cada golpe es mío.", ai: true }
+      ]
+    },
+    links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
+  },
+  /* v4.1 (27-ago-2026): TATEMIS ABRE, y no es capricho de orden. Es el #1 de la
+     escalera de defensa del kit v3: la unica pieza donde la doctrina entera es
+     suya, fechada y firmada en sus docs/. Lo que sigue debajo se lee como
+     respaldo de eso, no al reves. */
   {
     acc: "unseasoned", diag: null, stack: "Unity 6 · FMOD · WebGL", team: { en: "5 people", es: "5 personas" },
     /* La tarjeta usa la portada del juego (cover) y no la miniatura de YouTube, pero el
@@ -1625,64 +1721,35 @@ const PROJECTS = [
     ]
   },
   {
-    acc: "tatemis", diag: "tatemis-terrain", stack: "Unity 6 · URP", team: { en: "Solo", es: "Solo" },
-    title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: null, ai: true,
-    roleTags: { en: ["Solo","Programmer","Designer"], es: ["Solo","Programador","Diseñador"] },
-    dates: { en: "Jul 2026 – Present", es: "Jul 2026 – Presente" },
-    role: { en: "Solo programmer and designer", es: "Programador y diseñador solo" },
-    short: { en: "3D monster-battling game about creativity in a fight. Built solo in Unity 6 / URP.", es: "Juego 3D de combate de monstruos sobre creatividad en una pelea. Hecho solo en Unity 6 / URP." },
-    desc: {
-      en: "A 3D monster-battling game built around the thing the Pokémon anime shows and the games never do: creativity and resourcefulness in a fight. You control the creature directly, and the terrain, your own kit and even the enemy's kit are all options you can turn against the fight. Built solo in Unity 6 / URP.",
-      es: "Un juego 3D de combate de monstruos construido alrededor de lo que el anime de Pokémon muestra y los juegos nunca: creatividad e ingenio en una pelea. Controlas a la criatura directamente, y el terreno, tu propio kit e incluso el del enemigo son opciones que puedes usar a tu favor. Hecho solo en Unity 6 / URP."
-    },
-    bullets: {
-      en: [
-        "The design and the direction are entirely mine, with no assistance of any kind: the creature roster, the elemental type chart, how a fight should feel, and which mechanic earns its place and which one gets cut. The game exists because I wanted to build the monster battler the Pokémon games never made, so every design call in it is a call I made and can argue.",
-        { t: "Composable ability system so that a creature is data, not code: I designed abilities as lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.", ai: true },
-        { t: "Decided to write the camera rig from scratch rather than use Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.", ai: true },
-        { t: "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. I changed it so terrain accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.", ai: true },
-        { t: "Feel layer: hitstop, screen shake, hit flash and floating damage numbers, all scaled by the weight of the hit, on top of knockback, aerial juggle and stagger states. The tuning of what each hit is worth is mine.", ai: true }
-      ],
-      es: [
-        "El diseño y la dirección son enteramente míos, sin asistencia de ningún tipo: el roster de criaturas, la tabla de tipos elementales, cómo debe sentirse una pelea, y qué mecánica se gana su lugar y cuál se corta. El juego existe porque quise construir el juego de combate de monstruos que los Pokémon nunca hicieron, así que cada decisión de diseño ahí es una decisión mía y la puedo defender.",
-        { t: "Sistema de habilidades componible para que una criatura sea datos, no código: diseñé las habilidades como listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.", ai: true },
-        { t: "Decidí escribir el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.", ai: true },
-        { t: "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Lo cambié para que el terreno acumule saturación y detone como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.", ai: true },
-        { t: "Capa de feel: hitstop, screen shake, flash de impacto y números de daño flotantes, todos escalados por el peso del golpe, encima de knockback, juggle aéreo y estados de stagger. El tuning de cuánto vale cada golpe es mío.", ai: true }
-      ]
-    },
-    links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
-  },
-  {
     acc: "runies", diag: "nda-redacted", stack: "Unity 6", team: { en: "12 people", es: "12 personas" },
     /* nda: true se queda hasta que llegue la autorizacion POR ESCRITO de DOB.
        Mientras tanto: sin capturas, sin video y sin detalle tecnico nuevo.
        El titulo comercial si va (el juego salio a tienda, el nombre es publico). */
     title: "Runies Daycare: Merge & Pets", org: "DOB Studios", tags: ["professional"], youtubeId: null, nda: true, ai: true,
-    roleTags: { en: ["Game Programmer","Tools","Persistence"], es: ["Game Programmer","Herramientas","Persistencia"] },
+    roleTags: { en: ["Game Programmer","Systems design","UI architecture"], es: ["Game Programmer","Diseño de sistemas","Arquitectura de UI"] },
     dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
-    role: { en: "Game Programmer · tools, flow authoring and persistence", es: "Game Programmer · herramientas, autoría de flujos y persistencia" },
+    role: { en: "Game Programmer · tutorial flow design and UI architecture", es: "Game Programmer · diseño del flujo de tutorial y arquitectura de UI" },
     short: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código." },
     desc: {
-      en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Releasing on Play Store. I worked on the authoring tools, the tutorial and chapter flow, and the persistence layer.",
-      es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. En publicación. Trabajé en las herramientas de autoría, el flujo de tutorial y capítulos, y la capa de persistencia."
+      en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Releasing on Play Store. I diagnosed why the first vertical slice kept breaking, redesigned the tutorial flow around that diagnosis, and built the UI architecture every screen in the game routes through.",
+      es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. En publicación. Diagnostiqué por qué se rompía el primer vertical slice, rediseñé el flujo de tutorial a partir de ese diagnóstico, y construí la arquitectura de UI por la que pasa cada pantalla del juego."
     },
     bullets: {
       en: [
         "Root-caused the bug cluster in the project's first vertical slice. The systems worked; what broke them was the tutorial having to switch gameplay systems on and off at exact moments, and the tutorial runner was what made that fragile. A month into the project I proposed the replacement: small blocks holding one mini-action each, emitting their own events, with every block declaring its own condition for advancing. The diagnosis and that design are mine.",
         "Built the game's heavier UI by hand, before I was using AI at all: the Monsterpedia, a filterable creature compendium with its own multi-select dropdown and its info and detail popups, and the exploration map with its locations, explorer states and popups. Both were redesigned and extended later, but the versions they grew out of are mine. The UIManager every screen in the game routes through and the UI scale manager under it are mine too, along with the asset implementation across the interface. This is the part of my work here I can reconstruct on a whiteboard without notes.",
-        { t: "Built that design into an in-Unity node-graph editor (EditorWindow plus GraphView and UIElements) with polymorphic actions via [SerializeReference]. Three of us author with it now, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters, so shipping a new feature or chapter means adding steps instead of writing a new flow.", ai: true },
-        { t: "Save and persistence layer: atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes. I also migrated seven legacy managers onto it.", ai: true },
-        { t: "Toast concurrency layer of the notification system: two channels running side by side (an instant one plus a FIFO queue), de-duplication windows per id so the same alert cannot stack on itself, and pooled views. The notification centre that later grew on top of it is a teammate's work, not mine.", ai: true },
-        { t: "Standardised the game's text: a central typographic scale with semantic levels, styles that work like CSS classes, and a batch pass that re-applies them across every prefab and scene, so a typography decision costs one edit instead of hundreds. Plus the polish layer around it, press and scale feedback on buttons and arrow highlighting, which is individually trivial and collectively the difference between a screen that works and one that feels good to touch.", ai: true }
+        { t: "Built that design into an in-Unity node-graph editor (EditorWindow plus GraphView and UIElements) with polymorphic actions via [SerializeReference]. Three of us author with it now, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters, so shipping a new feature or chapter means adding steps instead of writing a new flow.", ai: true }
+        /* v4.1 (27-ago-2026): AQUI HABIA 3 BULLETS MAS y salieron los tres.
+           Persistencia/ISaveService, ToastConcurrency y el sistema de tipografia
+           estan en la lista negra de autoria: declarados asistidos el 26-ago y
+           fuera de los dos CVs desde ese dia. NO RE-ANADIRLOS.
+           Ver E:\Arzpal\memoria\no-atribuir-trabajo-ia-cv.md */
       ],
       es: [
         "Encontré la causa raíz del grupo de bugs del primer vertical slice del proyecto. Los sistemas funcionaban; lo que los rompía era que el tutorial tenía que encender y apagar sistemas de gameplay en momentos exactos, y el runner del tutorial era lo que hacía eso frágil. Al mes de entrar propuse el reemplazo: bloques pequeños con una mini-acción cada uno, emitiendo sus propios eventos, y cada bloque declarando su propia condición para avanzar. El diagnóstico y ese diseño son míos.",
         "Construí a mano la UI pesada del juego, antes de que usara IA para nada: la Monsterpedia, un compendio de criaturas filtrable con su propio dropdown de selección múltiple y sus popups de info y detalle, y el mapa de exploración con sus ubicaciones, estados del explorador y popups. Los dos se rediseñaron y ampliaron después, pero las versiones de las que salieron son mías. El UIManager por el que pasa cada pantalla del juego y el manager de escala de UI que va debajo también son míos, junto con la implementación de assets en toda la interfaz. Es la parte de mi trabajo aquí que puedo reconstruir en pizarra sin apuntes.",
-        { t: "Construí ese diseño como un editor de node-graph dentro de Unity (EditorWindow más GraphView y UIElements) con acciones polimórficas vía [SerializeReference]. Tres personas autorizamos con él, un programador, una diseñadora y yo, y todo tutorial de mecánica independiente del juego se construye ahí. Después bifurqué una variación para capítulos de historia, así que publicar una feature o un capítulo nuevo significa agregar pasos en vez de escribir un flujo nuevo.", ai: true },
-        { t: "Capa de guardado y persistencia: escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura. También migré siete managers legacy a esa capa.", ai: true },
-        { t: "Capa de concurrencia de toasts del sistema de notificaciones: dos canales corriendo en paralelo (uno instantáneo más una cola FIFO), ventanas de de-duplicación por id para que la misma alerta no se apile sobre sí misma, y vistas pooleadas. El centro de notificaciones que creció encima después es trabajo de un compañero, no mío.", ai: true },
-        { t: "Estandaricé el texto del juego: una escala tipográfica central con niveles semánticos, estilos que funcionan como clases CSS, y una pasada por lote que los reaplica en cada prefab y escena, así una decisión de tipografía cuesta una sola edición en vez de cientos. Más la capa de pulido alrededor, feedback de presión y escala en los botones y resaltado de flechas, que individualmente es trivial y en conjunto es la diferencia entre una pantalla que funciona y una que da gusto tocar.", ai: true }
+        { t: "Construí ese diseño como un editor de node-graph dentro de Unity (EditorWindow más GraphView y UIElements) con acciones polimórficas vía [SerializeReference]. Tres personas autorizamos con él, un programador, una diseñadora y yo, y todo tutorial de mecánica independiente del juego se construye ahí. Después bifurqué una variación para capítulos de historia, así que publicar una feature o un capítulo nuevo significa agregar pasos en vez de escribir un flujo nuevo.", ai: true }
+        /* v4.1: idem que en EN. Los 3 bullets vetados salieron tambien aqui. */
       ]
     },
     links: []
@@ -1721,21 +1788,21 @@ const PROJECTS = [
     title: "Casino cabinet games", org: { en: "GDP Studios · published under GMW", es: "GDP Studios · publicado bajo GMW" }, tags: ["professional"], youtubeId: null,
     roleTags: { en: ["Unity Developer","Technical Art","Optimization"], es: ["Desarrollador Unity","Arte técnico","Optimización"] },
     dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
-    role: { en: "Unity developer · multi-cabinet layout and optimization", es: "Desarrollador Unity · layout multi-cabinet y optimización" },
-    short: { en: "Four Unity titles running on physical casino cabinets, three screen arrangements.", es: "Cuatro títulos en Unity corriendo en cabinas físicas de casino, tres arreglos de pantalla." },
+    role: { en: "Unity developer · reskin pipeline and optimization", es: "Desarrollador Unity · pipeline de reskin y optimización" },
+    short: { en: "Four Unity titles shipped onto physical casino cabinets, across three screen arrangements.", es: "Cuatro títulos en Unity publicados en cabinas físicas de casino, en tres arreglos de pantalla." },
     desc: {
       en: "Unity games that run on physical casino cabinets. Four titles: the Clownfish / Lionfish / Parrotfish Treasure family (one game behind three different art sets), Triple Bananas, the Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe family, and Ravin' Hot Deluxe.",
       es: "Juegos en Unity que corren en cabinas físicas de casino. Cuatro títulos: la familia Clownfish / Lionfish / Parrotfish Treasure (un juego detrás de tres sets de arte distintos), Triple Bananas, la familia Soda Pop Deluxe / Rainbow Tripl3 Pop / Sugar & Pop Deluxe, y Ravin' Hot Deluxe."
     },
     bullets: {
       en: [
-        "The constraint that shaped everything: one Unity project had to run on three cabinet models with completely different screen arrangements. S4 stacks three 16:9 displays vertically, S5 runs 16:9 then 9:16 then 16:9, S8 is a 9:16 below a 16:9. Every layout is different and the game logic has to stay identical across all three.",
+        "The constraint that shaped everything, and it was already in place when I arrived: the codebase had to run on three cabinet models with completely different screen arrangements. S4 stacks three 16:9 displays vertically, S5 runs 16:9 then 9:16 then 16:9, S8 is a 9:16 below a 16:9. Every layout is different and the game logic has to stay identical across all three. I shipped four titles onto that codebase, working inside those constraints on every one.",
         "Reskin pipeline for the cloned titles: same logic, different face, so the work was swapping the art scene by scene without the logic ever drifting between versions.",
         "Proposed and drove optimization work across the projects, including cutting mini-features back to what they were actually worth.",
         "Changed how the studio worked, not just my own tasks: researched font optimization for their output formats and proposed a workflow with the art and UX teams that removed friction for everyone."
       ],
       es: [
-        "La restricción que le dio forma a todo: un solo proyecto de Unity tenía que correr en tres modelos de cabina con arreglos de pantalla completamente distintos. La S4 apila tres pantallas 16:9 verticalmente, la S5 va 16:9, luego 9:16, luego 16:9, la S8 es una 9:16 debajo de una 16:9. Cada layout es distinto y la lógica del juego tiene que quedar idéntica en las tres.",
+        "La restricción que le dio forma a todo, y ya estaba puesta cuando llegué: el codebase tenía que correr en tres modelos de cabina con arreglos de pantalla completamente distintos. La S4 apila tres pantallas 16:9 verticalmente, la S5 va 16:9, luego 9:16, luego 16:9, la S8 es una 9:16 debajo de una 16:9. Cada layout es distinto y la lógica del juego tiene que quedar idéntica en las tres. Publiqué cuatro títulos sobre ese codebase, trabajando dentro de esas restricciones en cada uno.",
         "Pipeline de reskin para los títulos clonados: misma lógica, cara distinta, así que el trabajo era cambiar el arte escena por escena sin que la lógica se desviara nunca entre versiones.",
         "Propuse e impulsé trabajo de optimización en los proyectos, incluyendo recortar mini-features a lo que realmente valían.",
         "Cambié cómo trabajaba el estudio, no solo mis propias tareas: investigué optimización de fuentes para sus formatos de salida y propuse un flujo con los equipos de arte y UX que quitó fricción para todos."
@@ -1863,19 +1930,6 @@ const TOOLS = [
     links: []
   },
   {
-    acc: "runies", diag: "type-scale", type: "system",
-    title: { en: "Typography and text style system", es: "Sistema de tipografía y estilos de texto" },
-    kind: { en: "Editor tooling · design system", es: "Herramienta de editor · design system" },
-    meta: { en: "DOB Studios · 12 files", es: "DOB Studios · 12 archivos" },
-    youtubeId: null, nda: true, ai: true,
-    roleTags: { en: ["Tools Programmer","Standardization"], es: ["Programador de herramientas","Estandarización"] },
-    body: {
-      en: "A design system for text inside Unity. A central scale defines six semantic size levels (caption through display) instead of magic numbers scattered across prefabs, and a text style works like a CSS class: an id, a font, a level, a fill and an outline. The part worth explaining is the calibration. Outline thickness and dilate are stored per font and per level, because the same value from 0 to 1 renders differently depending on each font asset's gradient scale, so one number cannot serve two fonts. Fill goes through vertex colour so styling never breaks batching. Editor windows author the scale and the style library, and a batch pass walks every prefab and scene in the project to re-apply styles after the scale changes, which turns a typography decision into one edit instead of hundreds.",
-      es: "Un design system de texto dentro de Unity. Una escala central define seis niveles semánticos de tamaño (de caption a display) en vez de números mágicos repartidos por los prefabs, y un estilo de texto funciona como una clase CSS: un id, una fuente, un nivel, un relleno y un outline. La parte que vale la pena explicar es la calibración. El grosor de outline y el dilate se guardan por fuente y por nivel, porque el mismo valor de 0 a 1 se renderiza distinto según el gradient scale de cada font asset, así que un solo número no puede servir a dos fuentes. El relleno va por vertex color para que aplicar estilos nunca rompa batching. Hay ventanas de editor para autorar la escala y la librería de estilos, y una pasada por lote recorre cada prefab y escena del proyecto para reaplicar los estilos cuando la escala cambia, lo que convierte una decisión de tipografía en una sola edición en vez de cientos."
-    },
-    links: []
-  },
-  {
     acc: "tatemis", diag: "ability-system", type: "system",
     title: { en: "Composable ability system", es: "Sistema de habilidades componible" },
     kind: { en: "Data-driven architecture", es: "Arquitectura data-driven" },
@@ -1896,18 +1950,6 @@ const TOOLS = [
     body: {
       en: "Scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases).",
       es: "Builders de escena para el laboratorio de combate, generadores de contenido, un property drawer SubclassSelector propio, y un validador que revisa la tabla de tipos elementales (52 de 52 casos)."
-    },
-    links: []
-  },
-  {
-    acc: "runies", diag: "persistence", type: "system",
-    title: { en: "Save and persistence layer", es: "Capa de guardado y persistencia" },
-    kind: { en: "Systems", es: "Sistemas" },
-    meta: "DOB Studios · Unity 6", youtubeId: null, nda: true, ai: true,
-    roleTags: { en: ["Systems Programmer"], es: ["Programador de sistemas"] },
-    body: {
-      en: "Atomic JSON write-with-backup, N-version schema migration and a centralized save-trigger service (autosave, app pause/quit, scene change), hardened against mid-write crashes.",
-      es: "Escritura atómica de JSON con backup, migración de esquema de N versiones y un servicio centralizado de triggers de guardado (autosave, pausa/cierre de app, cambio de escena), endurecido contra crashes a mitad de escritura."
     },
     links: []
   },
@@ -1973,8 +2015,8 @@ const TIMELINE = [
   {
     org: "DOB Studios", dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
     kind: { en: "Studio", es: "Estudio" },
-    role: { en: "Game Programmer · tools, flow authoring and persistence", es: "Game Programmer · herramientas, autoría de flujos y persistencia" },
-    line: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. I worked on the authoring tools, the tutorial and chapter flow, and the persistence layer.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Trabajé en las herramientas de autoría, el flujo de tutorial y capítulos, y la capa de persistencia." }
+    role: { en: "Game Programmer · tutorial flow design and UI architecture", es: "Game Programmer · diseño del flujo de tutorial y arquitectura de UI" },
+    line: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. I diagnosed why the first vertical slice kept breaking, redesigned the tutorial flow around that diagnosis, and built the UI architecture every screen routes through.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Diagnostiqué por qué se rompía el primer vertical slice, rediseñé el flujo de tutorial a partir de ese diagnóstico, y construí la arquitectura de UI por la que pasa cada pantalla." }
   },
   {
     org: "Raymi Games", dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
@@ -1986,8 +2028,8 @@ const TIMELINE = [
   {
     org: "GDP Studios", dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
     kind: { en: "Studio · published under GMW", es: "Estudio · publicado bajo GMW" },
-    role: { en: "Unity developer · multi-cabinet layout and optimization", es: "Desarrollador Unity · layout multi-cabinet y optimización" },
-    line: { en: "Four Unity titles for physical casino cabinets, one project running on three cabinet models with completely different screen arrangements.", es: "Cuatro títulos en Unity para cabinas físicas de casino, un solo proyecto corriendo en tres modelos de cabina con arreglos de pantalla completamente distintos." }
+    role: { en: "Unity developer · reskin pipeline and optimization", es: "Desarrollador Unity · pipeline de reskin y optimización" },
+    line: { en: "Four Unity titles shipped onto physical casino cabinets, onto a codebase that already had to render across three cabinet models with completely different screen arrangements.", es: "Cuatro títulos en Unity publicados en cabinas físicas de casino, sobre un codebase que ya tenía que renderizar en tres modelos de cabina con arreglos de pantalla completamente distintos." }
   },
   {
     org: "Naked Dog", dates: { en: "Dec 2024 – May 2026", es: "Dic 2024 – May 2026" },
@@ -2190,10 +2232,12 @@ function figCaption(item, n, lang) {
 function cardHtml(item, group, index, opts) {
   var t = COPY[state.lang];
   var hand = (HANDS[group] || [])[index] || [pick(item.title), ""];
+  /* El sello de IA se marca aparte porque se pinta distinto: toma el color de
+     identidad de la tarjeta (.seal-ai). NDA y VER son estado y siguen en gris. */
   var seals = [];
-  if (item.nda) seals.push("NDA");
-  if (item.ai) seals.push(t.aiTag);
-  if (item.youtubeId) seals.push(t.watch);
+  if (item.nda) seals.push({ txt: "NDA" });
+  if (item.ai) seals.push({ txt: t.aiTag, ai: true });
+  if (item.youtubeId) seals.push({ txt: t.watch });
 
   var h = '<button type="button" class="pin" style="' + accVars(item, opts.fig) + '"'
         + ' data-g="' + group + '" data-i="' + index + '"'
@@ -2211,7 +2255,7 @@ function cardHtml(item, group, index, opts) {
   h += '<div class="cbody">' + esc(pick(opts.short)) + '</div>';
   if (seals.length) {
     h += '<div class="seals">' + seals.map(function (s) {
-      return '<span class="seal">' + esc(s) + '</span>';
+      return '<span class="seal' + (s.ai ? " seal-ai" : "") + '">' + esc(s.txt) + '</span>';
     }).join("") + '</div>';
   }
   h += '<div class="rows">';
@@ -2443,6 +2487,7 @@ function render() {
   /* hero */
   $("oname").innerHTML = heroNameHtml();
   $("claim").textContent = t.claim;
+  $("claimSub").textContent = t.claimSub;
 
   /* Las anotaciones al margen. Cada una toma una tiza distinta de los 12
      matices de identidad, su propio giro, su propio desplazamiento vertical y
@@ -2577,15 +2622,19 @@ function render() {
   $("aiLabel").textContent = t.aiLabel;
   $("aiSaid").textContent = t.aiSub;
   /* Sin numeración y sin marca: son dos párrafos, no una lista ordenada. */
-  $("aiList").innerHTML = [t.aiBody, t.aiNote].map(function (txt) {
-    return '<li><span>' + esc(txt) + '</span></li>';
+  /* v4.1: cada punto es [entradilla, resto]. Los dos se escapan; la entradilla
+     va en <strong>, que .band li strong ya estila. aiNote NO va aqui: se sigue
+     usando dentro de las tarjetas marcadas (ver la linea del .inote). */
+  $("aiList").innerHTML = t.aiPoints.map(function (p) {
+    return '<li><span><strong>' + esc(p[0]) + '</strong> ' + esc(p[1]) + '</span></li>';
   }).join("");
 
   /* cierre */
   $("contactTitle").textContent = t.contactTitle;
   $("contactNote").textContent = t.contactNote;
   $("lnkEmail").textContent = t.ctaEmail;
-  $("lnkCv").textContent = t.ctaCv;
+  $("lnkCv").textContent = t.cvDesign;
+  $("lnkCv2").textContent = t.cvDev;
   $("contactHand").innerHTML = esc(t.contactHand[0])
     + ' <span class="dashx">&#183; ' + esc(t.contactHand[1]) + '</span>';
   $("contactHead").textContent = t.contactHead;
