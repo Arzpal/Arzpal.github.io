@@ -446,13 +446,32 @@ a{color:var(--mark);text-decoration:none}
 /* =========================================================================
    LA BANDA DE IA — el método en tiza, sin hoja.
    ========================================================================= */
-.band{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:40px;
-  padding:0;align-items:start;scroll-margin-top:96px}
+/* 📐 La banda se comporta como TODAS las demas secciones: encabezado centrado
+   arriba y contenido debajo. Antes era la unica a dos columnas, con el titulo a
+   la izquierda, y por eso se leia como algo pegado de otra pagina: .sechead
+   lleva justify-content:center en todo el sitio menos aqui.
+   El intento previo (dos columnas con align-items:center) era un parche al
+   sintoma: el titulo medía ~100px contra ~400px de puntos, asi que alineados
+   arriba dejaba 300px de vacio. Centrando la seccion entera el vacio no existe.
+   ⚠️ El h3 se queda en 23px y NO sube a los 26px de .sechead h2 a proposito:
+   esta banda no es una seccion del portafolio, no esta en el nav, y es el unico
+   sitio donde habla en primera persona del metodo. Que pese un poco menos es
+   correcto. */
+.band{scroll-margin-top:96px}
 .band h3{font-weight:600;font-size:23px;letter-spacing:-.012em;color:var(--chalk)}
-.band .said{font-family:var(--f-hand);font-size:26px;color:var(--chalk);opacity:.9;
-  transform:rotate(-1deg);margin-top:12px}
-.band ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:20px}
-.band li{font-size:16px;line-height:1.55;color:var(--chalk-2);text-wrap:pretty}
+/* Columna unica y centrada, acotada para que la linea no se estire a los
+   1160px del contenedor: a esa medida cuatro parrafos se vuelven ilegibles. */
+.band ul{list-style:none;margin:14px auto 0;padding:0;max-width:70ch;
+  display:flex;flex-direction:column;gap:20px}
+/* 🔢 El numeral de cada punto va en su PROPIA columna, no dentro del texto.
+   Es lo que pedia el artboard 09 y se me habia quedado fuera al portarlo: sin
+   el, los cuatro puntos se leen como un muro sin borde izquierdo y la seccion
+   parece incompleta. Aqui numerar SI dice algo: son cuatro afirmaciones que se
+   sostienen en orden, de la decision a la prueba. */
+.band li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:13px;
+  font-size:16px;line-height:1.55;color:var(--chalk-2);text-wrap:pretty}
+.band li i{font-style:normal;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
+  color:var(--chalk-3);padding-top:5px;font-variant-numeric:tabular-nums}
 .band li strong{color:var(--chalk)}
 
 /* =========================================================================
@@ -1350,11 +1369,8 @@ a{color:var(--mark);text-decoration:none}
 
   <div class="gap" style="--gp:27%;--go:.46" aria-hidden="true"><svg viewBox="0 0 320 20" style="transform:scaleX(-1);transform-origin:center"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleA"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleA"/></g></svg></div>
   <!-- El método, en tiza y sin hoja: no es una ficha, es cómo trabajo. -->
-  <section class="band veiled" id="sec-ai">
-    <div>
-      <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkAi"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkAi"/></g></svg><h3 id="aiLabel"></h3></div>
-      <div class="said" id="aiSaid"></div>
-    </div>
+  <section class="sec band veiled" id="sec-ai">
+    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkAi"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkAi"/></g></svg><h3 id="aiLabel"></h3></div>
     <ul id="aiList"></ul>
   </section>
 
@@ -1490,7 +1506,6 @@ const COPY = {
        asistido contradice el punto 3. */
     /* v4: es un título de sección, no un rótulo en versalitas. */
     aiLabel: "How I work with AI",
-    aiSub: "what AI does not decide",
     aiNote: "Marked: I decided and directed this, and used AI to help me implement it.",
     aiTag: "WITH AI",
     /* v4.1 (27-ago-2026): la banda pasa de UN parrafo a CUATRO puntos, y cambia
@@ -1563,7 +1578,6 @@ const COPY = {
 
     /* v4.1: ver la nota del bloque EN. aiToggle/aiHelp/aiCount borradas. */
     aiLabel: "Cómo trabajo con IA",
-    aiSub: "lo que la IA no decide",
     aiNote: "Marcado: yo lo decidí y lo dirigí, y usé IA como apoyo para implementarlo.",
     aiTag: "CON IA",
     /* v4.1: ver la nota del bloque EN. */
@@ -1704,16 +1718,6 @@ const DIAGRAMS = {
             lines: { en: ["a crash mid-write", "cannot corrupt it"],
                      es: ["un corte a mitad", "no lo corrompe"] } }
   },
-  "crazynema": {
-    g: "dgLight",
-    aria: "A cinema interior showing where the baked light comes from: the screen, the wall fixtures and the row of seats.",
-    cap: { en: "Where the light comes from", es: "De dónde viene la luz" },
-    nodes: [[76, 88, "SCREEN"], [209, 50, { en: "BAKED", es: "HORNEADO" }],
-            [194, 152, { en: "SEATS", es: "BUTACAS" }]],
-    note: { x: 24, y: 172, anchor: "start",
-            en: "lightmaps + probes, baked",
-            es: "lightmaps + probes, horneado" }
-  },
   "fusion-sandbox": {
     g: "dgNet",
     aria: "Two clients, an editor client and a standalone build, joined in the same networked room backed by a player-data store.",
@@ -1755,7 +1759,6 @@ const HANDS = {
     ["Node-graph editor",  { en: "3 of us author with it", es: "lo usamos 3 personas" }],
     ["Ability system",     { en: "data, not code",         es: "data, no código" }],
     ["Combat lab",         { en: "52 of 52 cases",         es: "52 de 52 casos" }],
-    ["Crazynema",          { en: "baked light + post",     es: "luz horneada + post" }],
     ["Space Invaders-like",{ en: "Godot · 2 weeks",        es: "Godot · 2 semanas" }],
     ["Fusion 2 sandbox",   { en: "a weekend, 2 clients",   es: "un fin de semana, 2 clientes" }]
   ]
@@ -2072,35 +2075,6 @@ const TOOLS = [
     body: {
       en: "Scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases).",
       es: "Builders de escena para el laboratorio de combate, generadores de contenido, un property drawer SubclassSelector propio, y un validador que revisa la tabla de tipos elementales (52 de 52 casos)."
-    },
-    links: []
-  },
-  {
-    acc: "crazynema", diag: "crazynema", type: "tool",
-    title: "Crazynema",
-    kind: { en: "Lighting and shaders", es: "Iluminación y shaders" },
-    meta: { en: "Independent project · Unity 6 / URP · in development", es: "Proyecto independiente · Unity 6 / URP · en desarrollo" },
-    youtubeId: null, ai: true,
-    roleTags: { en: ["Technical Art","Lighting","Shaders"], es: ["Arte técnico","Iluminación","Shaders"] },
-    body: {
-      en: "An asymmetric social deduction game set in a cinema, built by a small independent team: three police officers hunt one infiltrator who is indistinguishable from around fifty civilian NPCs, so they have to read behaviour instead of models. I came in on the lighting side: I audited why the scene did not read like its reference, baked it, and patched the toon shader so it could receive that baked light.",
-      es: "Un juego de deducción social asimétrica en un cine, hecho por un equipo independiente pequeño: tres policías buscan a un infiltrado indistinguible de unos cincuenta NPC civiles, así que tienen que leer comportamiento en vez de modelos. Yo entré por el lado de la iluminación: audité por qué la escena no se parecía a su referencia, la horneé, y parcheé el toon shader para que pudiera recibir esa luz horneada."
-    },
-    bullets: {
-      en: [
-        "Audited why the scene did not match its visual reference and left the plan written as a living document. What I found: no post-processing volume anywhere, no bake at all, 737 objects never marked static, ambient set to flat grey, colour grading still in LDR so emissives clipped before they could bloom, and the active URP asset was a demo asset from a bought pack. The conclusion was the useful part: the reference does not have better lights, it has baked light plus practical emissives plus post.",
-        { t: "Patched Simple Toon, a bought shader that sampled no global illumination at all, so once the scene was baked everything using it rendered black. Added the URP 17.3 lightmap and probe-volume pragmas, copied from the Lit shader installed in the project so the variants match exactly, and the three-branch SAMPLE_GI: lightmap when the object is static, adaptive probe volumes when it is dynamic, ambient probe as the fallback.", ai: true },
-        { t: "Two bugs the patch surfaced. The albedo multiplied only the texture sample and not the material colour, so any material without a texture took the colour of the light instead of its own. And I exposed a GI strength value, because in a toon shader letting the environment weigh 100% washes the shading out.", ai: true },
-        { t: "Baked the level: lightmaps, reflection probes and adaptive probe volumes.", ai: true },
-        { t: "A small editor tool that compiles the project's own shaders and reports errors and warnings. It exists because a broken shader does not break the C# build: Unity paints it pink and carries on, so if nobody watches the console at the right moment the failure turns up weeks later as \"this looks off\".", ai: true }
-      ],
-      es: [
-        "Audité por qué la escena no se parecía a su referencia visual y dejé el plan escrito como documento vivo. Lo que encontré: ningún volumen de post-procesado, cero bake, 737 objetos sin marcar como estáticos, ambiente en gris plano, color grading todavía en LDR así que los emisivos se recortaban antes de poder florecer, y el asset de URP activo era un asset de demo de un pack comprado. La conclusión fue lo útil: la referencia no tiene mejores luces, tiene luz horneada más emisivos prácticos más post.",
-        { t: "Parcheé Simple Toon, un shader comprado que no muestreaba iluminación global en absoluto, así que con la escena horneada todo lo que lo usara salía negro. Le agregué los pragmas de lightmap y probe volumes de URP 17.3, copiados del shader Lit instalado en el proyecto para que las variantes coincidan exactamente, y el SAMPLE_GI de tres ramas: lightmap si el objeto es estático, adaptive probe volumes si es dinámico, y sonda de ambiente como último recurso.", ai: true },
-        { t: "Dos bugs que destapó el parche. El albedo multiplicaba solo la muestra de textura y no el color del material, así que cualquier material sin textura tomaba el color de la luz en vez del suyo. Y expuse un valor de fuerza de GI, porque en un toon dejar que el entorno pese al 100% despinta el sombreado.", ai: true },
-        { t: "Horneé el nivel: lightmaps, reflection probes y adaptive probe volumes.", ai: true },
-        { t: "Una herramienta de editor chica que compila los shaders propios del proyecto y reporta errores y avisos. Existe porque un shader roto NO rompe la compilación de C#: Unity lo pinta de rosa y sigue, así que si nadie mira la consola en el momento justo el fallo aparece semanas después como \"esto se ve raro\".", ai: true }
-      ]
     },
     links: []
   },
@@ -2756,13 +2730,15 @@ function render() {
 
   /* la banda de IA: el método, en tiza y sin hoja */
   $("aiLabel").textContent = t.aiLabel;
-  $("aiSaid").textContent = t.aiSub;
   /* Sin numeración y sin marca: son dos párrafos, no una lista ordenada. */
   /* v4.1: cada punto es [entradilla, resto]. Los dos se escapan; la entradilla
      va en <strong>, que .band li strong ya estila. aiNote NO va aqui: se sigue
      usando dentro de las tarjetas marcadas (ver la linea del .inote). */
-  $("aiList").innerHTML = t.aiPoints.map(function (p) {
-    return '<li><span><strong>' + esc(p[0]) + '</strong> ' + esc(p[1]) + '</span></li>';
+  $("aiList").innerHTML = t.aiPoints.map(function (p, i) {
+    var num = String(i + 1);
+    if (num.length < 2) num = "0" + num;
+    return '<li><i>' + num + '</i><span><strong>' + esc(p[0]) + '</strong> '
+         + esc(p[1]) + '</span></li>';
   }).join("");
 
   /* cierre */
