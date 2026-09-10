@@ -213,9 +213,14 @@ a{color:var(--mark);text-decoration:none}
 .oname svg{display:block;width:100%;height:auto}
 .osent{max-width:54ch;color:var(--chalk-2);font-size:19px;text-wrap:pretty}
 .osent strong{color:var(--chalk)}
-/* v4.1: la linea del canal. Va debajo del claim porque el canal es el #2 de la
-   escalera de defensa (evidencia publica de criterio) y hasta ahora no tenia
-   ni una frase en toda la pagina, solo el icono del cierre. */
+/* La linea de evidencia. Va debajo del claim porque el claim afirma criterio y
+   esta frase dice donde comprobarlo.
+   ⚠️ 10-sep-2026: ANTES apuntaba al canal de YouTube y se cambio a los docs de
+   Tatemis. Motivo: el canal todavia no tiene suficiente contenido de diseno, y
+   la frase invitaba a ir a verlo ("you can watch me reason"), o sea que la
+   promesa se caia al primer clic. Los docs si existen, estan fechados y el repo
+   ya esta enlazado desde la ficha de Tatemis. NO revivir la version del canal
+   hasta que el canal la respalde. */
 .osub{max-width:54ch;color:var(--chalk-2);opacity:.72;font-size:15px;text-wrap:pretty;margin:-4px 0 0}
 
 /* ---- las anotaciones al margen del hero ----
@@ -1444,7 +1449,7 @@ const COPY = {
        dos CVs. Ademas "Unity Developer" es el termino que la gente busca. */
     eyebrow: "TECHNICAL DESIGNER & UNITY DEVELOPER · C#",
     claim: "I decide how a system should work, then build the prototype that proves it.",
-    claimSub: "I also run a Spanish-language channel taking game design apart, which is where I argue the trade-offs out loud. You can watch me reason before you decide to hire me.",
+    claimSub: "Every ruling in that prototype’s design docs is dated and signed as it was made, including the ones I later overturned. You can read how I reason before you decide to hire me.",
     /* v4.1 (27-ago-2026): AQUI VIVIAN pillars / diffTitle / diffBody. Se
        borraron, no se reescribieron. Eran el pitch v1 (authoring tools) y el v2
        (systems / data-driven architecture), y los dos se cayeron el 26-ago por
@@ -1554,7 +1559,7 @@ const COPY = {
        español, y traducirlo lo alejaria del titular de LinkedIn. */
     eyebrow: "DISEÑADOR TÉCNICO Y UNITY DEVELOPER · C#",
     claim: "Decido cómo debe funcionar un sistema y después construyo el prototipo que lo demuestra.",
-    claimSub: "También llevo un canal en español que desarma diseño de juegos, que es donde discuto los trade-offs en voz alta. Puedes verme razonar antes de decidir si me contratas.",
+    claimSub: "Cada decisión en los documentos de diseño de ese prototipo va fechada y firmada tal como se tomó, incluidas las que después deshice. Puedes leer cómo razono antes de decidir si me contratas.",
     /* v4.1: ver la nota en el bloque EN. pillars/diffTitle/diffBody borrados. */
     /* Ver la nota del bloque EN: son 8, y NOTE_STYLE va emparejado por indice. */
     notes: ["3 años en videojuegos", "carrera en game design", "9 proyectos", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
@@ -2170,7 +2175,7 @@ var SECTIONS = [
 /* ---------- fecha de actualizacion --------------------------------------- */
 /* Manual a proposito: si saliera del ultimo commit, cualquier cambio de CSS
    resetearia el reloj y nunca se veria vieja. Se actualiza al tocar contenido. */
-const LAST_UPDATE = "2026-08-21";
+const LAST_UPDATE = "2026-09-10";
 
 function lastUpdatedText(lang) {
   var p = LAST_UPDATE.split("-");
