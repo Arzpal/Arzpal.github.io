@@ -1846,17 +1846,18 @@ const PROJECTS = [
   },
   {
     acc: "runies", diag: "nda-redacted", stack: "Unity 6", team: { en: "12 people", es: "12 personas" },
-    /* nda: true se queda hasta que llegue la autorizacion POR ESCRITO de DOB.
-       Mientras tanto: sin capturas, sin video y sin detalle tecnico nuevo.
-       El titulo comercial si va (el juego salio a tienda, el nombre es publico). */
+    /* 12-sep-2026: el juego YA ESTA en Google Play (ficha de "DOB Development"),
+       asi que el titulo y la ficha son publicos por si solos y el enlace va abajo.
+       nda: true sigue: capturas y video aun no se han subido (DOB los autorizo
+       por correo el 19-ago con condicion de marca de agua). */
     title: "Runies Daycare: Merge & Pets", org: "DOB Studios", tags: ["professional"], youtubeId: null, nda: true, ai: true,
     roleTags: { en: ["Game Programmer","Systems design","UI architecture"], es: ["Game Programmer","Diseño de sistemas","Arquitectura de UI"] },
     dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
     role: { en: "Game Programmer · tutorial flow design and UI architecture", es: "Game Programmer · diseño del flujo de tutorial y arquitectura de UI" },
     short: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código." },
     desc: {
-      en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Releasing on Play Store. I diagnosed why the first vertical slice kept breaking, redesigned the tutorial flow around that diagnosis, and built the UI architecture every screen in the game routes through.",
-      es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. En publicación. Diagnostiqué por qué se rompía el primer vertical slice, rediseñé el flujo de tutorial a partir de ese diagnóstico, y construí la arquitectura de UI por la que pasa cada pantalla del juego."
+      en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. Out now on Google Play. I diagnosed why the first vertical slice kept breaking, redesigned the tutorial flow around that diagnosis, and built the UI architecture every screen in the game routes through.",
+      es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Ya disponible en Google Play. Diagnostiqué por qué se rompía el primer vertical slice, rediseñé el flujo de tutorial a partir de ese diagnóstico, y construí la arquitectura de UI por la que pasa cada pantalla del juego."
     },
     bullets: {
       en: [
@@ -1876,7 +1877,9 @@ const PROJECTS = [
         /* v4.1: idem que en EN. Los 3 bullets vetados salieron tambien aqui. */
       ]
     },
-    links: []
+    links: [
+      { url: "https://play.google.com/store/apps/details?id=com.DOB.DOB_MMR", label: { en: "Play it on Google Play", es: "Jugarlo en Google Play" } }
+    ]
   },
   {
     acc: "dco", diag: null, stack: "Unity 6 · URP · FMOD", team: { en: "7 people", es: "7 personas" },
@@ -1997,8 +2000,8 @@ const PROJECTS = [
     role: { en: "Technical artist · entire visual logic of the minigame", es: "Artista técnico · toda la lógica visual del minijuego" },
     short: { en: "Minigame inside Gin Rummy Super. I built its entire visual logic while leading the area.", es: "Minijuego dentro de Gin Rummy Super. Construí toda su lógica visual mientras lideraba el área." },
     desc: {
-      en: "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. It is still live in the shipped app, so this is the one piece of my studio work you can open and play instead of taking on trust. I kept my hands on the work while leading, which is the only reason the leading part went well.",
-      es: "Construí toda la lógica visual de Treasure Mines, un minijuego dentro de Gin Rummy Super. Sigue vivo en la app publicada, así que es la única pieza de mi trabajo en estudio que se puede abrir y jugar en vez de creerme. Mantuve las manos en el trabajo mientras lideraba, que es la única razón por la que la parte de liderar salió bien."
+      en: "Built the entire visual logic of Treasure Mines, a minigame inside Gin Rummy Super. It is still live in the shipped app, so you can open it and play it instead of taking my word for it. I kept my hands on the work while leading, which is the only reason the leading part went well.",
+      es: "Construí toda la lógica visual de Treasure Mines, un minijuego dentro de Gin Rummy Super. Sigue vivo en la app publicada, así que se puede abrir y jugar en vez de creerme. Mantuve las manos en el trabajo mientras lideraba, que es la única razón por la que la parte de liderar salió bien."
     },
     bullets: {
       en: [
@@ -2014,7 +2017,9 @@ const PROJECTS = [
        confirmo que el "Mines Mode" que describe la ficha de Play Store ES este
        minijuego. Lo convierte en el UNICO logro de su experiencia de empleo que
        cualquiera puede verificar por su cuenta, instalando la app. Todo lo demas
-       (DOB, GDP) esta detras de un NDA o no tiene ficha publica. */
+       (DOB, GDP) esta detras de un NDA o no tiene ficha publica.
+       12-sep-2026: YA NO ES EL UNICO. Runies Daycare (DOB) salio a Google Play,
+       y por eso la desc dejo de decir "the one piece of my studio work". */
     links: [
       { url: "https://play.google.com/store/apps/details?id=com.zarzilla.GinRummy", label: { en: "Play it on Google Play", es: "Jugarlo en Google Play" } },
       { url: "https://www.youtube.com/watch?v=SERw7aExaIU", label: { en: "Gin Rummy Super trailer", es: "Trailer de Gin Rummy Super" } }
@@ -2175,7 +2180,7 @@ var SECTIONS = [
 /* ---------- fecha de actualizacion --------------------------------------- */
 /* Manual a proposito: si saliera del ultimo commit, cualquier cambio de CSS
    resetearia el reloj y nunca se veria vieja. Se actualiza al tocar contenido. */
-const LAST_UPDATE = "2026-09-10";
+const LAST_UPDATE = "2026-09-12";
 
 function lastUpdatedText(lang) {
   var p = LAST_UPDATE.split("-");
