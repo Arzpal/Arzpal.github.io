@@ -1314,6 +1314,7 @@ a{color:var(--mark);text-decoration:none}
                No repongas download. -->
           <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
           <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
+          <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
         </div>
       </div>
       <button type="button" class="burger" id="burger" aria-label="Menu" aria-expanded="false"
@@ -1410,6 +1411,7 @@ a{color:var(--mark);text-decoration:none}
             <p class="cvnote" data-cvnote></p>
             <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
             <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
+            <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
           </div>
         </span>
         <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
@@ -1488,9 +1490,10 @@ const COPY = {
        construye. Misma evidencia, distinto orden. Ver kit-posicionamiento v3. */
     cvDesign: "CV · TECHNICAL DESIGNER", cvDev: "CV · UNITY DEVELOPER",
     cvLabel: "CV",
-    cvNote: "Same projects, two readings of them. Take whichever sits closer to the role.",
+    cvNote: "Same projects, three readings of them. Take whichever sits closer to the role.",
     cvDesignSub: "What I decide: systems, combat and progression.",
     cvDevSub: "What I build: gameplay, UI and tooling, in C#.",
+    cvArt: "CV · TECHNICAL ARTIST", cvArtSub: "How art reaches the build: VFX, lighting and pipelines.",
 
     secProjects: "Projects", projectsNote: "Games I have shipped or am shipping, in studios and on my own.",
     secTimeline: "Timeline", timelineNote: "Where I have worked and what the role actually was.",
@@ -1567,9 +1570,10 @@ const COPY = {
     ctaEmail: "ESCRÍBEME", ctaCv: "DESCARGAR CV", openToWork: "DISPONIBLE · UTC-5",
     cvDesign: "CV · DISEÑADOR TÉCNICO", cvDev: "CV · UNITY DEVELOPER",
     cvLabel: "CV",
-    cvNote: "Los mismos proyectos, dos lecturas de ellos. Llévate la que quede más cerca del puesto.",
+    cvNote: "Los mismos proyectos, tres lecturas de ellos. Llévate la que quede más cerca del puesto.",
     cvDesignSub: "Lo que decido: sistemas, combate y progresión.",
     cvDevSub: "Lo que construyo: gameplay, UI y tooling, en C#.",
+    cvArt: "CV · TECHNICAL ARTIST", cvArtSub: "Cómo llega el arte al build: VFX, iluminación y pipelines.",
 
     secProjects: "Proyectos", projectsNote: "Juegos que he publicado o estoy publicando, en estudios y por mi cuenta.",
     secTimeline: "Trayectoria", timelineNote: "Dónde he trabajado y cuál era el rol de verdad.",
@@ -1772,7 +1776,7 @@ const HANDS = {
 const PROJECTS = [
   {
     acc: "tatemis", diag: "tatemis-terrain", stack: "Unity 6 · URP", team: { en: "Solo", es: "Solo" },
-    title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: null, ai: true,
+    title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: "aeTJHzyon2k", ai: true,
     roleTags: { en: ["Solo","Programmer","Designer"], es: ["Solo","Programador","Diseñador"] },
     dates: { en: "Jul 2026 – Present", es: "Jul 2026 – Presente" },
     role: { en: "Solo programmer and designer", es: "Programador y diseñador solo" },
@@ -2180,7 +2184,7 @@ var SECTIONS = [
 /* ---------- fecha de actualizacion --------------------------------------- */
 /* Manual a proposito: si saliera del ultimo commit, cualquier cambio de CSS
    resetearia el reloj y nunca se veria vieja. Se actualiza al tocar contenido. */
-const LAST_UPDATE = "2026-09-12";
+const LAST_UPDATE = "2026-10-13";
 
 function lastUpdatedText(lang) {
   var p = LAST_UPDATE.split("-");
@@ -2765,6 +2769,8 @@ function render() {
   fill("[data-cvds]", t.cvDesignSub);
   fill("[data-cvv]",  t.cvDev);
   fill("[data-cvvs]", t.cvDevSub);
+  fill("[data-cva]",  t.cvArt);
+  fill("[data-cvas]", t.cvArtSub);
   $("contactHand").innerHTML = esc(t.contactHand[0])
     + ' <span class="dashx">&#183; ' + esc(t.contactHand[1]) + '</span>';
   $("contactHead").textContent = t.contactHead;

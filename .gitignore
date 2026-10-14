@@ -8,3 +8,6 @@ BRIEF-*.html
 # de trabajo (4.6 MB), no parte del sitio.
 Rediseño portafolio pizarra/
 Rediseño portafolio pizarra.zip
+
+# Material crudo para capturas, clips y el reel: se procesa a assets/, no se publica.
+_media-crudo/
