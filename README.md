@@ -8,118 +8,114 @@ Se sirve gratis desde GitHub Pages en `https://arzpal.github.io`.
 | Archivo | Qué es |
 |---|---|
 | `index.html` | Todo el sitio (HTML + CSS + JS en un solo archivo, autocontenido) |
-| `Andres-Ruiz-Game-Programmer.pdf` | El CV que descarga el botón del hero |
-| `assets/` | Imágenes propias de las tarjetas (`cover`) y de los modales (`image`) |
+| `Andres-Ruiz-*.pdf` | Los CV (Technical Designer, Unity Developer, Technical Artist). Se generan desde `E:\Arzpal\futuro\cv\*.html` |
+| `assets/reel.mp4` + `reel.jpg` | El reel del hero: 8 cortes, 24 s, 960×540, mudo |
+| `assets/clips/<id>.mp4` + `.jpg` | El loop mudo de cada ficha (5-7 s) y su póster |
+| `assets/gallery/` | Capturas de la galería del inspector (1280 px de ancho) |
+| `assets/og.png` | La vista previa al pegar el enlace (1200×630) |
+| `assets/board-dust*.webp` | El polvo del pizarrón horneado (escritorio y móvil) |
+| `docs/*.pdf` | Los documentos de diseño publicados (en inglés, versión limpia para reclutador) |
 
-> El bundle del rediseño v2 (`newREADME.md`, `reference-design-v2.dc.html`,
-> `current-site-before.html`) se borró el 18-ago-2026: solo queda viva la versión final.
-> **El sitio anterior al rediseño se recupera con `git show 590abbe:index.html`** (el commit
-> `69b8346 Portfolio Visual Update` es el que trajo el rediseño). La paleta exacta vive en las
-> variables de `:root` de `index.html`, y el modelo de datos y las reglas del diseño están en
-> este archivo.
+No se publican (están en `.gitignore`): `_media-crudo/` (videos fuente, capturas en crudo y la
+plantilla de `og.png`), `_traducciones/` (los .md de los documentos y su script de PDF) y los
+`BRIEF-*`.
 
-## Estructura de la página
+## Estructura de la página (v5, 14-oct-2026)
 
-Barra fija · hero · **01 Projects** · **02 Timeline** · **03 Tools & Prototypes** ·
-**04 Education** · **05 Get in touch**. Las tarjetas de Projects y Tools abren un modal con
-video, rol, descripción, puntos y links.
+Barra fija · **hero** (nombre, rol, frase, selector de perfil y el reel) · línea de datos ·
+**Recognition** · **Projects** (selector repetido, 5 destacados del perfil y el archivo compacto con
+filtros por disciplina) · **Timeline** (estudios y formación en un gráfico en el tiempo; Education ya
+no es sección aparte) · banda "How I work with AI" (dos carriles) · **Contact**.
 
-La página es **bilingüe EN/ES** con un switch en la barra, y tiene un **toggle "AI-assisted"**
-que muestra u oculta los puntos marcados como hechos con IA. Ambos se guardan en `localStorage`
-(`arzpal-lang`, `arzpal-showai`).
+- **Perfil:** Technical Designer por defecto; `?r=ud` abre Unity Developer. Los destacados viven en
+  `FEAT` y el orden del archivo en `ARCHIVE_ORDER`, los dos por `id`.
+- **Inspector:** cualquier hoja o renglón lo abre. Pieza grande (video o captura) con tira debajo,
+  datos al costado, nota de IA, puntos y, solo si hay algo que poner, los bloques
+  *How it works* (el diagrama), *Design docs* y *Code*.
+- Bilingüe EN/ES; el idioma se guarda en `localStorage` (`arzpal-lang`).
 
 ## Cómo agregar contenido
 
-Todo el contenido vive en cuatro arreglos al inicio del `<script>` de `index.html`:
+El contenido vive en `PROJECTS[]`, `TOOLS[]`, `TIMELINE[]` y `EDUCATION[]`, al inicio del
+`<script>`. Cada campo de texto acepta `"texto"` o `{ en: "...", es: "..." }`.
 
-| Arreglo | Sección |
+Campos de una ficha (`PROJECTS` / `TOOLS`):
+
+| Campo | Para qué |
 |---|---|
-| `PROJECTS[]` | 01 Projects |
-| `TIMELINE[]` | 02 Timeline |
-| `TOOLS[]` | 03 Tools & Prototypes |
-| `EDUCATION[]` | 04 Education |
+| `id` | Nombre estable. Lo usan `FEAT` y `ARCHIVE_ORDER` |
+| `acc` | Color de identidad (`--k-<acc>` / `--ki-<acc>`) |
+| `youtubeId` | Solo el ID. El iframe no se crea hasta el clic |
+| `loop` | `assets/clips/<id>.mp4`; su póster es el `.jpg` del mismo nombre |
+| `cover` / `image` | Portada propia (gana sobre el póster y sobre YouTube) |
+| `gallery` | `[{ src, cap }]`. Con 4 o más, la hoja grande muestra 3 en tira |
+| `diag` | Diagrama en tiza. Solo es la figura si no hay material; si lo hay, va a *How it works* |
+| `award` | Sello de resaltador. **Solo con fuente pública**, igual que Recognition |
+| `proof` | `{ td: [i, j], ud: [i, j] }`: índices de bullets reales para la hoja grande |
+| `docs` | `[{ url, label, sub }]`: PDFs en `docs/`, se abren en pestaña nueva |
+| `disc` | Disciplinas para los filtros del archivo: `design`, `code`, `impl`, `techart`, `vfx`, `tools`, `proto` |
+| `orgShort` | Org corto para la cabecera de la hoja, si el largo no entra |
+| `codeLinks` | El render lo soporta pero **no se usa**: Andrés prefirió no enlazar código (14-oct) |
+| `aiUse` | La nota de IA del inspector: **para qué** se usó. Sin campo, sin nota |
+| `nda` | Sello NDA |
 
-**Cada campo de texto acepta dos formas:** `"texto"` (igual en los dos idiomas) o
-`{ en: "...", es: "..." }`. Si a una entrada le falta el par `en`/`es`, esa vista queda vacía
-en el idioma que falte.
+⚠️ `HANDS.p` y `HANDS.t` (la nota a mano de cada hoja) son **posicionales**: siguen el orden de
+`PROJECTS` y `TOOLS`. Si reordenas un arreglo, reordena el otro.
 
-### Un proyecto nuevo
+⚠️ **La IA ya no se marca por tarjeta ni por punto** (decidido el 13-oct-2026: daba a entender que
+todo estaba hecho con IA). Los `{ t, ai: true }` de los bullets se quedan como registro de autoría,
+pero no se pintan; lo que se publica es `aiUse`.
 
-Copia un bloque de `PROJECTS` y ponlo en la posición donde debe salir: **el orden del arreglo
-es el orden en pantalla.**
+## Media
 
-- `youtubeId`: **solo el ID**, no la URL. De `youtube.com/watch?v=dQw4w9WgXcQ` va `"dQw4w9WgXcQ"`.
-  Con `null` la tarjeta muestra el patrón rayado y el aviso; en cuanto haya video se llena sola.
-- `nda: true`: cambia ese aviso a "sin material público · bajo NDA".
-- `roleTags`: **máximo 3**. Con más, la imagen deja de leerse.
-- `short`: **una sola frase**. Si crece, la altura del grid se descuadra.
-- `tags`: `professional` | `team` | `personal` | `prototype` | `freelance`.
+Con ffmpeg (instalado con winget). Recetas usadas:
 
-### Un punto hecho con IA
+```bash
+# loop de ficha: 960x540, 30 fps, mudo
+ffmpeg -ss <inicio> -i fuente.mp4 -t <dur> -an -vf "scale=960:540:force_original_aspect_ratio=increase,crop=960:540,fps=30,format=yuv420p" -c:v libx264 -crf 28 -preset slow -movflags +faststart assets/clips/<id>.mp4
+# su póster
+ffmpeg -ss <inicio> -i fuente.mp4 -frames:v 1 -vf "scale=960:540:force_original_aspect_ratio=increase,crop=960:540" -q:v 4 assets/clips/<id>.jpg
+# captura de galería
+ffmpeg -i captura.png -vf "scale=1280:-2" -q:v 4 assets/gallery/<nombre>.jpg
+```
 
-Cambia el string por `{ t: "...", ai: true }`. Eso pinta el badge `CON IA` y lo controla el
-toggle de la barra. **Cuando el toggle está apagado esos puntos se ocultan, no se atenúan.**
-En `TOOLS` la marca es `ai: true` en la entrada completa.
+El reel se arma cortando cada tramo a `-crf 18`, uniéndolos con `concat` y saliendo a
+`-crf 26 -preset slow -movflags +faststart`. Los cortes y su orden están en la memoria del
+proyecto (`E:\Arzpal\memoria\portfolio-web.md`).
 
-Criterio acordado: describir **el resultado concreto**, no la habilidad de usar IA.
+## El polvo del pizarrón (horneado)
 
-### Imágenes propias (mejor que el thumbnail de YouTube)
+Las capas `wide`, `ghosts`, `dry` y `cloud` ya no se pintan en vivo: van en `assets/board-dust.webp`
+(y `-m` para móvil), capturadas de las capas reales sobre negro y convertidas a blanco con alfa =
+luminancia, que equivale al `screen` sin fusión (comparado píxel a píxel: idéntico). Si se recalibra
+el polvo: volver a poner las capas, capturarlas con Chrome headless a 2560×1440 (y 860×1864 con
+`--clean:0`) con todo lo demás oculto, y convertir con `ffmpeg ... alphamerge ... -c:v libwebp -lossless 1`.
+El grano fino sigue vivo.
 
-1. Guárdalas en `assets/` con nombre por proyecto (`assets/dont-chicken-out-cover.jpg`).
-2. Agrega a la entrada `cover` (tarjeta, 16:9, ~640×360, JPG ~80%) e `image` (fondo del modal,
-   ~1280×720).
-3. `cover` gana sobre el thumbnail de YouTube e `image` gana sobre `maxresdefault`. Si no
-   existen, se mantiene el comportamiento actual.
-4. La tarjeta aplica `grayscale(1)` y solo lo quita en hover: **las capturas tienen que leerse
-   bien en gris.**
-
-El video no carga hasta que abres el modal: hasta entonces solo se ve la miniatura. Eso mantiene
-la página liviana y evita que YouTube trackee a quien solo pasó de largo.
-
-## Reglas para no romper el diseño
-
-1. **Nada de colores nuevos.** Si hace falta un tono, derívalo de las variables de `:root`.
-2. Máximo **dos fondos**: `#08090a` y `#0f1112`. Las secciones alternan.
-3. El **aqua `#00e5c0` es acento**, no color de área. Nunca como fondo de bloques grandes.
-4. Una familia por rol: **Archivo** títulos · **IBM Plex Sans** cuerpo · **IBM Plex Mono**
-   etiquetas, fechas, roles y nav. Nada de fuentes nuevas.
-5. Los textos de proyecto son del autor: **no reescribirlos** al agregar datos, solo traducir
-   cuando falte el par `en`/`es`.
-6. La barra va **por encima del modal** a propósito (`z-index` 200 vs 100): se puede cambiar
-   idioma o el toggle con un proyecto abierto.
-7. Los enlaces de la nav hacen scroll por JS **sin cambiar la URL**. Nada de `href="#work"`.
+La trayectoria lee de `TIMELINE` y `EDUCATION`: `start`, `end` (`"now"` = la fecha de `LAST_UPDATE`),
+`fuzzy` (`start` / `end` / `both`: extremos sin mes conocido, que se dibujan difuminados) y `open`
+(el id de la ficha que abre la fila).
 
 ## Regenerar el PDF del CV
 
-El diálogo de impresión del navegador corta mal. Usa Chrome en modo headless, que respeta
-el CSS de `@media print` sin depender de la configuración del diálogo:
+Chrome headless desde Git Bash. Las tres banderas del medio no son opcionales: sin ellas Chrome
+sale **sin escribir y sin error** (verifica la hora del archivo y que diga `bytes written`):
 
 ```bash
-"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --no-pdf-header-footer --print-to-pdf="E:\Arzpal.github.io\Andres-Ruiz-Game-Programmer.pdf" "file:///E:/Arzpal/futuro/cv/Andres-Ruiz-Game-Programmer.html"
+"/c/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --no-sandbox --no-pdf-header-footer --user-data-dir="$TEMP/chrome-pdf" --virtual-time-budget=10000 --run-all-compositor-stages-before-draw --print-to-pdf="E:/Arzpal.github.io/Andres-Ruiz-Technical-Designer.pdf" "file:///E:/Arzpal/futuro/cv/Andres-Ruiz-Technical-Designer.html"
 ```
 
-El corte de página está forzado en la sección `#projects-section`: página 1 = perfil,
-skills y experiencia; página 2 = proyectos y educación. Sin ese `break-before`, el bloque
-de Zarzilla saltaba entero y dejaba media página en blanco.
+Son 2 páginas a propósito (corte forzado en `#projects-section`).
 
 ## Probar en local
 
-Abrir `index.html` con doble clic funciona. Si el navegador bloquea algo por `file://`:
+Hace falta un servidor (los videos piden rangos y `file://` bloquea cosas):
 
 ```bash
-node -e "const h=require('http'),f=require('fs'),p=require('path');h.createServer((q,s)=>{let r=q.url==='/'?'/index.html':q.url;f.readFile(p.join(process.cwd(),r),(e,b)=>e?s.writeHead(404).end():s.writeHead(200,{'content-type':r.endsWith('.html')?'text/html; charset=utf-8':'application/octet-stream'}).end(b))}).listen(8777,()=>console.log('http://127.0.0.1:8777'))"
+npx --yes http-server -p 8777 -c-1
 ```
 
 ## Publicar
 
-El repo público `Arzpal/Arzpal.github.io` ya existe y Pages sirve desde `main` / `(root)`.
-Cada push lo actualiza solo:
-
-```bash
-git add index.html README.md
-git commit -m "Rediseño v2"
-git push
-```
-
-> Ojo: el repo tiene que ser público para que Pages funcione en cuenta gratis, así que nada
-> privado aquí adentro.
+El repo `Arzpal/Arzpal.github.io` es público y Pages sirve desde `main` / `(root)`. Cada push lo
+actualiza solo. **Nada privado aquí adentro.**

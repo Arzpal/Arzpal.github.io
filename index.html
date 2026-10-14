@@ -6,6 +6,18 @@
 <title>Andrés Ruiz Palomino · Technical Designer &amp; Unity Developer</title>
 <meta name="description" content="Technical designer and Unity developer, C#. I decide how a system should work, then build the prototype that proves it.">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080909">
+<!-- Lo que se ve al pegar el enlace en LinkedIn, Slack o un correo. Sin esto
+     la vista previa salía vacía, y el enlace se manda en cada postulación. -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arzpal.github.io/">
+<meta property="og:title" content="Andrés Ruiz Palomino · Technical Designer &amp; Unity Developer">
+<meta property="og:description" content="I decide how a system should work, then build the prototype that proves it. Unity 6, C#. Lima, Perú, full US-hours overlap.">
+<meta property="og:image" content="https://arzpal.github.io/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23080909'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial,sans-serif' font-weight='700' font-size='30' fill='%23F0F2ED'%3EAR%3C/text%3E%3Cpath d='M14 52c11-3 25-3 36 0' stroke='%23D9E36B' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Caveat:wght@600&amp;family=Martian+Mono:wght@400;500&amp;display=swap">
@@ -114,6 +126,10 @@ a{color:var(--mark);text-decoration:none}
     rgba(0,0,0,.48) calc(50% - var(--clean)),rgba(0,0,0,.44) 50%,
     rgba(0,0,0,.48) calc(50% + var(--clean)),#000 100%);
   -webkit-mask-composite:source-over;mask-composite:add}
+.lay.baked{mix-blend-mode:normal;-webkit-mask-image:none;mask-image:none;
+  background:url("assets/board-dust.webp") center/2560px 1440px no-repeat}
+@media (min-width:2561px),(min-height:1441px){.lay.baked{background-size:cover}}
+@media (max-width:760px){.lay.baked{background-image:url("assets/board-dust-m.webp");background-size:cover}}
 .lay.wide{filter:blur(18px);opacity:var(--lay)}
 .lay.ghosts{filter:blur(9px);opacity:calc(var(--lay) * .9)}
 .lay.dry{filter:blur(2px);opacity:calc(var(--lay) * .85)}
@@ -203,94 +219,83 @@ a{color:var(--mark);text-decoration:none}
   letter-spacing:.09em;text-transform:uppercase;color:var(--chalk-3)}
 .drawer nav button.is-active{color:var(--chalk)}
 
-/* ---- el hero 6a: barra, nombre, una frase, y las hojas antes del fold ---- */
-/* El hero va centrado como el resto de la página: las cabeceras de sección, su
-   nota y el cierre ya caen sobre el mismo eje, y el hero era lo único pegado a
-   la izquierda. */
-.hero{display:flex;flex-direction:column;align-items:center;text-align:center;
-  gap:26px;padding:54px 0 0}
-.oname{max-width:760px;width:100%}
-.oname svg{display:block;width:100%;height:auto}
-.osent{max-width:54ch;color:var(--chalk-2);font-size:19px;text-wrap:pretty}
-.osent strong{color:var(--chalk)}
-/* La linea de evidencia. Va debajo del claim porque el claim afirma criterio y
-   esta frase dice donde comprobarlo.
-   ⚠️ 10-sep-2026: ANTES apuntaba al canal de YouTube y se cambio a los docs de
-   Tatemis. Motivo: el canal todavia no tiene suficiente contenido de diseno, y
-   la frase invitaba a ir a verlo ("you can watch me reason"), o sea que la
-   promesa se caia al primer clic. Los docs si existen, estan fechados y el repo
-   ya esta enlazado desde la ficha de Tatemis. NO revivir la version del canal
-   hasta que el canal la respalde. */
-.osub{max-width:54ch;color:var(--chalk-2);opacity:.72;font-size:15px;text-wrap:pretty;margin:-4px 0 0}
+/* ---- el hero v5 (14-oct-2026): asimétrico, con el trabajo en la primera pantalla ----
+   Crítica del 13-oct (P1): el hero centrado con el nombre en SVG y ocho chips
+   dejaba la primera hoja por debajo del fold. Ahora el texto y el selector de
+   perfil van a la izquierda y el reel, como hoja pegada, a la derecha. El nombre
+   pasa a ser un <h1> de texto vivo: la página no tenía h1. */
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:center;
+  padding:56px 0 18px}
+.who h1{font-weight:700;font-size:clamp(34px,4.1vw,52px);line-height:1.02;letter-spacing:-.025em;
+  color:var(--chalk);text-wrap:balance}
+.who .role{margin-top:14px;font-family:var(--f-mono);font-size:11.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--chalk-2)}
+.who .claim{margin-top:22px;font-size:21px;line-height:1.45;color:var(--chalk);max-width:30ch;
+  text-wrap:pretty}
 
-/* ---- las anotaciones al margen del hero ----
-   Escritas a mano, en tiza de colores: son notas de pizarrón, no chips con
-   borde. El texto NUNCA se filtra (el filtro se lo come); lo que le da materia
-   es la letra, el color y lo que se le dibuja alrededor — y ESO sí va filtrado.
-   🔑 Nada de una fila prolija: cada nota tiene su giro, su desplazamiento
-   vertical y su tamaño, y solo algunas llevan subrayado. Ocho notas alineadas
-   al milímetro vuelven a leerse como chips, que es lo que se estaba sacando. */
-.notes{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:26px 18px;max-width:960px;margin-top:2px;padding:10px 0 24px}
-/* Corte de fila explícito a la mitad: dejar que el wrap decida daba 4/3/1 y
-   "open to work" quedaba sola abajo, que es justo la que no se puede quedar
-   colgando. Con el corte son 4 y 4 en los dos idiomas. */
-.notes .brk{flex:0 0 100%;height:0;margin:0}
-.note{position:relative;display:inline-block;padding:0 12px;
-  transform:rotate(var(--rot)) translateY(var(--dy,0px))}
-.note b{position:relative;z-index:1;font-family:var(--f-hand);font-weight:600;
-  font-size:min(var(--fs,23px),5.4vw);line-height:1.1;color:var(--kc);opacity:.92;white-space:nowrap}
-/* El subrayado se estira al ancho de la nota. La altura del svg iguala la del
-   viewBox, así que el trazo no se deforma en vertical: un subrayado es casi
-   horizontal y su grosor lo manda esa escala.
-   ⚠️ El ancho va con calc(), NO con left+right: un <svg> con viewBox es un
-   elemento reemplazado y los inset no lo estiran — se queda en su ancho
-   intrínseco de 128 px y se sale de la pantalla en móvil. Es la misma trampa
-   ya documentada para el contorno de foco de las tarjetas. */
-.uline{position:absolute;left:4px;bottom:-3px;height:12px;width:calc(100% - 8px);
-  opacity:.62;pointer-events:none}
-/* El círculo es una caja HTML con border-radius y el filtro encima, igual que
-   el contorno de foco de las tarjetas: un path de SVG no se estira con los
-   inset, y acá el ancho lo pone el texto. */
-.circ{position:absolute;inset:-7px -4px -9px -6px;border:2.4px solid var(--kc);
-  border-radius:56% 44% 60% 40%/48% 56% 44% 52%;opacity:.66;filter:url(#chalk);
-  pointer-events:none}
-.notes .tick{display:block;width:13px;height:13px;opacity:.42;flex:0 0 auto}
+/* El selector de perfil: la primera decisión de la página, escrita en tiza.
+   Filtra los 5 destacados; lo demás baja al archivo, nada sale de la página. */
+.pick{margin-top:30px}
+.pick .q{font-family:var(--f-hand);font-weight:600;font-size:20px;color:var(--chalk-3);
+  transform:rotate(-1.5deg);display:inline-block}
+.tabs{display:flex;flex-wrap:wrap;gap:6px 26px;margin-top:4px}
+.tab{position:relative;padding:4px 10px;font-family:var(--f-hand);font-weight:600;font-size:29px;
+  line-height:1.15;color:var(--chalk-3);transition:color .18s ease}
+.tab:hover{color:var(--chalk)}
+.tab[aria-pressed="true"]{color:var(--mark)}
+/* El círculo es una caja HTML con border-radius y el filtro encima: un path de
+   SVG no se estira con los inset, y acá el ancho lo pone el texto. */
+.circ{position:absolute;inset:-4px -6px -6px -8px;border:2.4px solid var(--mark);
+  border-radius:56% 44% 60% 40%/48% 56% 44% 52%;opacity:0;filter:url(#chalk);pointer-events:none;
+  transition:opacity .2s ease}
+.tab[aria-pressed="true"] .circ{opacity:.72}
+.pick .hint{margin-top:8px;font-size:14px;color:var(--chalk-2);max-width:40ch}
+.pick .hint code{font-family:var(--f-mono);font-size:12px;color:var(--chalk)}
 
-/* Los garabatos al margen. Cuelgan de la nota, no ocupan sitio en la fila: el
-   ritmo de las anotaciones lo manda el texto, y el dibujo se apoya donde cae. */
-/* Cada garabato trae su propio giro y su propio corrimiento: si todos cuelgan
-   a la misma altura y derechos vuelven a parecer iconos alineados en una fila.
-   --dr, --dmx y --dmy los pone cada nota.
-   🔑 El garabato vive DENTRO de la caja de la nota, en un hueco que se le
-   reserva con padding. Colgando por fuera caía justo donde va el tilde que
-   separa dos notas, y se le montaba encima. */
-.doo{position:absolute;pointer-events:none;opacity:.82;
-  transform:rotate(var(--dr,0deg)) translate(var(--dmx,0px),var(--dmy,0px))}
-/* --dw/--dh los pone cada nota inline; --dscale lo pone el contenedor, y es lo
-   que permite achicarlos en móvil: un estilo inline no lo puede pisar una
-   media query, así que el tamaño tiene que entrar multiplicado. Escalan a la
-   vez el dibujo y el hueco que la nota le reserva, o se descuadran. */
-.doo.l{left:2px;top:50%;width:calc(var(--dw,30px) * var(--dscale,1));
-  height:calc(var(--dh,30px) * var(--dscale,1));
-  margin-top:calc(var(--dh,30px) * var(--dscale,1) / -2)}
-.doo.r{right:2px;top:50%;width:calc(var(--dw,22px) * var(--dscale,1));
-  height:calc(var(--dh,22px) * var(--dscale,1));
-  margin-top:calc(var(--dh,22px) * var(--dscale,1) / -2)}
-.note.dl{padding-left:calc(var(--dw,30px) * var(--dscale,1) + 13px)}
-.note.dr{padding-right:calc(var(--dw,22px) * var(--dscale,1) + 13px)}
+/* El reel: una hoja-pantalla pegada con cinta. Mudo y en loop; el botón lo
+   pausa (WCAG 2.2.2: todo lo que se mueve solo más de 5 s se tiene que poder
+   parar). No hay versión con sonido: son ocho juegos con ocho mezclas. */
+.reel{position:relative;padding-top:14px}
+.reel .sheet{--rot:.6deg;padding:18px 18px 16px}
+.figbox{position:relative}
+.figbox video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#cfc9b8}
+.vbtn{position:absolute;right:16px;bottom:16px;display:flex;align-items:center;gap:8px;
+  background:rgba(8,9,9,.78);color:var(--chalk);padding:7px 12px 7px 9px;font-family:var(--f-mono);
+  font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.vbtn svg{width:14px;height:14px;fill:var(--mark)}
+.vbtn:hover{background:rgba(8,9,9,.92)}
 
-/* La única palabra escrita a mano: vive en COPY y se traduce como cualquier
-   otro texto. Una sola: si fueran varias volvería a ser una lista.
-   🔑 La flecha va DENTRO de la aclaración, no suelta al costado: así quedan
-   siempre alineadas entre sí, sale de la palabra y apunta a la nota de arriba,
-   que es el orden en que se lee. Posicionarlas por separado las descuadraba
-   en cuanto cambiaba el largo de la palabra o el idioma. */
-.aside{position:absolute;left:14px;top:100%;margin-top:2px;display:flex;
-  align-items:flex-end;gap:2px;font-family:var(--f-hand);font-weight:600;
-  font-size:21px;line-height:1;color:var(--kc);opacity:.85;
-  transform:rotate(-6deg);white-space:nowrap;pointer-events:none}
-.aside svg{display:block;width:21px;height:27px;flex:0 0 auto;margin-bottom:-2px}
+/* Los 8 datos en UNA línea de tiza, a todo el ancho, bajo el hero. Antes eran
+   anotaciones con garabatos emparejados por índice; los garabatos salieron
+   (13-oct) y quedan el color y el círculo de "open to work". */
+.facts{display:flex;flex-wrap:wrap;align-items:center;gap:6px 22px;padding:18px 0 4px;
+  border-top:1px dashed rgba(240,242,237,.12);margin:26px 0 0;list-style:none}
+.facts li{font-family:var(--f-hand);font-weight:600;font-size:21px;line-height:1.2;color:var(--kc);
+  white-space:nowrap;opacity:.92}
+.facts li.circled{position:relative;padding:0 8px}
+.facts li.circled::after{content:"";position:absolute;inset:-5px -4px -7px -6px;border:2.2px solid var(--kc);
+  border-radius:56% 44% 60% 40%/48% 56% 44% 52%;opacity:.6;filter:url(#chalk)}
+
+/* La nota a mano bajo el título de una sección: por qué se ve lo que se ve. */
+.why{display:block;margin:-4px auto 0;padding-bottom:30px;text-align:center;font-family:var(--f-hand);
+  font-weight:600;font-size:23px;line-height:1.2;color:var(--mark);transform:rotate(-1deg)}
+
+/* =========================================================================
+   RECONOCIMIENTO — tres recortes pegados. Es lo único de la página que dice
+   alguien más, por eso va antes de los proyectos. Cada uno enlaza su fuente.
+   ========================================================================= */
+.recog{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;padding-top:6px}
+.clip{position:relative;display:flex;flex-direction:column;gap:6px;background:var(--paper);color:var(--ink);
+  padding:22px 20px 16px;transform:rotate(var(--rot,0deg));box-shadow:0 8px 20px rgba(0,0,0,.4)}
+.clip .tape{top:-12px;left:50%;margin-left:-42px;transform:rotate(-3deg)}
+.clip .ev{font-family:var(--f-mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);padding-right:36px}
+.clip .hon{font-weight:700;font-size:21px;line-height:1.15;letter-spacing:-.015em;color:var(--ki)}
+.clip .pr{font-size:14.5px;color:var(--ink-2);line-height:1.45}
+.clip a{margin-top:auto;padding-top:8px;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
+  color:var(--ink);border-top:1px solid var(--rule)}
+.clip a:hover{color:var(--ki)}
+.clip svg{position:absolute;top:14px;right:14px;width:30px;height:30px}
 
 /* ---- secciones ---- */
 .sec{padding:0;scroll-margin-top:112px}
@@ -319,12 +324,91 @@ a{color:var(--mark);text-decoration:none}
 /* =========================================================================
    LA HOJA — pegada con cinta sobre el pizarrón.
    ========================================================================= */
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:44px 30px;
-  align-items:start}
 /* min-width:0 no es decorativo: sin él, el ancho intrínseco de la portada
    (630 px) empuja la pista del grid y la hoja se sale de la pantalla en móvil. */
 .pin{position:relative;padding:70px 18px 30px;display:block;width:100%;min-width:0;
   text-align:left}
+
+/* ---- v5: LOS DESTACADOS. 1 grande a la izquierda + un 2×2 REAL a la derecha.
+   Corregido por Andrés el 13-oct: la primera versión (grande + 2 apiladas + 2
+   abajo) dejaba un hueco bajo la grande. La grande se ESTIRA al alto de las dos
+   filas, pero su video se queda en 16:9 (estirarlo lo recortaba a 497×600); lo
+   que sobre cae entre los puntos y las filas, que van empujadas al fondo.
+   Las 4 chicas van compactas: sin la frase corta, que vive en el inspector. */
+.feat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:30px 30px;align-items:stretch;
+  grid-template-areas:"a a b c" "a a d e"}
+.feat .pin{display:flex;flex-direction:column;padding:52px 0 22px}
+.feat .pin .sheet{flex:1}
+.feat .pin .rows{margin-top:auto}
+/* v5.1: el espacio que sobra en una hoja (la grande mide lo que dos chicas, y
+   las chicas difieren por los renglones del título) lo toma la pieza visual,
+   no el papel vacío. Crece hasta 4:3 como mucho (container query), para no
+   recortar la imagen de más; si aún sobra, cae antes de las filas. */
+.feat .pin .figbox{flex:1 0 auto;display:flex;flex-direction:column;justify-content:center;
+  container-type:inline-size}
+.feat .pin .figbox > .figimg{flex:1 0 auto;max-height:75cqw}
+.feat .pin .figbox > .fig{margin:auto 0}
+.feat .ring{top:30px;height:calc(100% - 30px)}
+.feat .hand{top:0}
+/* En las chicas del 2×2 (~255 px) nombre y dato no caben en un renglón: el
+   dato baja al segundo en vez de cortarse con puntos suspensivos. */
+.feat .pin:not(.f1) .hand{top:-6px;white-space:normal;line-height:1.05}
+.feat .pin:not(.f1) .hand .dashx{display:block;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin.f1{grid-area:a}.pin.f2{grid-area:b}.pin.f3{grid-area:c}.pin.f4{grid-area:d}.pin.f5{grid-area:e}
+.f1 .ctitle{font-size:27px}
+.f1 .cbody{font-size:16px;max-width:52ch}
+.minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:-3px}
+.minis span{background:var(--paper-2);padding:3px}
+.minis img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+/* Dos puntos de prueba en la grande: la primera frase de dos bullets REALES de
+   la ficha, elegidos por perfil. Nunca un resumen inventado. */
+.proof{margin:2px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.proof li{display:grid;grid-template-columns:14px minmax(0,1fr);gap:8px;font-size:14.5px;
+  line-height:1.45;color:var(--ink);text-wrap:pretty}
+.proof li::before{content:"";width:8px;height:8px;margin-top:7px;border:1.6px solid var(--ki);
+  border-radius:50% 40% 55% 45%}
+
+/* El selector repetido en la sección, un punto más chico que el del hero. */
+.ptabs{justify-content:center;margin:-2px 0 6px}
+.ptabs .tab{font-size:25px}
+
+/* EL CAMBIO DE PERFIL (v5.1): las hojas se despegan hacia arriba y las nuevas
+   se pegan desde abajo, una tras otra (--k es su lugar en la grilla). */
+.feat > .pin.pin,.alist > li{transition:opacity .26s ease,transform .34s cubic-bezier(.2,.7,.3,1);
+  transition-delay:calc(var(--k,0) * 45ms)}
+.feat.is-out > .pin.pin,.alist.is-out > li{opacity:0;transform:translateY(-16px) rotate(-1.6deg)}
+.feat.is-in > .pin.pin,.alist.is-in > li{opacity:0;transform:translateY(24px) rotate(1.4deg);transition:none}
+
+/* Los filtros del archivo: rótulos en mono, el activo subrayado en tiza. */
+.afilter{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;margin-top:18px}
+.afilter button{position:relative;font-family:var(--f-mono);font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--chalk-3);padding:4px 0;transition:color .18s ease}
+.afilter button i{font-style:normal;opacity:.6;margin-left:5px}
+.afilter button:hover:not(:disabled){color:var(--chalk)}
+.afilter button:disabled{opacity:.35;cursor:default}
+.afilter button[aria-pressed="true"]{color:var(--mark)}
+.afilter button[aria-pressed="true"]::after{content:"";position:absolute;left:-2px;right:-2px;bottom:-1px;
+  height:2px;background:var(--mark);border-radius:2px;opacity:.8;filter:url(#chalk)}
+.alist > li[hidden]{display:none}
+
+/* ---- v5: EL ARCHIVO. Renglones de tiza, sin hoja: todo lo que no es destacado
+   en el perfil elegido, herramientas incluidas. Abren el mismo inspector. */
+.arch{margin-top:76px}
+.arch h3{font-weight:600;font-size:21px;letter-spacing:-.012em;color:var(--chalk);text-align:center}
+.arch .sub{color:var(--chalk-2);font-size:15px;margin-top:4px;text-align:center}
+.alist{list-style:none;margin:22px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:40px}
+.arow{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;width:100%;
+  text-align:left;padding:14px 0;border-bottom:1px solid rgba(240,242,237,.1);transition:background .18s ease}
+.arow:hover,.arow:focus-visible{background:linear-gradient(90deg,rgba(240,242,237,.05),transparent)}
+.thumb{background:var(--paper);padding:4px;transform:rotate(var(--rot,-.6deg));box-shadow:0 5px 12px rgba(0,0,0,.4)}
+.thumb .figimg,.thumb .fig{aspect-ratio:16/9}
+.thumb .fig{background:var(--paper-2)}
+.atitle{font-weight:600;font-size:16.5px;letter-spacing:-.01em;color:var(--chalk);line-height:1.25}
+.atitle i{font-style:normal;color:var(--kc)}
+.ameta{font-family:var(--f-mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--chalk-3);margin-top:4px}
+.arole{font-size:14px;color:var(--chalk-2);margin-top:2px;line-height:1.4}
 
 /* El contorno de foco es una caja HTML con border-radius, no un path de SVG:
    los inset no estiran un <svg> con viewBox, y el radio desigual sobrevive a
@@ -363,6 +447,9 @@ a{color:var(--mark);text-decoration:none}
 /* Una sola línea siempre: un estudio de nombre largo no puede empujar la hoja. */
 .chead span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .chead span:last-child{flex:0 0 auto}
+/* Si la cabecera tiene un solo texto, ése SÍ se recorta: con flex:0 0 auto se
+   salía de la hoja (pasó con "Takernal Game Jam 2026" en el 2×2). */
+.chead span:only-child{flex:1 1 auto}
 .figbox{background:var(--paper-2);padding:7px;min-width:0}
 .fig{display:block;width:100%;max-width:100%;height:auto}
 .figimg{display:block;width:100%;max-width:100%;aspect-ratio:16/9;object-fit:cover}
@@ -380,122 +467,115 @@ a{color:var(--mark);text-decoration:none}
 .rows span{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-3);padding-top:3px}
 .rows b{font-weight:400;color:var(--ink-2)}
-/* Sello sobre la hoja: NDA, video, marcado con IA. */
+/* Sello sobre la hoja: NDA y video son estado y van en gris. El sello de IA
+   salió el 13-oct (ver aiUse en los datos): por tarjeta daba a entender que
+   todo estaba hecho con IA. */
 .seal{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:9.5px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);
   border:1px solid var(--rule);padding:2px 6px}
-/* 🎨 v4.1 (27-ago-2026): la marca de IA va en el COLOR DE IDENTIDAD de la
-   tarjeta, no en gris. --ki es la tiza densificada, la version que se lee sobre
-   el papel, y es la misma con la que se dibuja el diagrama de esa ficha.
-   Por que solo esta y no NDA ni VER: esos dos son ESTADO (hay acuerdo, hay
-   video) y el gris les queda bien. La marca de IA es AUTORIA, que es materia
-   de la ficha, y en gris de borde se leia como advertencia al pie. En el color
-   de la tarjeta se lee como parte de lo que la ficha cuenta, que es el encuadre
-   de la banda: dirigir no es una deuda que confesar.
-   currentColor para el borde y no color-mix, porque este archivo no usa
-   color-mix en ningun sitio y no vale estrenarlo por un borde. */
-.seal-ai{color:var(--ki);border-color:currentColor;opacity:.82}
+/* El logro va como trazo de resaltador sobre el papel: es lo único de la hoja
+   que alguien más dijo de este trabajo, y por eso se marca distinto. */
+.seal.award{color:var(--ink);border-color:transparent;font-weight:500;
+  background:linear-gradient(transparent 12%,rgba(217,227,107,.72) 12%,rgba(217,227,107,.72) 88%,transparent 88%)}
 .seals{display:flex;flex-wrap:wrap;gap:6px}
 
 /* =========================================================================
-   TRAYECTORIA — no la cubrió ningún artboard: escrita en el mismo idioma.
-   Renglones de tiza sobre el pizarrón, sin hoja: es una lista, no una ficha.
+   TRAYECTORIA v5.1 (14-oct-2026) — un gráfico de tiza en el tiempo.
+   Antes eran dos secciones planas (un riel con renglones y dos hojas de
+   educación). Ahora es UNA: cada estudio es una barra del color de su
+   proyecto sobre un eje de años, así se ve de un vistazo lo que el texto no
+   decía: en 2025 se pisaron tres trabajos. Los extremos que no tienen mes
+   conocido se dibujan difuminados, no inventados. Cada fila abre la ficha de
+   su proyecto.
    ========================================================================= */
-/* Un solo riel largo por el medio y los textos alternando a los lados: con
-   filas cortas, un riel al costado deja la mitad de la columna vacía. */
-.tl{position:relative;display:flex;flex-direction:column;padding:6px 0 2px}
-.tlspine{position:absolute;left:50%;top:0;bottom:0;width:22px;margin-left:-11px;
+.tlc{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);column-gap:34px}
+.tlaxis{grid-column:2;position:relative;height:30px;margin-bottom:6px;
+  border-bottom:1px dashed rgba(240,242,237,.16)}
+.tlaxis span{position:absolute;bottom:7px;transform:translateX(-50%);font-family:var(--f-mono);
+  font-size:10.5px;letter-spacing:.08em;color:var(--chalk-3)}
+.tlaxis i{position:absolute;bottom:-4px;width:1px;height:8px;background:rgba(240,242,237,.28)}
+/* "hoy": una raya vertical de tiza amarilla que cruza todas las filas. */
+.tlnow{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed rgba(217,227,107,.55);
   pointer-events:none}
-.tlspine svg{display:block;width:22px;height:100%}
-.tlrow{display:grid;grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);
-  align-items:start;padding:30px 0}
-.tlbody{grid-column:3;grid-row:1}
-.tlrow.alt .tlbody{grid-column:1;text-align:right}
-.tlrail{grid-column:2;grid-row:1;display:flex;justify-content:center;padding-top:3px}
-.tldates{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
-  color:var(--chalk-3)}
-/* El riel y los nodos se DIBUJAN. Era la única sección que no hablaba el
-   idioma del resto: un riel de 1 px y puntos de border-radius. El riel va
-   como rect relleno y no como línea con stroke, porque preserveAspectRatio
-   none deforma el grosor de un trazo y no el de un relleno. */
-.tlnode{display:block;width:22px;height:22px;position:relative;z-index:1}
-.tlbody{display:flex;flex-direction:column;gap:6px}
-.tlrow.alt .tlh{justify-content:flex-end}
-.tlrow.alt .tlline{margin-left:auto}
-.tlh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-.tlh h3{font-weight:600;font-size:19px;letter-spacing:-.012em;color:var(--chalk)}
-.tlcur{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--mark);border:1px solid rgba(217,227,107,.45);padding:2px 6px}
-.tlkind{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--chalk-3)}
-.tlrole{font-size:15px;color:var(--chalk)}
-.tlline{font-size:15px;color:var(--chalk-2);text-wrap:pretty;max-width:70ch}
+.tlnow b{position:absolute;top:-22px;left:-14px;font-family:var(--f-hand);font-weight:600;font-size:17px;
+  color:var(--mark);white-space:nowrap;transform:rotate(-4deg)}
+.tlbody2{grid-column:1 / -1;position:relative;display:grid;grid-template-columns:subgrid}
+.tlgroup{grid-column:1 / -1;font-family:var(--f-hand);font-weight:600;font-size:21px;color:var(--chalk-2);
+  margin:18px 0 2px;transform:rotate(-1deg);transform-origin:left}
+.tlrow2{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;text-align:left;
+  padding:13px 0;border-bottom:1px solid rgba(240,242,237,.07);transition:background .18s ease}
+.tlrow2:hover,.tlrow2:focus-visible{background:linear-gradient(90deg,rgba(240,242,237,.045),transparent 70%)}
+.tllab h3{font-weight:600;font-size:17px;letter-spacing:-.01em;color:var(--chalk);line-height:1.25}
+.tllab h3 em{font-style:normal;margin-left:8px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;
+  color:var(--mark);border:1px solid rgba(217,227,107,.45);padding:1px 5px;vertical-align:2px}
+.tllab p{font-size:13.5px;color:var(--chalk-2);line-height:1.4;margin-top:2px}
+.tllab small{display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--chalk-3);margin-top:3px}
+.tltrack{position:relative;height:100%;min-height:44px}
+/* La barra: tiza gruesa del color del proyecto. Borde irregular a propósito. */
+/* Dos pasadas, como los diagramas: un núcleo liso y encima la capa con la
+   textura de tiza. Solo con el filtro, la barra se leía punteada. */
+.tlbar{position:absolute;top:50%;height:17px;margin-top:-10px;opacity:.9}
+.tlbar::before,.tlbar::after{content:"";position:absolute;inset:0;background:var(--kc);
+  border-radius:8px 4px 9px 5px/7px 8px 6px 7px}
+.tlbar::before{opacity:.5}
+.tlbar::after{inset:-2px -1px;filter:url(#chalk)}
+.tlbar.fz-s{-webkit-mask-image:linear-gradient(90deg,transparent,#000 46px);mask-image:linear-gradient(90deg,transparent,#000 46px)}
+.tlbar.fz-e{-webkit-mask-image:linear-gradient(270deg,transparent,#000 46px);mask-image:linear-gradient(270deg,transparent,#000 46px)}
+.tlbar.fz-s.fz-e{-webkit-mask-image:linear-gradient(90deg,transparent,#000 46px,#000 calc(100% - 46px),transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 46px,#000 calc(100% - 46px),transparent)}
+.tlline2{position:absolute;left:var(--x0);right:0;top:calc(50% + 10px);font-size:12.5px;line-height:1.35;
+  color:var(--chalk-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:4px}
+.tlrow2:hover .tlbar,.tlrow2:focus-visible .tlbar{opacity:1}
+.tlrow2:hover .tllab h3,.tlrow2:focus-visible .tllab h3{color:var(--kc)}
 
 /* =========================================================================
-   EDUCACIÓN — hojas chicas, sin figura: solo el dato.
+   LA BANDA DE IA v5.1 — dos carriles en tiza: lo que es mío y dónde ayuda la
+   IA, con la vara escrita a mano debajo. Antes eran cuatro párrafos
+   numerados, que es justo lo que se lee como plantilla.
    ========================================================================= */
-.edu{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:34px 30px;
-  align-items:start}
-.edu .sheet{gap:8px}
-.eduh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.eduh h3{font-weight:700;font-size:17px;letter-spacing:-.012em;color:var(--ink)}
-.edudates{font-family:var(--f-mono);font-size:10px;letter-spacing:.07em;color:var(--ink-3);
-  white-space:nowrap}
-.eduprog{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;
-  color:var(--ink-3)}
-.eduline{font-size:14.5px;line-height:1.5;color:var(--ink-2);text-wrap:pretty}
-.edunote{display:flex;gap:8px;font-size:13.5px;color:var(--ink-2);
-  border-top:1px solid var(--rule);padding-top:10px}
-.edunote svg{flex:0 0 auto;width:15px;height:15px;fill:var(--ink-3);margin-top:3px}
-
-/* =========================================================================
-   LA BANDA DE IA — el método en tiza, sin hoja.
-   ========================================================================= */
-/* 📐 La banda se comporta como TODAS las demas secciones: encabezado centrado
-   arriba y contenido debajo. Antes era la unica a dos columnas, con el titulo a
-   la izquierda, y por eso se leia como algo pegado de otra pagina: .sechead
-   lleva justify-content:center en todo el sitio menos aqui.
-   El intento previo (dos columnas con align-items:center) era un parche al
-   sintoma: el titulo medía ~100px contra ~400px de puntos, asi que alineados
-   arriba dejaba 300px de vacio. Centrando la seccion entera el vacio no existe.
-   ⚠️ El h3 se queda en 23px y NO sube a los 26px de .sechead h2 a proposito:
-   esta banda no es una seccion del portafolio, no esta en el nav, y es el unico
-   sitio donde habla en primera persona del metodo. Que pese un poco menos es
-   correcto. */
 .band{scroll-margin-top:96px}
 .band h3{font-weight:600;font-size:23px;letter-spacing:-.012em;color:var(--chalk)}
-/* Columna unica y centrada, acotada para que la linea no se estire a los
-   1160px del contenedor: a esa medida cuatro parrafos se vuelven ilegibles. */
-.band ul{list-style:none;margin:14px auto 0;padding:0;max-width:70ch;
-  display:flex;flex-direction:column;gap:20px}
-/* 🔢 El numeral de cada punto va en su PROPIA columna, no dentro del texto.
-   Es lo que pedia el artboard 09 y se me habia quedado fuera al portarlo: sin
-   el, los cuatro puntos se leen como un muro sin borde izquierdo y la seccion
-   parece incompleta. Aqui numerar SI dice algo: son cuatro afirmaciones que se
-   sostienen en orden, de la decision a la prueba. */
-.band li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:13px;
-  font-size:16px;line-height:1.55;color:var(--chalk-2);text-wrap:pretty}
-.band li i{font-style:normal;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;
-  color:var(--chalk-3);padding-top:5px;font-variant-numeric:tabular-nums}
-.band li strong{color:var(--chalk)}
+.lanes{display:grid;grid-template-columns:minmax(0,1fr) 120px minmax(0,1fr);align-items:stretch;
+  max-width:920px;margin:18px auto 0}
+.lane h4{margin:0 0 12px;font-family:var(--f-mono);font-weight:500;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase}
+.lane ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.lane li{font-family:var(--f-hand);font-weight:600;font-size:23px;line-height:1.15}
+.lane.mine h4{color:var(--mark)}
+.lane.mine li{color:var(--chalk)}
+.lane.help{text-align:left}
+.lane.help h4{color:var(--chalk-3)}
+.lane.help li{color:var(--chalk-2);opacity:.85}
+.lanegap{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.lanegap::before{content:"";position:absolute;top:4px;bottom:4px;left:50%;border-left:2px dashed rgba(240,242,237,.18)}
+.lanegap span{position:relative;background:var(--board);padding:6px 4px;text-align:center;font-family:var(--f-hand);
+  font-weight:600;font-size:17px;line-height:1.1;color:var(--chalk-3);transform:rotate(-3deg)}
+.bar2{max-width:760px;margin:44px auto 0;text-align:center}
+.bar2 q{display:inline;quotes:none;font-family:var(--f-hand);font-weight:600;font-size:30px;line-height:1.2;
+  color:var(--chalk);background:linear-gradient(transparent 78%,rgba(217,227,107,.35) 78%,rgba(217,227,107,.35) 92%,transparent 92%)}
+.bar2 p{margin-top:12px;font-size:14.5px;color:var(--chalk-2)}
+.bar2 button{margin-top:16px;font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--chalk);border-bottom:1px solid rgba(240,242,237,.3);transition:.18s ease}
+.bar2 button:hover{color:var(--mark);border-bottom-color:var(--mark)}
 
 /* =========================================================================
-   CIERRE DE CONTACTO — la última hoja de la página.
+   CIERRE DE CONTACTO v5.1 — dos columnas: lo que se hace (escribir) a la
+   izquierda, en grande; la ficha de contacto a la derecha.
    ========================================================================= */
-/* En vertical y centrado: título, frase, la hoja, los enlaces y el sello.
-   Además le da alto a la sección, que es lo que le faltaba para que el
-   scroll-spy la pueda marcar sin llegar al final de la página. */
-.close-row{display:flex;flex-direction:column;align-items:center;gap:34px;
-  padding-bottom:56px;text-align:center}
-.closetext{display:flex;flex-direction:column;align-items:center;gap:14px}
-.closetext h2{font-weight:700;font-size:34px;letter-spacing:-.02em;line-height:1.08}
-.closetext p{color:var(--chalk-2);font-size:17px;max-width:46ch;text-wrap:pretty}
-.close-row .pin{width:min(380px,100%);padding-top:56px}
-.closelinks{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;
-  font-family:var(--f-mono);font-size:11px;
-  letter-spacing:.09em;text-transform:uppercase}
+.close2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:56px;align-items:center;
+  padding:10px 0 64px}
+.close2 h2{font-weight:700;font-size:44px;letter-spacing:-.025em;line-height:1.02;color:var(--chalk)}
+.close2 .cnote{margin-top:14px;color:var(--chalk-2);font-size:17px;max-width:40ch;text-wrap:pretty}
+.cmail{display:inline-block;margin-top:26px;font-family:var(--f-hand);font-weight:600;font-size:34px;line-height:1.1;
+  color:var(--mark);border-bottom:2px solid rgba(217,227,107,.4);transition:border-color .18s ease}
+.cmail:hover{border-bottom-color:var(--mark)}
+.closelinks{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px;
+  font-family:var(--f-mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase}
 .closelinks a{color:var(--chalk);border-bottom:1px solid rgba(240,242,237,.3);transition:.18s ease}
 .closelinks a:hover{color:var(--mark);border-bottom-color:var(--mark)}
+.close2 .pin{padding-top:56px}
+.close2 .stamp{margin-top:18px}
 
 /* =========================================================================
    ELEGIR CV — dos CVs, un solo enlace. Mismo componente arriba y abajo.
@@ -553,7 +633,9 @@ a{color:var(--mark);text-decoration:none}
    EL INSPECTOR — la hoja ampliada. El pizarrón se oscurece detrás, no se mueve.
    ========================================================================= */
 .insp{position:fixed;inset:0;z-index:60;overflow-y:auto;overscroll-behavior:contain;
-  padding:74px 44px 60px;background:rgba(4,5,5,.62);backdrop-filter:blur(3px);
+  /* Sin backdrop-filter (v5.1): desenfocar la página entera detrás, con
+     videos debajo, se recalculaba en cada cuadro. Un velo más denso alcanza. */
+  padding:74px 44px 60px;background:rgba(4,5,5,.8);
   display:flex;justify-content:center;align-items:flex-start;
   animation:inspIn .2s ease both}
 .insp.is-out{animation:inspOut .18s ease both}
@@ -583,7 +665,7 @@ a{color:var(--mark);text-decoration:none}
   color:var(--ink-3)}
 .ititle{font-weight:700;font-size:27px;letter-spacing:-.018em;line-height:1.12;color:var(--ink)}
 /* La hoja mide 1180; la prosa nunca pasa de una medida legible. */
-.isub{font-size:15.5px;color:var(--ink-2);text-wrap:pretty;max-width:60ch}
+.isub{font-size:14.5px;line-height:1.55;color:var(--ink-2);text-wrap:pretty;max-width:60ch}
 /* El video lidera y los datos van al costado: es lo que contesta más rápido
    "¿qué es esto?". Antes vivía en la columna angosta, a 315 px. */
 .ilead{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:26px;
@@ -591,19 +673,15 @@ a{color:var(--mark);text-decoration:none}
 /* Los puntos van a lo ancho de la hoja, en dos pistas: una sola columna de
    1100 px daría 150 caracteres por línea. Sin puntos no hay bloque, así que
    una herramienta ya no abre con una columna vacía de 413 × 416 px. */
-.ibul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));
+.ibul{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));
   gap:14px 34px;
   margin:0;padding:0;list-style:none;border-top:1px solid var(--rule);padding-top:16px}
 .ibul li{display:grid;grid-template-columns:17px minmax(0,1fr);gap:11px;font-size:14.5px;
   line-height:1.5;color:var(--ink-2);text-wrap:pretty}
 .ibulmark{display:block;width:15px;height:15px;margin-top:3px}
-.ibul li b{font-weight:400}
-/* La marca de IA va POR PUNTO, no por proyecto: esa es la granularidad honesta. */
-/* Mismo criterio que .seal-ai: el color de identidad de la tarjeta. El modal
-   tambien recibe accVars(), asi que --ki esta disponible aqui dentro. */
-.aitag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono);font-size:9.5px;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--ki);border:1px solid currentColor;
-  opacity:.82;padding:2px 6px;margin-left:6px;white-space:nowrap}
+.ibul li b{display:block;font-weight:600;color:var(--ink);line-height:1.4}
+.ibul li .solo b{font-weight:500}
+.ibul li span{display:block;margin-top:4px;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
 .iside{display:flex;flex-direction:column;gap:16px}
 .irows{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:14px;
   border-top:1px solid var(--rule);padding-top:12px}
@@ -613,21 +691,57 @@ a{color:var(--mark);text-decoration:none}
 .ilinks{display:flex;flex-direction:column;gap:8px;font-size:14px;align-items:flex-start}
 .ilinks a{color:var(--ink);border-bottom:1px solid #C6C1B2}
 .ilinks a:hover{color:#000;border-bottom-color:var(--ink)}
-/* Dos cosas distintas, dos bloques: la nota de IA solo aparece si esa ficha
-   tiene al menos un punto marcado; la fecha va siempre. */
+/* La nota de IA (v5): UNA por ficha y solo donde aplica, diciendo PARA QUÉ se
+   usó. Va en frase normal y no en versalitas: es algo que se lee, no un rótulo. */
+.iai{font-family:var(--f-mono);font-size:11px;line-height:1.6;color:var(--ink-3);
+  border-top:1px solid var(--rule);padding-top:10px}
+.iai b{font-weight:500;color:var(--ink-2)}
 .inote{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--ink-3);
   border-top:1px solid var(--rule);padding-top:10px;text-transform:uppercase}
-.istamp{border-top:0;padding-top:0}
 
-/* Video: el iframe no existe hasta que se hace clic en el póster. */
+/* Video: el iframe no existe hasta que se hace clic en el póster. Mientras
+   tanto el póster es el loop mudo de la ficha (o su imagen, con movimiento
+   reducido), así que el inspector no carga nada de YouTube hasta el clic. */
 .ivideo{position:relative;aspect-ratio:16/9;background:#DAD5C6;overflow:hidden}
 .ivideo iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ivideo video,.ivideo > img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .iposter{position:absolute;inset:0;background-size:cover;background-position:center}
 .iplay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
 .iplay i{display:flex;align-items:center;justify-content:center;width:56px;height:56px;
   border-radius:50%;background:rgba(31,36,34,.82);transition:transform .18s ease}
 .iplay:hover i{transform:scale(1.07)}
 .iplay svg{width:22px;height:22px;fill:var(--paper);margin-left:3px}
+.istill{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+
+/* La tira bajo la pieza grande: el video y las capturas. Clic = cambia la
+   pieza grande, sin tocar el resto del inspector. */
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:8px}
+.strip button{position:relative;background:var(--paper-2);padding:3px;outline-offset:2px}
+.strip button[aria-current="true"]{outline:2px solid var(--ki)}
+.strip img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+.strip .sv{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;
+  border-radius:50%;background:rgba(31,36,34,.8);display:flex;align-items:center;justify-content:center}
+.strip .sv svg{width:10px;height:10px;fill:var(--paper);margin-left:2px}
+
+/* Los bloques de abajo: cómo funciona, documentos y código. Cada uno existe
+   solo si la ficha tiene algo que poner: nada de bloques vacíos ni "pronto". */
+.blocks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:24px;
+  border-top:1px solid var(--rule);padding-top:18px}
+.blocks h4{margin:0 0 10px;font-family:var(--f-mono);font-weight:500;font-size:10.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink-3)}
+.how{background:var(--paper-2);padding:7px}
+.slip{display:flex;flex-direction:column;gap:3px;background:#F6F3EA;border:1px solid var(--rule);
+  padding:10px 12px;margin-bottom:8px;color:var(--ink);transform:rotate(var(--rot,0deg));
+  box-shadow:0 2px 0 rgba(0,0,0,.04);transition:border-color .18s ease}
+.slip:hover{border-color:var(--ki)}
+.slip b{font-weight:600;font-size:14.5px}
+.slip span{font-size:13px;color:var(--ink-2)}
+.slip em{font-style:normal;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ki)}
+.code a{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--rule);
+  color:var(--ink);font-size:14px}
+.code a code{font-family:var(--f-mono);font-size:11.5px;color:var(--ki);white-space:nowrap}
+.code a:hover code{text-decoration:underline}
 
 /* =========================================================================
    MOVIMIENTO — la entrada es un fundido corto. Nada rebota.
@@ -641,10 +755,13 @@ a{color:var(--mark);text-decoration:none}
    ========================================================================= */
 @media (max-width:1000px){
   .ilead{grid-template-columns:1fr;gap:18px}
+  .hero{grid-template-columns:1fr;gap:30px;padding-top:34px}
+  /* En una columna el reel va primero: el trabajo sigue entrando en la primera pantalla. */
+  .reel{order:-1}
+  .feat{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"a a" "b c" "d e"}
+  .alist,.recog{grid-template-columns:1fr}
   .gap{height:110px}
   .gap.lg{height:126px}
-  .band{grid-template-columns:1fr;gap:24px;padding:0}
-  .close-row{gap:28px}
 }
 @media (max-width:760px){
   /* 🐛 En movil el enlace "CV" cae cerca del borde izquierdo de su fila, y
@@ -656,46 +773,45 @@ a{color:var(--mark);text-decoration:none}
     transform:translateX(-50%);width:min(320px,88vw)}
   .wrap{--pad:18px}
   .barwrap{margin:0 -18px;padding:0 18px}
-  /* Los garabatos cuelgan por fuera de la nota: en una pantalla angosta hay que
-     dejarles el hueco o rozan el canto. Y la fila se aprieta, que si no ocho
-     anotaciones sueltas se comen media pantalla. */
-  .notes{gap:14px 10px;padding:4px 20px 26px;--dscale:.7}
-  /* Más chicas en móvil: entran más por renglón y el bloque no se come medio
-     viewport antes de que aparezca la primera hoja. */
-  .note{padding:0 8px}
-  .note b{font-size:min(var(--fs,23px),4.7vw)}
-  .aside{left:10px;font-size:18px}
-  .aside svg{width:18px;height:23px}
   .bar{padding:16px 0 12px}
   .barwrap.is-stuck .bar{padding:10px 0 9px}
   .lay{--clean:0px;--clean-v:60px}
   .veil{background:none}
   .bar nav{display:none}
   .bar{flex-wrap:nowrap}
-  .acts{gap:14px}
+  .acts{gap:12px;font-size:10px}
   .acts .cvpick{display:none}
   .burger{display:block}
   .drawer{display:block}
-  .hero{padding:30px 0 0;gap:18px}
+  .hero{padding:26px 0 0;gap:26px}
+  /* La barra no se parte: "EMAIL ME" se iba a dos renglones a 375 px. */
+  .acts{white-space:nowrap}
+  .who .claim{font-size:19px}
+  .tab{font-size:26px}
+  .facts{gap:4px 16px}
+  .facts li{font-size:19px}
   .gap{height:88px}
   .gap.lg{height:72px}
   .gap svg{width:66%}
-  .cards,.edu{grid-template-columns:1fr;gap:38px 0}
+  .feat{grid-template-columns:1fr;grid-template-areas:"a" "b" "c" "d" "e"}
+  .arow{grid-template-columns:88px minmax(0,1fr)}
+  .strip{gap:5px}
   .pin{padding:64px 8px 22px}
-  .tl{padding-left:34px}
-  /* El riel es absoluto contra la caja de padding de .tl y el nodo contra su
-     fila, que arranca en el padding: los dos tienen que caer en el mismo eje. */
-  .tlspine{left:0;margin-left:0}
-  .tlrow{grid-template-columns:minmax(0,1fr);padding:22px 0}
-  .tlbody,.tlrow.alt .tlbody{grid-column:1;text-align:left}
-  .tlrow.alt .tlh{justify-content:flex-start}
-  .tlrow.alt .tlline{margin-left:0}
-  .tlrail{position:absolute;left:-34px;padding-top:2px}
-  .tlrow{position:relative}
+  .feat .pin{padding:50px 4px 18px}
+  .tlc{grid-template-columns:minmax(0,1fr)}
+  .tlaxis{grid-column:1}
+  .tlrow2{grid-template-columns:minmax(0,1fr);padding:12px 0 6px}
+  .tltrack{min-height:30px}
+  .tlc{--lab:0px}
+  .lanes{grid-template-columns:1fr;gap:26px}
+  .lanegap{display:none}
+  .bar2 q{font-size:25px}
+  .close2{grid-template-columns:1fr;gap:20px}
+  .close2 h2{font-size:34px}
+  .cmail{font-size:27px}
   .insp{padding:64px 14px 40px}
   .isheet{padding:20px 18px 20px}
   .ititle{font-size:23px}
-  .closetext h2{font-size:28px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -715,23 +831,18 @@ a{color:var(--mark);text-decoration:none}
      con el contenido: es una pared, no un fondo de parallax.
      ========================================================================= -->
 <div class="board" aria-hidden="true"></div>
-<svg class="lay wide" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">
-  <use href="#edges" opacity=".55"/><use href="#arcs" opacity=".32"/>
-</svg>
-<svg class="lay ghosts" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">
-  <use href="#ghost" opacity=".35"/>
-</svg>
-<svg class="lay dry" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">
-  <g filter="url(#dry)" opacity=".7"><use href="#arcsThin"/></g>
-</svg>
-<!-- Estas dos son <div> con el ruido de fondo en mosaico, no <svg> con el
-     filtro en vivo. feTurbulence se evalúa por píxel, y estirado al alto del
-     documento eran 11 megapíxeles de ruido procedural CADA UNA, recalculados
-     al rasterizar cada tramo nuevo mientras se scrollea. Como mosaico el ruido
-     se genera una sola vez y se repite. La frecuencia va en unidades de
-     usuario, así que el grano sale idéntico. -->
+<!-- v5.1 (14-oct-2026): las capas wide, ghosts, dry y cloud van HORNEADAS en
+     una sola imagen (assets/board-dust*.webp), capturada de las capas vivas con
+     sus valores calibrados. Eran cuatro capas fijas a pantalla completa con
+     desenfoques de 18, 9, 9 y 2 px y modo de fusión, y el navegador las
+     recomponía en cada cuadro, con más razón ahora que hay videos corriendo.
+     La imagen es blanco con alfa = luminancia de la captura sobre negro, que
+     es matemáticamente lo mismo que el screen sobre el pizarrón, sin fusión.
+     Las capas vivas siguen en el <defs> y en el historial: si se recalibra el
+     polvo, se vuelve a hornear (receta en el README). El grano fino queda vivo:
+     es un mosaico barato y es lo que da materia. -->
+<div class="lay baked" aria-hidden="true"></div>
 <div class="lay grain" aria-hidden="true"></div>
-<div class="lay cloud" aria-hidden="true"></div>
 
 
 <!-- =========================================================================
@@ -1125,6 +1236,11 @@ a{color:var(--mark);text-decoration:none}
       <path d="M6 4 V24"/>
       <path d="M6 9 H14 M6 15 H21 M6 21 H11"/>
     </g>
+    <g id="mkRecog" fill="none" style="stroke:var(--nk,#F0F2ED);stroke-width:var(--sw,2)"
+       stroke-linecap="round" stroke-linejoin="round">
+      <!-- una estrella de tiza, de las que se ponen al margen de lo que vale -->
+      <path d="M14 4 L16.6 11 L24 11.4 L18.2 16 L20.2 23.4 L14 19.2 L7.8 23.4 L9.8 16 L4 11.4 L11.4 11 Z"/>
+    </g>
     <g id="mkEdu" fill="none" style="stroke:var(--nk,#F0F2ED);stroke-width:var(--sw,2)"
        stroke-linecap="round" stroke-linejoin="round">
       <!-- el compás abierto: formación, no diploma -->
@@ -1324,31 +1440,67 @@ a{color:var(--mark);text-decoration:none}
   <div class="drawer" id="drawer"><nav class="tree" id="navM"></nav></div>
   </div>
 
+  <main>
   <!-- =======================================================================
-       EL HERO. Nombre en tres capas de tiza —halo, núcleo nítido y textura—,
-       una sola frase, y el primer renglón de hojas antes de los 900 px.
+       EL HERO v5. Texto y selector de perfil a la izquierda, el reel como hoja
+       a la derecha: el trabajo entra en la primera pantalla.
        ======================================================================= -->
   <header class="hero">
-    <div class="oname" id="oname"></div>
-    <p class="osent" id="claim"></p>
-    <p class="osub" id="claimSub"></p>
-    <div class="notes" id="heroNotes"></div>
+    <div class="who">
+      <h1>Andrés Ruiz Palomino</h1>
+      <p class="role" id="heroRole"></p>
+      <p class="claim" id="claim"></p>
+      <div class="pick">
+        <span class="q" id="pickQ"></span>
+        <div class="tabs" role="group" id="pickTabs">
+          <button type="button" class="tab" data-r="td" aria-pressed="true"><span data-tab="td"></span><i class="circ" aria-hidden="true"></i></button>
+          <button type="button" class="tab" data-r="ud" aria-pressed="false"><span data-tab="ud"></span><i class="circ" aria-hidden="true"></i></button>
+        </div>
+        <p class="hint" id="pickHint"></p>
+      </div>
+    </div>
+    <div class="reel">
+      <div class="sheet">
+        <i class="tape t1"></i><i class="tape t2"></i>
+        <div class="chead"><span id="reelHead"></span><span>0:24</span></div>
+        <div class="figbox">
+          <video id="reelVideo" src="assets/reel.mp4" poster="assets/reel.jpg" muted loop playsinline preload="metadata"></video>
+          <button type="button" class="vbtn" id="reelBtn"></button>
+        </div>
+        <div class="ccap" id="reelCap"></div>
+      </div>
+    </div>
   </header>
-
+  <ul class="facts" id="heroFacts"></ul>
 
   <div class="gap lg" style="--gp:52%;--go:.5" aria-hidden="true"><svg viewBox="0 0 320 20"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleA"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleA"/></g></svg></div>
-  <section class="sec veiled" id="sec-projects">
-    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkProjects"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkProjects"/></g></svg><h2 id="secProjects"></h2></div>
-    <p class="secnote" id="projectsNote"></p>
-    <div class="cards" id="projectsGrid"></div>
+  <!-- RECONOCIMIENTO: lo único de la página que dice alguien más. Cada recorte
+       enlaza su fuente; si un logro no tiene fuente pública, no entra. -->
+  <section class="sec veiled" id="sec-recog">
+    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkRecog"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkRecog"/></g></svg><h2 id="secRecog"></h2></div>
+    <span class="why" id="recogWhy"></span>
+    <div class="recog" id="recogList"></div>
   </section>
 
-
   <div class="gap" style="--gp:34%;--go:.42" aria-hidden="true"><svg viewBox="0 0 320 20"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleB"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleB"/></g></svg></div>
-  <section class="sec veiled" id="sec-tools">
-    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkTools"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkTools"/></g></svg><h2 id="secTools"></h2></div>
-    <p class="secnote" id="toolsNote"></p>
-    <div class="cards" id="toolsGrid"></div>
+  <!-- PROYECTOS v5: 5 destacados según el perfil elegido, y el resto
+       (herramientas incluidas) en el archivo compacto. Nada sale de la página. -->
+  <section class="sec veiled" id="sec-projects">
+    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkProjects"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkProjects"/></g></svg><h2 id="secProjects"></h2></div>
+    <!-- v5.1: el mismo selector del hero, repetido aquí para cambiar de perfil
+         sin volver arriba. Los dos se mantienen sincronizados. -->
+    <div class="tabs ptabs" role="group" id="pickTabs2">
+      <button type="button" class="tab" data-r="td" aria-pressed="true"><span data-tab="td"></span><i class="circ" aria-hidden="true"></i></button>
+      <button type="button" class="tab" data-r="ud" aria-pressed="false"><span data-tab="ud"></span><i class="circ" aria-hidden="true"></i></button>
+    </div>
+    <span class="why" id="projectsWhy"></span>
+    <div class="feat" id="projectsGrid"></div>
+    <div class="arch">
+      <h3 id="archTitle"></h3>
+      <p class="sub" id="archSub"></p>
+      <div class="afilter" role="group" id="archFilter"></div>
+      <ul class="alist" id="archList"></ul>
+    </div>
   </section>
 
 
@@ -1358,18 +1510,12 @@ a{color:var(--mark);text-decoration:none}
        tres trazos distintos a cinco anchos y cinco opacidades; faltar del todo
        en uno de seis sitios se lee como un bug. -->
   <div class="gap" style="--gp:22%;--go:.3" aria-hidden="true"><svg viewBox="0 0 320 20"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleA"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleA"/></g></svg></div>
+  <!-- TRAYECTORIA v5.1: estudios y formación en un solo gráfico en el tiempo.
+       La sección Education dejó de existir aparte: vive aquí como "Training". -->
   <section class="sec veiled" id="sec-timeline">
     <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkTimeline"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkTimeline"/></g></svg><h2 id="secTimeline"></h2></div>
-    <p class="secnote" id="timelineNote"></p>
-    <div class="tl" id="timelineList"></div>
-  </section>
-
-
-  <div class="gap" style="--gp:46%;--go:.38" aria-hidden="true"><svg viewBox="0 0 320 20"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleC"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleC"/></g></svg></div>
-  <section class="sec veiled" id="sec-edu">
-    <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkEdu"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkEdu"/></g></svg><h2 id="secEdu"></h2></div>
-    <p class="secnote" id="eduNote"></p>
-    <div class="edu" id="eduList"></div>
+    <span class="why" id="timelineWhy"></span>
+    <div class="tlc" id="timelineChart"></div>
   </section>
 
 
@@ -1377,16 +1523,42 @@ a{color:var(--mark);text-decoration:none}
   <!-- El método, en tiza y sin hoja: no es una ficha, es cómo trabajo. -->
   <section class="sec band veiled" id="sec-ai">
     <div class="sechead"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkAi"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkAi"/></g></svg><h3 id="aiLabel"></h3></div>
-    <ul id="aiList"></ul>
+    <div class="lanes">
+      <div class="lane mine"><h4 id="aiMineT"></h4><ul id="aiMine"></ul></div>
+      <div class="lanegap" aria-hidden="true"><span id="aiBetween"></span></div>
+      <div class="lane help"><h4 id="aiHelpT"></h4><ul id="aiHelp"></ul></div>
+    </div>
+    <div class="bar2">
+      <q id="aiBar"></q>
+      <p id="aiBarSub"></p>
+      <button type="button" data-g="p" data-i="0" id="aiCheck"></button>
+    </div>
   </section>
 
 
   <div class="gap" style="--gp:40%;--go:.34" aria-hidden="true"><svg viewBox="0 0 320 20" style="transform:scaleX(-1);transform-origin:center"><g style="--sw:2.6;--nk:#F0F2ED" opacity=".3"><use href="#gapRuleB"/></g><g style="--sw:4;--nk:#F0F2ED" opacity=".62" filter="url(#chalk)"><use href="#gapRuleB"/></g></svg></div>
   <section class="sec veiled" id="sec-contact">
-    <div class="close-row">
-      <div class="closetext">
-        <div class="sechead" style="padding-bottom:0"><svg class="secmark" viewBox="0 0 28 28" aria-hidden="true"><g style="--sw:2.2;--nk:#F0F2ED" opacity=".36"><use href="#mkContact"/></g><g style="--sw:3.1;--nk:#F0F2ED" opacity=".92" filter="url(#chalk)"><use href="#mkContact"/></g></svg><h2 id="contactTitle"></h2></div>
-        <p id="contactNote"></p>
+    <div class="close2">
+      <div>
+        <h2 id="contactTitle"></h2>
+        <p class="cnote" id="contactNote"></p>
+        <a class="cmail" href="mailto:andres.gp.ruiz@gmail.com">andres.gp.ruiz@gmail.com</a>
+        <div class="closelinks">
+          <span class="cvpick up" id="cvPickEnd">
+            <button type="button" id="lnkCv"
+              aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuEnd"></button>
+            <div class="cvmenu" id="cvMenuEnd" hidden>
+              <p class="cvnote" data-cvnote></p>
+              <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
+              <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
+              <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
+            </div>
+          </span>
+          <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
+          <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
+          <a href="https://www.youtube.com/@arzpal" target="_blank" rel="noopener">YouTube &#8599;</a>
+        </div>
+        <div class="stamp" id="stamp"></div>
       </div>
 
       <div class="pin" style="--kc:var(--k-space);--ki:var(--ki-space);--rot:.7deg">
@@ -1401,26 +1573,10 @@ a{color:var(--mark);text-decoration:none}
           <div class="rows" id="contactRows"></div>
         </div>
       </div>
-
-      <div class="closelinks">
-        <a href="mailto:andres.gp.ruiz@gmail.com" id="lnkEmail"></a>
-        <span class="cvpick up" id="cvPickEnd">
-          <button type="button" id="lnkCv"
-            aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuEnd"></button>
-          <div class="cvmenu" id="cvMenuEnd" hidden>
-            <p class="cvnote" data-cvnote></p>
-            <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
-            <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
-            <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
-          </div>
-        </span>
-        <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
-        <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
-        <a href="https://www.youtube.com/@arzpal" target="_blank" rel="noopener">YouTube &#8599;</a>
-      </div>
-      <div class="stamp" id="stamp"></div>
     </div>
   </section>
+
+  </main>
 
   <div class="foot">
     <div id="footNote"></div>
@@ -1451,40 +1607,46 @@ const COPY = {
        dos CVs. Ademas "Unity Developer" es el termino que la gente busca. */
     eyebrow: "TECHNICAL DESIGNER & UNITY DEVELOPER · C#",
     claim: "I decide how a system should work, then build the prototype that proves it.",
-    claimSub: "Every ruling in that prototype’s design docs is dated and signed as it was made, including the ones I later overturned. You can read how I reason before you decide to hire me.",
     /* v4.1 (27-ago-2026): AQUI VIVIAN pillars / diffTitle / diffBody. Se
        borraron, no se reescribieron. Eran el pitch v1 (authoring tools) y el v2
        (systems / data-driven architecture), y los dos se cayeron el 26-ago por
        lo mismo: se apoyaban en el editor node-graph y en la arquitectura, que
        es justo donde la IA cargo mas. NO REVIVIRLOS. El pitch vigente es
        Technical Designer y vive en claim + eyebrow. Ver kit-posicionamiento v3. */
-    /* Anotaciones de tiza bajo el nombre. Eran los 8 chips con borde de la v3
-       — el tipo de componente de stock que este rediseño existe para eliminar.
-       Ahora son notas al margen, escritas a mano y en tiza de colores.
-       🔑 Tres de estas no son adorno, son quita-descartes: un reclutador de un
-       puesto remoto en USD tiene la duda del idioma, el huso y la disponibilidad
-       antes que ninguna otra, y si no se las contestás no llega a mirar el trabajo. */
-    /* "9 projects" y no "9 projects shipped": Tatemis3D está en curso, Don't
-       Chicken Out en producción y Prismonaut en pausa. El verbo sobra-reclama,
-       y es justo el tipo de línea que después hay que defender. */
-    /* ⚠️ SON 8 Y TIENEN QUE SEGUIR SIENDO 8, por dos motivos que se suman:
-       1) CABEN EN 2 FILAS. Medido el 27-ago con 9: la segunda fila daba 919px
-          contra 960 disponibles, o sea 41px de margen, y en cualquier ventana
-          mas angosta se caia a una TERCERA fila. Con 8 el margen sube a ~175px.
-       2) CADA GARABATO ESTA EMPAREJADO CON SU CHIP POR INDICE, en NOTE_STYLE:
-          el engranaje, la banderita de Peru, el reloj de las horas y el "!!"
-          circulado de "open to work" NO son decoracion, significan lo que dice
-          su chip. Anadir o quitar uno los corre a todos y el reloj termina
-          sobre "ingles". Si tocas este arreglo, TOCA NOTE_STYLE en el mismo
-          movimiento, y notesAside tambien (va en paralelo, mismo largo).
-       ✂️ El 27-ago salio "6 tools & systems" para hacerle sitio a la carrera:
-          bajo el perfil Technical Designer, presumir un conteo de HERRAMIENTAS
-          es vocabulario del pitch v1, que es justo el que se cayo. Y la seccion
-          de Tools esta tres pantallas mas abajo diciendo lo mismo. */
+    /* Los datos de un vistazo, en una línea de tiza bajo el hero (v5). Tres no
+       son adorno, son quita-descartes: un reclutador de un puesto remoto en USD
+       tiene la duda del idioma, el huso y la disponibilidad antes que ninguna
+       otra. "9 projects" y no "9 projects shipped": Tatemis3D está en curso,
+       Don't Chicken Out en producción y Prismonaut en pausa.
+       El último va rodeado y en amarillo: es el remate. Los garabatos
+       emparejados por índice (NOTE_STYLE) salieron el 13-oct, así que ya se
+       puede tocar el arreglo sin correr nada. */
     notes: ["3 years in games", "game design degree", "9 projects", "Unity · C#", "Perú · UTC-5", "advanced English", "full US-hours overlap", "open to work"],
-    /* La aclaración escrita a mano. Va en paralelo a notes: una sola, y vacía
-       en el resto. Traducirla cuesta esta línea. */
-    notesAside: ["", "", "", "", "", "fluent", "", ""],
+
+    /* v5 (14-oct-2026): el selector de perfil. Filtra los 5 destacados; el
+       enlace con ?r=ud abre directo la vista de Unity Developer, para mandarlo
+       en cada postulación. */
+    pickQ: "hiring for…",
+    tabs: { td: "Technical Designer", ud: "Unity Developer" },
+    pickAria: "Show projects for",
+    profile: {
+      td: { why: "what I decide: systems, combat and progression",
+            hint: "Five projects picked for design roles. Send this view with ?r=td" },
+      ud: { why: "what I build: gameplay, UI and tooling in C#",
+            hint: "Five projects picked for Unity roles. Send this view with ?r=ud" }
+    },
+    reelHead: "Reel · 2026", reelPause: "Pause", reelPlay: "Play",
+    reelAria: "Gameplay reel, muted",
+    reelCap: "Fig. 00 · Tatemis3D, Prismonaut, Unseasoned, Don’t Chicken Out!, Hell Is Mine, Prismonaut momentum prototype, Crust and Conflict, Treasure Mines",
+    secRecog: "Recognition", recogWhy: "not just my word",
+    archTitle: "Also on the board",
+    archSub: "Everything else, including the tools and prototypes. Same detail when you open it.",
+    howItWorks: "How it works", designDocs: "Design docs", codeTitle: "Code",
+    docPdf: "PDF · opens in a new tab", aiUseLabel: "How I used AI here:",
+    stripVideo: "Video", stripShot: "Screenshot",
+    disc: { all: "All", design: "Design", code: "Programming", impl: "Implementation", techart: "Technical art",
+            vfx: "VFX", tools: "Tools", proto: "Prototypes" },
+    filterAria: "Filter the archive",
     ctaEmail: "EMAIL ME", ctaCv: "DOWNLOAD CV", openToWork: "OPEN TO WORK · UTC-5",
     /* Dos CVs, publicos y leidos juntos: uno dice lo que decide, el otro lo que
        construye. Misma evidencia, distinto orden. Ver kit-posicionamiento v3. */
@@ -1514,30 +1676,18 @@ const COPY = {
        asistido contradice el punto 3. */
     /* v4: es un título de sección, no un rótulo en versalitas. */
     aiLabel: "How I work with AI",
-    aiNote: "Marked: I decided and directed this, and used AI to help me implement it.",
-    aiTag: "WITH AI",
-    /* v4.1 (27-ago-2026): la banda pasa de UN parrafo a CUATRO puntos, y cambia
-       de encuadre. El texto viejo abria por la velocidad ("AI makes me faster on
-       the parts I already know how to write"), que es la postura defensiva de un
-       programador: ahi "dirigi y la IA implemento" es algo que gestionar. Bajo
-       Technical Designer se da vuelta, porque LA DECISION ES EL PRODUCTO, y
-       dirigir deja de ser una deuda para ser la habilidad que vende.
-       Cada punto es un par [entradilla, resto]; el render pone la entradilla en
-       <strong>. Escapa los dos, asi que no metas HTML aqui.
-       🚫 Del borrador del artboard 09 se DESCARTO su punto 04 ("what it has not
-       touched: this page drawings"): los diagramas de tiza de esta pagina los
-       dibujo la IA, asi que ese punto era falso. Habria sido una sobreatribucion
-       nueva, justo el error que memoria/no-atribuir-trabajo-ia-cv.md prohibe. */
-    aiPoints: [
-      ["Design is the job of deciding, and the deciding is mine.",
-       "What a system is for, what it has to survive, which half of it carries the weight, and which idea gets cut. Nothing on this page got past that stage without me choosing it."],
-      ["On the implementation side I use AI, and I mark it per bullet rather than per project.",
-       "A project is never all one thing, so that is the honest granularity. AI writes faster than I do on the things I already know how to write. What it does not do is decide what to write, and I read every line before it lands."],
-      ["The bar is whether I can defend it at a whiteboard months later, without notes.",
-       "Work that fails that bar is not here. I have pulled things off this page and out of my CV for exactly that reason, including some I liked."],
-      ["Where that line is easiest to check is Tatemis3D.",
-       "Every ruling in its design docs is dated and attributed, open questions are marked as undecided instead of quietly assumed, and a superseded rule records what it replaced and when. The decisions are auditable, not just claimed."]
-    ],
+    /* v5.1: la banda pasa a dos carriles. Mismo contenido que los 4 puntos de
+       antes, sin el párrafo: lo mío / dónde ayuda / la vara / dónde comprobarlo. */
+    aiMineT: "Mine, always",
+    aiMine: ["what a system is for", "what it has to survive", "which half carries the weight", "which idea gets cut", "every design call on this page"],
+    aiHelpT: "Where AI helps",
+    aiHelp: ["drafting a design doc from decisions I already made", "writing code I already know how to write, faster", "translating my docs into English"],
+    aiBetween: "I read every line before it lands",
+    aiBar: "If I can’t defend it at a whiteboard months later, without notes, it isn’t on this page.",
+    aiBarSub: "I have pulled things off this page and out of my CV for exactly that reason, including some I liked.",
+    aiCheck: "Where it is easiest to check: Tatemis3D →",
+    timelineWhy: "the bars overlap because the work did",
+    tlStudios: "Studios", tlTraining: "Training", tlNow: "today",
 
     tProject: "PROJECT", tTool: "TOOL", tSystem: "SYSTEM", tPrototype: "PROTOTYPE",
     rOrg: "ORG", rDates: "DATES", rRole: "ROLE", rStack: "STACK", rTeam: "TEAM",
@@ -1546,8 +1696,8 @@ const COPY = {
     watch: "WATCH", inspect: "INSPECT", playHint: "CLICK TO PLAY", close: "Close",
 
     /* v4 «La pizarra»: pies de figura, la anotación del cierre y el sello. */
-    capCover: "Cover", capVideo: "Cover · gameplay video on click",
-    capTrailer: "Cover · trailer on click",
+    capCover: "Cover", capVideo: "Gameplay · the full video is inside",
+    capTrailer: "Trailer · the full trailer is inside",
     contactHand: ["Contact", "same-day reply"],
     contactHead: "Contact · Lima, Perú",
     contactBody: "Technical designer who programs. I specify combat, progression and the systems underneath, then build the prototype that proves the design holds. Unity 6, C#.",
@@ -1562,11 +1712,29 @@ const COPY = {
        español, y traducirlo lo alejaria del titular de LinkedIn. */
     eyebrow: "DISEÑADOR TÉCNICO Y UNITY DEVELOPER · C#",
     claim: "Decido cómo debe funcionar un sistema y después construyo el prototipo que lo demuestra.",
-    claimSub: "Cada decisión en los documentos de diseño de ese prototipo va fechada y firmada tal como se tomó, incluidas las que después deshice. Puedes leer cómo razono antes de decidir si me contratas.",
     /* v4.1: ver la nota en el bloque EN. pillars/diffTitle/diffBody borrados. */
-    /* Ver la nota del bloque EN: son 8, y NOTE_STYLE va emparejado por indice. */
     notes: ["3 años en videojuegos", "carrera en game design", "9 proyectos", "Unity · C#", "Perú · UTC-5", "inglés avanzado", "solape total con EE.UU.", "disponible"],
-    notesAside: ["", "", "", "", "", "fluido", "", ""],
+    pickQ: "buscas…",
+    tabs: { td: "Technical Designer", ud: "Unity Developer" },
+    pickAria: "Mostrar proyectos para",
+    profile: {
+      td: { why: "lo que decido: sistemas, combate y progresión",
+            hint: "Cinco proyectos elegidos para puestos de diseño. Comparte esta vista con ?r=td" },
+      ud: { why: "lo que construyo: gameplay, UI y tooling en C#",
+            hint: "Cinco proyectos elegidos para puestos de Unity. Comparte esta vista con ?r=ud" }
+    },
+    reelHead: "Reel · 2026", reelPause: "Pausa", reelPlay: "Reproducir",
+    reelAria: "Reel de gameplay, sin sonido",
+    reelCap: "Fig. 00 · Tatemis3D, Prismonaut, Unseasoned, Don’t Chicken Out!, Hell Is Mine, prototipo de momentum de Prismonaut, Crust and Conflict, Treasure Mines",
+    secRecog: "Reconocimiento", recogWhy: "no solo lo digo yo",
+    archTitle: "También en la pizarra",
+    archSub: "Todo lo demás, herramientas y prototipos incluidos. Al abrirlo, el mismo detalle.",
+    howItWorks: "Cómo funciona", designDocs: "Documentos de diseño", codeTitle: "Código",
+    docPdf: "PDF · se abre en otra pestaña", aiUseLabel: "Cómo usé IA aquí:",
+    stripVideo: "Video", stripShot: "Captura",
+    disc: { all: "Todo", design: "Diseño", code: "Programación", impl: "Implementación", techart: "Arte técnico",
+            vfx: "VFX", tools: "Herramientas", proto: "Prototipos" },
+    filterAria: "Filtrar el archivo",
     ctaEmail: "ESCRÍBEME", ctaCv: "DESCARGAR CV", openToWork: "DISPONIBLE · UTC-5",
     cvDesign: "CV · DISEÑADOR TÉCNICO", cvDev: "CV · UNITY DEVELOPER",
     cvLabel: "CV",
@@ -1587,19 +1755,16 @@ const COPY = {
 
     /* v4.1: ver la nota del bloque EN. aiToggle/aiHelp/aiCount borradas. */
     aiLabel: "Cómo trabajo con IA",
-    aiNote: "Marcado: yo lo decidí y lo dirigí, y usé IA como apoyo para implementarlo.",
-    aiTag: "CON IA",
-    /* v4.1: ver la nota del bloque EN. */
-    aiPoints: [
-      ["Diseñar es decidir, y las decisiones son mías.",
-       "Para qué existe un sistema, qué tiene que aguantar, qué mitad carga el peso y qué idea se corta. Nada de lo que hay en esta página pasó esa etapa sin que yo lo eligiera."],
-      ["En la implementación uso IA, y la marco por punto y no por proyecto.",
-       "Un proyecto nunca es una sola cosa, así que esa es la granularidad honesta. La IA escribe más rápido que yo lo que ya sé escribir. Lo que no hace es decidir qué escribir, y leo cada línea antes de que entre."],
-      ["La vara es si lo puedo defender en pizarra meses después y sin apuntes.",
-       "Lo que no pasa esa vara no está acá. He sacado cosas de esta página y de mi CV por exactamente eso, incluidas algunas que me gustaban."],
-      ["Donde esa línea es más fácil de comprobar es en Tatemis3D.",
-       "Cada decisión en sus documentos de diseño va fechada y atribuida, las preguntas abiertas están marcadas como no dictadas en vez de asumirse en silencio, y una regla derogada registra qué reemplazó y cuándo. Las decisiones se pueden auditar, no solo afirmar."]
-    ],
+    aiMineT: "Mío, siempre",
+    aiMine: ["para qué existe un sistema", "qué tiene que aguantar", "qué mitad carga el peso", "qué idea se corta", "cada decisión de diseño de esta página"],
+    aiHelpT: "Donde ayuda la IA",
+    aiHelp: ["redactar un documento de diseño a partir de decisiones que ya tomé", "escribir más rápido código que ya sé escribir", "traducir mis documentos al inglés"],
+    aiBetween: "leo cada línea antes de que entre",
+    aiBar: "Si no lo puedo defender en pizarra meses después y sin apuntes, no está en esta página.",
+    aiBarSub: "He sacado cosas de esta página y de mi CV por exactamente eso, incluidas algunas que me gustaban.",
+    aiCheck: "Donde es más fácil comprobarlo: Tatemis3D →",
+    timelineWhy: "las barras se pisan porque el trabajo también",
+    tlStudios: "Estudios", tlTraining: "Formación", tlNow: "hoy",
 
     tProject: "PROYECTO", tTool: "HERRAMIENTA", tSystem: "SISTEMA", tPrototype: "PROTOTIPO",
     rOrg: "ORG", rDates: "FECHAS", rRole: "ROL", rStack: "STACK", rTeam: "EQUIPO",
@@ -1608,8 +1773,8 @@ const COPY = {
     watch: "VER", inspect: "INSPECCIONAR", playHint: "CLIC PARA REPRODUCIR", close: "Cerrar",
 
     /* v4 «La pizarra»: pies de figura, la anotación del cierre y el sello. */
-    capCover: "Portada", capVideo: "Portada · video de gameplay al hacer clic",
-    capTrailer: "Portada · tráiler al hacer clic",
+    capCover: "Portada", capVideo: "Gameplay · el video completo está adentro",
+    capTrailer: "Tráiler · el tráiler completo está adentro",
     contactHand: ["Contacto", "respondo el mismo día"],
     contactHead: "Contacto · Lima, Perú",
     contactBody: "Diseñador técnico que programa. Especifico combate, progresión y los sistemas de abajo, y después construyo el prototipo que demuestra que el diseño aguanta. Unity 6, C#.",
@@ -1751,11 +1916,11 @@ const HANDS = {
        hoja sale firmada con el nombre de otra. Paso el 27-ago al subir Tatemis. */
     ["Tatemis3D",          { en: "solo · in progress",     es: "solo · en curso" }],
     ["Unseasoned",         { en: "9 days · 5 people",      es: "9 días · 5 personas" }],
-    ["Runies Daycare",     { en: "~118k LOC · 12 people",  es: "~118k LOC · 12 personas" }],
+    ["Runies Daycare",     { en: "on Google Play",         es: "en Google Play" }],
     ["Don't Chicken Out",  { en: "~70% of the code",       es: "~70% del código" }],
     ["Casino cabinets",    { en: "4 titles · 3 layouts",   es: "4 títulos · 3 disposiciones" }],
     ["Prismonaut",         { en: "founder · core of 6",    es: "fundador · núcleo de 6" }],
-    ["Crust and Conflict", { en: "Game Jam Plus 2023",     es: "Game Jam Plus 2023" }],
+    ["Crust and Conflict", { en: "Game Jam Plus",          es: "Game Jam Plus" }],
     ["Treasure Mines",     { en: "15-20 people",           es: "15-20 personas" }],
     ["Hell Is Mine",       { en: "final degree project",   es: "proyecto final de carrera" }]
   ],
@@ -1769,14 +1934,37 @@ const HANDS = {
     ["Ability system",     { en: "data, not code",         es: "data, no código" }],
     ["Combat lab",         { en: "52 of 52 cases",         es: "52 de 52 casos" }],
     ["Space Invaders-like",{ en: "Godot · 2 weeks",        es: "Godot · 2 semanas" }],
-    ["Fusion 2 sandbox",   { en: "a weekend, 2 clients",   es: "un fin de semana, 2 clientes" }]
+    ["Fusion 2 sandbox",   { en: "a weekend, 2 clients",   es: "un fin de semana, 2 clientes" }],
+    ["Prismonaut momentum",{ en: "my design, end to end",  es: "mi diseño, de punta a punta" }]
   ]
 };
 
 const PROJECTS = [
   {
+    id: "tatemis", disc: ["design","code","proto"],
     acc: "tatemis", diag: "tatemis-terrain", stack: "Unity 6 · URP", team: { en: "Solo", es: "Solo" },
     title: "Tatemis3D", org: { en: "Personal project", es: "Proyecto personal" }, tags: ["personal", "prototype"], youtubeId: "aeTJHzyon2k", ai: true,
+    /* v5: media propia. La portada y la galería salen de sus grabaciones; el
+       loop, de su video de YouTube. El diagrama pasa al bloque "How it works". */
+    cover: "assets/gallery/tatemis-01-tormenta-arena.jpg", loop: "assets/clips/tatemis.mp4",
+    gallery: [
+      { src: "assets/gallery/tatemis-01-tormenta-arena.jpg", cap: { en: "A provoked sandstorm over saturated earth", es: "Tormenta de arena provocada sobre tierra saturada" } },
+      { src: "assets/gallery/tatemis-02-golpe-hitstop.jpg", cap: { en: "A heavy hit: hitstop and damage number", es: "Golpe pesado: hitstop y número de daño" } },
+      { src: "assets/gallery/tatemis-03-explosion.jpg", cap: { en: "Area burst", es: "Explosión de área" } },
+      { src: "assets/gallery/tatemis-04-saturacion-agua.jpg", cap: { en: "Water saturation spreading around the enemies", es: "Saturación de agua alrededor de los enemigos" } },
+      { src: "assets/gallery/tatemis-05-terreno-fuego.jpg", cap: { en: "Fire terrain", es: "Terreno de fuego" } }
+    ],
+    /* Los dos puntos de la hoja grande: índices de bullets REALES, por perfil.
+       Se muestra la primera frase de cada uno. */
+    proof: { td: [1, 6], ud: [4, 5] },
+    docs: [
+      { url: "docs/Tatemis3D-GDD.pdf", label: { en: "Game design document", es: "Documento de diseño (GDD)" },
+        sub: { en: "Pillars, combat, the six elements, terrain and the roster", es: "Pilares, combate, los seis elementos, terreno y roster · en inglés" } },
+      { url: "docs/Tatemis3D-Elemental-Reactions.pdf", label: { en: "Elemental reactions", es: "Reacciones elementales" },
+        sub: { en: "How two elements combine, and why the table stays six by six", es: "Cómo se combinan dos elementos, y por qué la tabla sigue en seis por seis · en inglés" } }
+    ],
+    aiUse: { en: "to draft the design docs from my own decisions and to speed up writing the code. The design calls, and what each system has to do, are mine.",
+             es: "para redactar los documentos de diseño a partir de mis decisiones y para acelerar la escritura del código. Las decisiones de diseño, y lo que cada sistema tiene que hacer, son mías." },
     roleTags: { en: ["Solo","Programmer","Designer"], es: ["Solo","Programador","Diseñador"] },
     dates: { en: "Jul 2026 – Present", es: "Jul 2026 – Presente" },
     role: { en: "Solo programmer and designer", es: "Programador y diseñador solo" },
@@ -1790,7 +1978,7 @@ const PROJECTS = [
         "The design and the direction are entirely mine, with no assistance of any kind: the creature roster, the elemental type chart, how a fight should feel, and which mechanic earns its place and which one gets cut. The game exists because I wanted to build the monster battler the Pokémon games never made, so every design call in it is a call I made and can argue.",
         "The decision I would defend first: six elements reacting with each other, plus terrain, plus status effects, is a combinatorial explosion nobody can balance and nobody can teach. Two rules kill it. Each element carries a single verb instead of a list of effects, and when two elements meet, the dominant one supplies the verb while the other supplies only the material. The matrix stays six by six no matter how much content I add, and a player can predict a reaction they have never seen without opening a wiki.",
         "The roster is five archetypes whose counters close in a pentagon, and each one is defined by three things: how it wins, how it is beaten, and a generating question that decides whether a raw creature idea belongs in it or not. I validated the framework against an existing class taxonomy before committing to it, which costs an afternoon and is far cheaper than finding the hole after forty creatures are designed.",
-        "Every ruling in the design docs is dated and attributed. Ratified rules carry the date they were ratified, open questions are marked as undecided instead of quietly assumed, and a superseded rule records what it replaced and when. It is the habit that lets me answer why a rule exists months later, and it lets a rule be reversed without unpicking everything built on top of it.",
+        "Every ruling in the project's design log is dated and attributed. Ratified rules carry the date they were ratified, open questions are marked as undecided instead of quietly assumed, and a superseded rule records what it replaced and when. It is the habit that lets me answer why a rule exists months later, and it lets a rule be reversed without unpicking everything built on top of it.",
         { t: "Composable ability system so that a creature is data, not code: I designed abilities as lists of small reusable effects authored on ScriptableObjects. I designed it to survive design churn, and it did. The design kept moving while I built it, and the system absorbed every change instead of being rewritten.", ai: true },
         { t: "Decided to write the camera rig from scratch rather than use Cinemachine. The game needs three dynamic camera states with genuinely different behavior, plus per-creature variations, and I was not willing to let a package decide how a mechanic feels.", ai: true },
         { t: "Rebuilt the elemental terrain system after a playtest: reacting on every impact produced around 40 small events per fight, which read as noise instead of as events. I changed it so terrain accumulates saturation and detonates as a chained wave the player aims and times, so the same damage lands as roughly 6 events that matter.", ai: true },
@@ -1800,7 +1988,7 @@ const PROJECTS = [
         "El diseño y la dirección son enteramente míos, sin asistencia de ningún tipo: el roster de criaturas, la tabla de tipos elementales, cómo debe sentirse una pelea, y qué mecánica se gana su lugar y cuál se corta. El juego existe porque quise construir el juego de combate de monstruos que los Pokémon nunca hicieron, así que cada decisión de diseño ahí es una decisión mía y la puedo defender.",
         "La decisión que defendería primero: seis elementos reaccionando entre sí, más el terreno, más los estados alterados, es una explosión combinatoria que nadie puede balancear y nadie puede enseñar. Dos reglas la matan. Cada elemento carga un solo verbo en vez de una lista de efectos, y cuando dos elementos se encuentran, el dominante pone el verbo y el otro pone solo la materia. La matriz se queda en seis por seis por más contenido que agregue, y un jugador puede predecir una reacción que nunca vio sin abrir una wiki.",
         "El roster son cinco arquetipos cuyos counters cierran en un pentágono, y cada uno se define por tres cosas: cómo gana, cómo se le gana, y una pregunta generadora que decide si una idea cruda de criatura pertenece ahí o no. Validé el marco contra una taxonomía de clases existente antes de comprometerme con él, que cuesta una tarde y sale mucho más barato que encontrar el hueco cuando ya hay cuarenta criaturas diseñadas.",
-        "Cada decisión en los documentos de diseño va fechada y atribuida. Las reglas ratificadas llevan la fecha en que se ratificaron, las preguntas abiertas se marcan como no dictadas en vez de asumirse en silencio, y una regla derogada registra qué reemplazó y cuándo. Es el hábito que me deja responder meses después por qué existe una regla, y que deja revertir una sin descoser todo lo que se construyó encima.",
+        "Cada decisión en el registro de diseño del proyecto va fechada y atribuida. Las reglas ratificadas llevan la fecha en que se ratificaron, las preguntas abiertas se marcan como no dictadas en vez de asumirse en silencio, y una regla derogada registra qué reemplazó y cuándo. Es el hábito que me deja responder meses después por qué existe una regla, y que deja revertir una sin descoser todo lo que se construyó encima.",
         { t: "Sistema de habilidades componible para que una criatura sea datos, no código: diseñé las habilidades como listas de efectos pequeños y reutilizables autorizados en ScriptableObjects. Lo diseñé para sobrevivir al cambio de diseño, y lo hizo. El diseño siguió moviéndose mientras lo construía, y el sistema absorbió cada cambio en lugar de ser reescrito.", ai: true },
         { t: "Decidí escribir el rig de cámara desde cero en vez de usar Cinemachine. El juego necesita tres estados de cámara dinámicos con comportamiento genuinamente distinto, más variaciones por criatura, y no estaba dispuesto a dejar que un paquete decidiera cómo se siente una mecánica.", ai: true },
         { t: "Reconstruí el sistema de terreno elemental después de un playtest: reaccionar en cada impacto producía unos 40 eventos pequeños por pelea, que se leían como ruido en vez de como eventos. Lo cambié para que el terreno acumule saturación y detone como una onda encadenada que el jugador apunta y cronometra, así que el mismo daño llega como unos 6 eventos que importan.", ai: true },
@@ -1814,11 +2002,21 @@ const PROJECTS = [
      suya, fechada y firmada en sus docs/. Lo que sigue debajo se lee como
      respaldo de eso, no al reves. */
   {
+    id: "unseasoned", disc: ["design","code","impl"],
     acc: "unseasoned", diag: null, stack: "Unity 6 · FMOD · WebGL", team: { en: "5 people", es: "5 personas" },
     /* La tarjeta usa la portada del juego (cover) y no la miniatura de YouTube, pero el
        chip "Watch" y el video del modal salen del youtubeId igual. */
-    title: "Unseasoned", org: { en: "Takernal Game Jam 2026", es: "Takernal Game Jam 2026" }, tags: ["team"],
+    title: "Unseasoned", org: { en: "Takernal Game Jam 2026", es: "Takernal Game Jam 2026" }, orgShort: "Takernal GJ", tags: ["team"],
     youtubeId: "FsBLrasEyio", cover: "assets/unseasoned-cover.png", image: "assets/unseasoned-cover.png", ai: true,
+    loop: "assets/clips/unseasoned.mp4",
+    award: { en: "Best Narrative", es: "Mejor narrativa" },
+    proof: { td: [0, 1], ud: [2, 3] },
+    docs: [
+      { url: "docs/Unseasoned-GDD.pdf", label: { en: "Game design document", es: "Documento de diseño (GDD)" },
+        sub: { en: "The game as shipped: pitch, pillars, the attention dialogue, the kitchen", es: "El juego tal como salió: pitch, pilares, el diálogo de atención, la cocina · en inglés" } }
+    ],
+    aiUse: { en: "to draft the design document from my own decisions and to speed up writing the code. The design and the narrative are mine.",
+             es: "para redactar el documento de diseño a partir de mis decisiones y para acelerar la escritura del código. El diseño y la narrativa son míos." },
     roleTags: { en: ["Sole Programmer","Co-Director","Narrative Design"], es: ["Único programador","Co-director","Diseño narrativo"] },
     dates: { en: "Aug 2026 · 9 days", es: "Ago 2026 · 9 días" },
     role: { en: "Co-director, sole programmer, and gameplay and narrative designer", es: "Co-director, único programador, y diseñador de gameplay y narrativa" },
@@ -1849,12 +2047,16 @@ const PROJECTS = [
     ]
   },
   {
+    id: "runies", disc: ["design","code","impl"],
     acc: "runies", diag: "nda-redacted", stack: "Unity 6", team: { en: "12 people", es: "12 personas" },
     /* 12-sep-2026: el juego YA ESTA en Google Play (ficha de "DOB Development"),
        asi que el titulo y la ficha son publicos por si solos y el enlace va abajo.
        nda: true sigue: capturas y video aun no se han subido (DOB los autorizo
        por correo el 19-ago con condicion de marca de agua). */
     title: "Runies Daycare: Merge & Pets", org: "DOB Studios", tags: ["professional"], youtubeId: null, nda: true, ai: true,
+    proof: { td: [0, 1], ud: [1, 2] },
+    aiUse: { en: "to speed up writing the node-graph editor's code. The diagnosis, the block design and the hand-built UI are mine.",
+             es: "para acelerar la escritura del código del editor de node-graph. El diagnóstico, el diseño de los bloques y la UI hecha a mano son míos." },
     roleTags: { en: ["Game Programmer","Systems design","UI architecture"], es: ["Game Programmer","Diseño de sistemas","Arquitectura de UI"] },
     dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
     role: { en: "Game Programmer · tutorial flow design and UI architecture", es: "Game Programmer · diseño del flujo de tutorial y arquitectura de UI" },
@@ -1886,8 +2088,20 @@ const PROJECTS = [
     ]
   },
   {
+    id: "dco", disc: ["design","code","impl"],
     acc: "dco", diag: null, stack: "Unity 6 · URP · FMOD", team: { en: "7 people", es: "7 personas" },
     title: "Don't Chicken Out!", org: "Raymi Games", tags: ["team"], youtubeId: "U-nvo6fbJK0",
+    loop: "assets/clips/dco.mp4", capKind: "trailer",
+    /* Fotogramas del tráiler (con el OK de Raymi Games, 13-oct), en tramos sin
+       placas de texto. Se reemplazan cuando Andrés grabe las capturas propias. */
+    gallery: [
+      { src: "assets/gallery/dco-01-torre.jpg", cap: { en: "Four players building the tower as the camera climbs", es: "Cuatro jugadores armando la torre mientras sube la cámara" } },
+      { src: "assets/gallery/dco-02-rueda.jpg", cap: { en: "A round in progress", es: "Una ronda en curso" } },
+      { src: "assets/gallery/dco-03-cuatro.jpg", cap: { en: "Climbing while the camera rises", es: "Trepando mientras sube la cámara" } },
+      { src: "assets/gallery/dco-04-bloques.jpg", cap: { en: "Blocks falling into place", es: "Bloques cayendo en su lugar" } }
+    ],
+    award: { en: "Featured by Global Game Jam", es: "Destacado por Global Game Jam" },
+    proof: { td: [0, 1], ud: [0, 1] },
     roleTags: { en: ["Gameplay Programmer","Lead Programmer","Design support"], es: ["Gameplay Programmer","Programador principal","Apoyo en diseño"] },
     dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
     role: { en: "Gameplay Programmer · lead programmer on the project", es: "Gameplay Programmer · programador principal del proyecto" },
@@ -1915,8 +2129,10 @@ const PROJECTS = [
     links: [{ url: "https://raymi-games.itch.io/dont-chicken-out", label: { en: "Play on itch.io", es: "Jugar en itch.io" } }]
   },
   {
+    id: "casino", disc: ["code","impl","techart"],
     acc: "casino", diag: "casino-cabinets", stack: "Unity", team: { en: "30+ people", es: "30+ personas" },
     title: "Casino cabinet games", org: { en: "GDP Studios · published under GMW", es: "GDP Studios · publicado bajo GMW" }, tags: ["professional"], youtubeId: null,
+    proof: { td: [0, 1], ud: [0, 1] },
     roleTags: { en: ["Unity Developer","Technical Art","Optimization"], es: ["Desarrollador Unity","Arte técnico","Optimización"] },
     dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
     role: { en: "Unity developer · reskin pipeline and optimization", es: "Desarrollador Unity · pipeline de reskin y optimización" },
@@ -1942,8 +2158,12 @@ const PROJECTS = [
     links: []
   },
   {
+    id: "prismonaut", disc: ["design","code","techart"],
     acc: "prismonaut", diag: null, stack: "Unity", team: { en: "10, core of 6", es: "10, núcleo de 6" },
     title: "Prismonaut", org: "Naked Dog", tags: ["team"], youtubeId: "dtM9pDWQxzI",
+    loop: "assets/clips/prismonaut.mp4",
+    award: { en: "GJ+ 24/25 semifinalist", es: "Semifinalista GJ+ 24/25" },
+    proof: { td: [0, 2], ud: [0, 1] },
     roleTags: { en: ["Founder","Lead Tech Art","Design"], es: ["Fundador","Lead Tech Art","Diseño"] },
     dates: { en: "Dec 2024 – May 2026 · on pause", es: "Dic 2024 – May 2026 · en pausa" },
     role: { en: "Founder · designer, environment artist and lead technical artist", es: "Fundador · diseñador, artista de entornos y lead technical artist" },
@@ -1969,8 +2189,11 @@ const PROJECTS = [
     links: [{ url: "https://naked-dog.itch.io/prismonaut", label: { en: "Play on itch.io", es: "Jugar en itch.io" } }]
   },
   {
+    id: "crust", disc: ["design","code","techart"],
     acc: "crust", diag: null, stack: "Unity", team: { en: "6 people", es: "6 personas" },
     title: "Crust and Conflict", org: "Game Jam Plus 2023", tags: ["team"], youtubeId: "x62QN_tkGs0",
+    loop: "assets/clips/crust.mp4",
+    proof: { td: [0, 1], ud: [1, 0] },
     roleTags: { en: ["Game Design","Technical Art"], es: ["Diseño","Arte técnico"] },
     dates: { en: "Oct 2023 · about a month", es: "Oct 2023 · como un mes" },
     role: { en: "Game designer and technical artist", es: "Diseñador de juego y artista técnico" },
@@ -1997,8 +2220,10 @@ const PROJECTS = [
     ]
   },
   {
+    id: "treasure", disc: ["techart","vfx"],
     acc: "treasure", diag: null, stack: "Cocos Creator", team: { en: "15-20 people", es: "15-20 personas" },
     title: "Treasure Mines · Gin Rummy Super", org: "Zarzilla Games", tags: ["professional"], youtubeId: "bcCz_zDc9t8",
+    loop: "assets/clips/treasure.mp4", capKind: "trailer",
     roleTags: { en: ["Technical Artist","Visual Logic"], es: ["Artista técnico","Lógica visual"] },
     dates: { en: "2023 – 2025", es: "2023 – 2025" },
     role: { en: "Technical artist · entire visual logic of the minigame", es: "Artista técnico · toda la lógica visual del minijuego" },
@@ -2030,8 +2255,10 @@ const PROJECTS = [
     ]
   },
   {
+    id: "hell", disc: ["design","techart","vfx"],
     acc: "hell", diag: null, stack: "Unity", team: { en: "7 people", es: "7 personas" },
     title: "Hell Is Mine", org: { en: "Final degree project · Toulouse Lautrec", es: "Proyecto final de carrera · Toulouse Lautrec" }, tags: ["team"], youtubeId: "9WE1rslrnqE",
+    loop: "assets/clips/hell.mp4",
     roleTags: { en: ["Game Design","Environment Art","Technical Art"], es: ["Diseño","Arte de entornos","Arte técnico"] },
     dates: { en: "Mar – Dec 2022", es: "Mar – Dic 2022" },
     role: { en: "Game design, environment art and technical art", es: "Diseño de juego, arte de entornos y arte técnico" },
@@ -2056,11 +2283,16 @@ const PROJECTS = [
 
 const TOOLS = [
   {
+    id: "nodegraph", disc: ["code","tools"],
     acc: "runies", diag: "node-graph", type: "tool",
     title: { en: "Node-graph flow editor for Unity", es: "Editor de flujos node-graph para Unity" },
     kind: { en: "Editor tooling", es: "Herramienta de editor" },
-    meta: "DOB Studios · ~2,000 LOC",
+    /* Sin conteo de líneas (13-oct-2026): el editor es diseño y arquitectura,
+       no volumen de código escrito a mano. Mismo formato que las demás. */
+    meta: "DOB Studios · Unity 6",
     youtubeId: null, ai: true,
+    aiUse: { en: "to speed up writing the editor's code. The block design it implements, and how the team authors with it, are mine.",
+             es: "para acelerar la escritura del código del editor. El diseño de bloques que implementa, y cómo lo usa el equipo para autorizar, son míos." },
     roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
     body: {
       en: "An in-Unity node-graph editor (EditorWindow + GraphView / UIElements) with polymorphic actions via [SerializeReference]. Three of us authored with it, a programmer, a designer and me, and every standalone mechanic tutorial in the game is built in it. I then forked a variation for story chapters (dialogue events plus missions), so shipping a new feature or chapter means adding steps instead of writing a new flow.",
@@ -2069,10 +2301,13 @@ const TOOLS = [
     links: []
   },
   {
+    id: "abilities", disc: ["code"],
     acc: "tatemis", diag: "ability-system", type: "system",
     title: { en: "Composable ability system", es: "Sistema de habilidades componible" },
     kind: { en: "Data-driven architecture", es: "Arquitectura data-driven" },
     meta: "Tatemis3D · Unity 6", youtubeId: null, ai: true,
+    aiUse: { en: "to speed up writing the code. The composition model, and what it had to survive, are mine.",
+             es: "para acelerar la escritura del código. El modelo de composición, y lo que tenía que aguantar, son míos." },
     roleTags: { en: ["Systems Programmer","Architecture"], es: ["Programador de sistemas","Arquitectura"] },
     body: {
       en: "Abilities are lists of small reusable effects authored on ScriptableObjects, so a creature is data, not code. I designed it to survive design churn, and it did: the design kept moving while I built it, and the system absorbed every change instead of being rewritten.",
@@ -2081,10 +2316,13 @@ const TOOLS = [
     links: [{ url: "https://github.com/Arzpal/Project_Tatemis3D", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
   },
   {
+    id: "combatlab", disc: ["code","tools"],
     acc: "tatemis", diag: "type-chart", type: "tool",
     title: { en: "Combat lab tooling and type-chart validator", es: "Tooling del laboratorio de combate y validador de tabla de tipos" },
     kind: { en: "Editor tooling", es: "Herramienta de editor" },
     meta: "Tatemis3D · Unity 6", youtubeId: null, ai: true,
+    aiUse: { en: "to speed up writing the tooling. What the validator checks, case by case, comes from my type chart.",
+             es: "para acelerar la escritura del tooling. Lo que el validador revisa, caso por caso, sale de mi tabla de tipos." },
     roleTags: { en: ["Tools Programmer"], es: ["Programador de herramientas"] },
     body: {
       en: "Scene builders for the combat lab, content generators, a custom SubclassSelector property drawer, and a validator that checks the elemental type chart (52 of 52 cases).",
@@ -2093,6 +2331,7 @@ const TOOLS = [
     links: []
   },
   {
+    id: "space", disc: ["code","proto"],
     acc: "space", diag: null, type: "prototype",
     title: "Space Invaders-like",
     kind: { en: "Prototype · engine evaluation", es: "Prototipo · evaluación de motor" },
@@ -2108,47 +2347,80 @@ const TOOLS = [
     ]
   },
   {
+    id: "fusion", disc: ["code","proto"],
     acc: "photon", diag: "fusion-sandbox", type: "prototype",
     title: "Photon Fusion 2 + PlayFab sandbox",
     kind: { en: "Prototype · networking", es: "Prototipo · networking" },
     meta: { en: "Unity · Jul 2026", es: "Unity · Jul 2026" }, youtubeId: null, ai: true,
+    aiUse: { en: "to speed up writing the code. It was a learning exercise, and what I was there to learn was the networking model.",
+             es: "para acelerar la escritura del código. Era un ejercicio de aprendizaje, y lo que fui a aprender era el modelo de red." },
     roleTags: { en: ["Learning exercise"], es: ["Ejercicio de aprendizaje"] },
     body: {
       en: "A small sandbox built over a weekend to get hands-on with networked state authority in Fusion 2 Shared Mode and PlayFab-backed player data. Networked spawn and movement, verified with an editor client and a standalone build in the same room. Not production experience, just the shortest path from reading about it to running it.",
       es: "Un sandbox pequeño hecho en un fin de semana para meter mano en autoridad de estado en red con Fusion 2 Shared Mode y datos de jugador respaldados por PlayFab. Spawn y movimiento en red, verificados con un cliente del editor y una build standalone en la misma sala. No es experiencia de producción, solo el camino más corto entre leer sobre eso y hacerlo correr."
     },
     links: [{ url: "https://github.com/Arzpal/SandboxPlaytest", label: { en: "GitHub repo", es: "Repo en GitHub" } }]
+  },
+  /* v5 (14-oct-2026): tarjeta propia, decidido por Andrés el 13-oct. El diseño
+     nuevo y el GDD son enteramente suyos ("todo el diseño nuevo y el prototipo
+     nuevo es de mi autoría"); el código del prototipo lo escribió la IA a partir
+     de ese diseño (30 de 32 commits), y eso lo dice aiUse. El repo
+     (Prismonaut-4.0) es privado: sin enlace de código. */
+  {
+    id: "momentum", disc: ["design","proto"],
+    acc: "prismonaut", diag: null, type: "prototype",
+    title: { en: "Prismonaut momentum redesign", es: "Rediseño de momentum de Prismonaut" },
+    kind: { en: "Prototype · design document", es: "Prototipo · documento de diseño" },
+    meta: { en: "Naked Dog · Unity 6 · Sep–Oct 2026", es: "Naked Dog · Unity 6 · set–oct 2026" },
+    youtubeId: "vsxVPkMvJQk", loop: "assets/clips/momentum.mp4", ai: true,
+    roleTags: { en: ["Designer","Prototype direction"], es: ["Diseñador","Dirección del prototipo"] },
+    body: {
+      en: "A redesign of Prismonaut as a momentum platformer with a semi-linear metroidvania structure. Speed is the central resource: it builds up, is conserved, multiplies or is lost depending on how you chain the three forms with the geometry, and it opens walls, decides routes and scales the damage you take. I wrote the design document on my own, end to end, and directed the prototype that tests the movement: bounces, the hook and speed carried from one form to the next.",
+      es: "Un rediseño de Prismonaut como plataformas de momentum con estructura de metroidvania semilineal. La velocidad es el recurso central: se acumula, se conserva, se multiplica o se pierde según cómo encadenes las tres formas con la geometría, y abre paredes, decide rutas y escala el daño que recibes. Escribí el documento de diseño yo solo, de punta a punta, y dirigí el prototipo que prueba el movimiento: rebotes, el gancho y la velocidad que pasa de una forma a la siguiente."
+    },
+    docs: [
+      { url: "docs/Prismonaut-GDD.pdf", label: { en: "Game design document", es: "Documento de diseño (GDD)" },
+        sub: { en: "Premise, the speed core, the forms, progression and bases", es: "Premisa, el núcleo de velocidad, las formas, progresión y bases · en inglés" } }
+    ],
+    aiUse: { en: "to write the prototype's code from my design, and to translate the design document into English. The document, and every design call in it, are mine.",
+             es: "para escribir el código del prototipo a partir de mi diseño, y para traducir el documento de diseño al inglés. El documento, y cada decisión de diseño en él, son míos." },
+    links: [{ url: "https://www.youtube.com/watch?v=vsxVPkMvJQk", label: { en: "Prototype video", es: "Video del prototipo" } }]
   }
 ];
 
 const TIMELINE = [
   {
-    org: "DOB Studios", dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
+    org: "DOB Studios", start: "2026-03", end: "2026-08", open: "runies",
+    dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
     kind: { en: "Studio", es: "Estudio" },
     role: { en: "Game Programmer · tutorial flow design and UI architecture", es: "Game Programmer · diseño del flujo de tutorial y arquitectura de UI" },
     line: { en: "Live-service mobile game in Unity 6, 12-person team, around 118k lines of code. I diagnosed why the first vertical slice kept breaking, redesigned the tutorial flow around that diagnosis, and built the UI architecture every screen routes through.", es: "Juego móvil live-service en Unity 6, equipo de 12 personas, cerca de 118k líneas de código. Diagnostiqué por qué se rompía el primer vertical slice, rediseñé el flujo de tutorial a partir de ese diagnóstico, y construí la arquitectura de UI por la que pasa cada pantalla." }
   },
   {
-    org: "Raymi Games", dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
+    org: "Raymi Games", start: "2025-09", end: "now", open: "dco",
+    dates: { en: "Sep 2025 – Present", es: "Sep 2025 – Presente" },
     kind: { en: "Studio", es: "Estudio" },
     role: { en: "Gameplay Programmer · lead programmer on the project", es: "Gameplay Programmer · programador principal del proyecto" },
     line: { en: "Lead programmer on Don't Chicken Out!, with roughly 70% of the game's code, and support on design.", es: "Programador principal en Don't Chicken Out!, con cerca del 70% del código del juego, y apoyo en diseño." },
     current: true
   },
   {
-    org: "GDP Studios", dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
+    org: "GDP Studios", start: "2025-07", end: "2026-03", open: "casino",
+    dates: { en: "Jul 2025 – Mar 2026", es: "Jul 2025 – Mar 2026" },
     kind: { en: "Studio · published under GMW", es: "Estudio · publicado bajo GMW" },
     role: { en: "Unity developer · reskin pipeline and optimization", es: "Desarrollador Unity · pipeline de reskin y optimización" },
     line: { en: "Four Unity titles shipped onto physical casino cabinets, onto a codebase that already had to render across three cabinet models with completely different screen arrangements.", es: "Cuatro títulos en Unity publicados en cabinas físicas de casino, sobre un codebase que ya tenía que renderizar en tres modelos de cabina con arreglos de pantalla completamente distintos." }
   },
   {
-    org: "Naked Dog", dates: { en: "Dec 2024 – May 2026", es: "Dic 2024 – May 2026" },
+    org: "Naked Dog", start: "2024-12", end: "2026-05", open: "prismonaut",
+    dates: { en: "Dec 2024 – May 2026", es: "Dic 2024 – May 2026" },
     kind: { en: "Studio I founded", es: "Estudio que fundé" },
     role: { en: "Founder · designer, environment artist and lead technical artist", es: "Fundador · diseñador, artista de entornos y lead technical artist" },
     line: { en: "Founded the studio to build Prismonaut. Started at ten, settled into a core six, took it from prototype through Game Jam Plus incubation to a Steam build.", es: "Fundé el estudio para construir Prismonaut. Empezamos diez, nos asentamos en un core de seis, y lo llevamos de prototipo a la incubación de Game Jam Plus y a una build de Steam." }
   },
   {
-    org: "Zarzilla Games", dates: { en: "2023 – 2025", es: "2023 – 2025" },
+    org: "Zarzilla Games", start: "2023-01", end: "2025-06", fuzzy: "both", open: "treasure",
+    dates: { en: "2023 – 2025", es: "2023 – 2025" },
     kind: { en: "Studio", es: "Estudio" },
     role: { en: "Technical Artist → Lead Technical Artist → Studio Manager", es: "Technical Artist → Lead Technical Artist → Studio Manager" },
     line: { en: "Came in as a technical artist, was promoted to lead, and about a year later to Studio Manager, running around 15 people across five areas: technical art, development, UI and raster art, animation and concept art.", es: "Entré como artista técnico, fui promovido a lead, y como un año después a Studio Manager, dirigiendo unas 15 personas en cinco áreas: arte técnico, desarrollo, UI y arte raster, animación y concept art." }
@@ -2157,14 +2429,14 @@ const TIMELINE = [
 
 const EDUCATION = [
   {
-    school: "Toulouse Lautrec",
+    school: "Toulouse Lautrec", start: "2022-01", end: "2023-06", fuzzy: "both", open: "hell", acc: "hell",
     dates: { en: "Graduated 2023", es: "Egresado 2023" },
     program: { en: "Game Design & Digital Entertainment · final degree project: Hell Is Mine", es: "Diseño de Videojuegos y Entretenimiento Digital · proyecto final: Hell Is Mine" },
     line: { en: "Hell Is Mine was the final degree project: a top-down action game in a stylized underworld, where I owned game design, environment art and technical art, including the shader for the glowing lava that lights most of the world.", es: "Hell Is Mine fue el proyecto final de carrera: un juego de acción top-down en un inframundo estilizado, donde fui dueño del diseño de juego, el arte de entornos y el arte técnico, incluyendo el shader de la lava brillante que ilumina casi todo el mundo." },
     note: { en: "Pronabec scholarship, 2021 · a year and a half of the degree", es: "Becado Pronabec 2021 · un año y medio de la carrera" }
   },
   {
-    school: { en: "Game Jam Plus · incubation", es: "Game Jam Plus · incubación" },
+    school: { en: "Game Jam Plus · incubation", es: "Game Jam Plus · incubación" }, start: "2023-10", end: "2025-06", fuzzy: "end", open: "crust", acc: "crust",
     dates: { en: "2023 – 2025", es: "2023 – 2025" },
     program: { en: "Crust and Conflict (2023) and Prismonaut (incubation)", es: "Crust and Conflict (2023) y Prismonaut (incubación)" },
     line: { en: "Two projects taken to Game Jam Plus with a pitch and a playable build, and Prismonaut carried through the program's incubation stage on the way to a Steam build.", es: "Dos proyectos llevados a Game Jam Plus con pitch y build jugable, y Prismonaut llevado por la etapa de incubación del programa camino a una build de Steam." }
@@ -2175,16 +2447,14 @@ const EDUCATION = [
    va detrás porque a esta altura ya se ganó la lectura. */
 var SECTIONS = [
   { key: "projects", el: "sec-projects", label: "navProjects" },
-  { key: "tools",    el: "sec-tools",    label: "navTools" },
   { key: "timeline", el: "sec-timeline", label: "navTimeline" },
-  { key: "edu",      el: "sec-edu",      label: "navEdu" },
   { key: "contact",  el: "sec-contact",  label: "navContact" }
 ];
 
 /* ---------- fecha de actualizacion --------------------------------------- */
 /* Manual a proposito: si saliera del ultimo commit, cualquier cambio de CSS
    resetearia el reloj y nunca se veria vieja. Se actualiza al tocar contenido. */
-const LAST_UPDATE = "2026-10-13";
+const LAST_UPDATE = "2026-10-14";
 
 function lastUpdatedText(lang) {
   var p = LAST_UPDATE.split("-");
@@ -2198,7 +2468,8 @@ function lastUpdatedText(lang) {
 }
 
 /* ---------- estado -------------------------------------------------------- */
-var state = { lang: "en", active: "projects", open: null, showAI: true, playing: false };
+/* role: el perfil del selector (td | ud). media: qué pieza muestra el inspector. */
+var state = { lang: "en", active: "projects", open: null, playing: false, role: "td", media: 0, filter: "all" };
 /* Que tarjeta esta pintada ahora mismo en el DOM del inspector. Sirve para
    refrescar en sitio en vez de reconstruir, que mataria el iframe del video. */
 var modalShown = "";
@@ -2206,7 +2477,6 @@ var modalShown = "";
 try {
   var savedLang = localStorage.getItem("arzpal-lang");
   if (savedLang === "en" || savedLang === "es") state.lang = savedLang;
-  if (localStorage.getItem("arzpal-showai") === "0") state.showAI = false;
 } catch (err) {}
 
 /* ---------- utilidades ---------------------------------------------------- */
@@ -2230,29 +2500,39 @@ function firstSentence(s) {
   return m ? m[0].trim() : s;
 }
 
-function bulletList(raw) {
-  return (raw || [])
-    .map(function (b) { return typeof b === "string" ? { text: b, ai: false } : { text: b.t, ai: !!b.ai }; })
-    .filter(function (b) { return b.ai ? state.showAI : true; });
-}
-
-function allBullets(raw) {
-  return (raw || []).map(function (b) { return typeof b === "string" ? { ai: false } : { ai: !!b.ai }; });
-}
 
 function thumbUrl(item) {
   if (item.cover) return item.cover;
+  /* El póster del loop es un fotograma de juego en plena acción y a 16:9; la
+     miniatura de YouTube viene a 4:3 con franjas negras. */
+  if (item.loop) return item.loop.replace(/\.mp4$/, ".jpg");
   if (item.youtubeId) return "https://i.ytimg.com/vi/" + item.youtubeId + "/hqdefault.jpg";
   return null;
 }
 
 function bigUrl(item) {
   if (item.image) return item.image;
+  if (item.cover) return item.cover;
+  if (item.loop) return item.loop.replace(/\.mp4$/, ".jpg");
   if (item.youtubeId) return "https://i.ytimg.com/vi/" + item.youtubeId + "/maxresdefault.jpg";
   return null;
 }
 
 function cssUrl(u) { return "url(&#39;" + esc(u) + "&#39;)"; }
+
+/* Movimiento reducido: ningún video arranca solo, se queda el póster. */
+var REDUCED = false;
+try { REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (err) {}
+
+/* v5: las fichas se buscan por id, no por posición. FEAT y el archivo las
+   nombran así; data-g/data-i siguen existiendo porque el inspector y HANDS
+   trabajan por grupo e índice. */
+function findItem(id) {
+  for (var i = 0; i < PROJECTS.length; i++) if (PROJECTS[i].id === id) return { item: PROJECTS[i], g: "p", i: i };
+  for (var j = 0; j < TOOLS.length; j++) if (TOOLS[j].id === id) return { item: TOOLS[j], g: "t", i: j };
+  return null;
+}
+function figNumber(g, i) { return g === "t" ? PROJECTS.length + i + 1 : i + 1; }
 
 /* =========================================================================
    LA HOJA. Una sola función para proyectos y herramientas: la diferencia
@@ -2314,12 +2594,15 @@ function figSvg(key) {
   return h + '</svg>';
 }
 
-/* La figura de la hoja: la portada si existe, el hueco rayado si todavía no,
-   o el diagrama en tiza para lo que no tiene material que mostrar. */
-function figureFor(item, lang) {
+/* La figura de la hoja. v5: el MATERIAL manda (crítica del 13-oct, P1: en
+   Tatemis el diagrama le ganaba al video). Primero la portada o el póster del
+   loop; el diagrama en tiza solo para lo que no tiene nada que mostrar, porque
+   no hay material o porque hay NDA. Cuando hay las dos cosas, el diagrama se
+   muda al bloque "How it works" del inspector. */
+function figureFor(item) {
   var url = thumbUrl(item);
-  if (item.diag && DIAGRAMS[item.diag]) return figSvg(item.diag);
   if (url) return '<img class="figimg" src="' + esc(url) + '" alt="" loading="lazy" decoding="async">';
+  if (item.diag && DIAGRAMS[item.diag]) return figSvg(item.diag);
   /* Hueco honesto: dice qué archivo falta en vez de fingir que está. */
   return '<div class="figgap"><i></i><span>' + esc(coverPath(item)) + '</span></div>';
 }
@@ -2328,51 +2611,105 @@ function coverPath(item) {
   return "assets/" + (item.acc || "cover") + "-cover.png";
 }
 
-/* El pie de figura. Sale del diagrama cuando hay diagrama; si es portada, lo
-   que importa es qué pasa al hacer clic. */
-function figCaption(item, n, lang) {
-  var t = COPY[lang];
+function pad2(n) { return n < 10 ? "0" + n : String(n); }
+
+/* El pie de figura dice qué se está viendo y qué pasa al abrir la hoja. */
+function figCaption(item, n) {
+  var t = COPY[state.lang];
   var d = item.diag && DIAGRAMS[item.diag];
-  var body = d ? pick(d.cap)
-    : item.youtubeId ? (item.capKind === "trailer" ? t.capTrailer : t.capVideo)
-    : t.capCover;
-  return "Fig. " + (n < 10 ? "0" + n : n) + " — " + body;
+  var body = thumbUrl(item)
+    ? (item.loop || item.youtubeId ? (item.capKind === "trailer" ? t.capTrailer : t.capVideo) : t.capCover)
+    : d ? pick(d.cap) : t.capCover;
+  return "Fig. " + pad2(n) + " · " + body;
 }
 
-function cardHtml(item, group, index, opts) {
-  var t = COPY[state.lang];
-  var hand = (HANDS[group] || [])[index] || [pick(item.title), ""];
-  /* El sello de IA se marca aparte porque se pinta distinto: toma el color de
-     identidad de la tarjeta (.seal-ai). NDA y VER son estado y siguen en gris. */
-  var seals = [];
-  if (item.nda) seals.push({ txt: "NDA" });
-  if (item.ai) seals.push({ txt: t.aiTag, ai: true });
-  if (item.youtubeId) seals.push({ txt: t.watch });
+/* La pieza de la hoja: el loop si lo hay, la figura si no. La grande arranca
+   sola (data-auto, y solo mientras se ve); las chicas esperan al hover para no
+   bajar cinco videos de entrada. Con movimiento reducido, ninguna se mueve. */
+function cardMedia(item, big) {
+  if (!item.loop || REDUCED) return figureFor(item);
+  var poster = thumbUrl(item) || "";
+  return '<video class="figimg" src="' + esc(item.loop) + '" poster="' + esc(poster) + '"'
+    + (big ? ' data-auto preload="auto"' : ' data-hover preload="none"')
+    + ' muted loop playsinline aria-hidden="true"></video>';
+}
 
-  var h = '<button type="button" class="pin" style="' + accVars(item, opts.fig) + '"'
-        + ' data-g="' + group + '" data-i="' + index + '"'
-        + ' aria-label="' + esc(pick(item.title)) + ' — ' + esc(t.inspect) + '">';
+function bulletText(b) { return typeof b === "string" ? b : (b && b.t) || ""; }
+
+/* LA HOJA DESTACADA (v5). slot 0 es la grande; 1-4, el 2×2.
+   🔑 Ya no lleva sello de IA (13-oct): por tarjeta daba a entender que todo
+   estaba hecho con IA. Eso lo dice una nota en el inspector, solo donde aplica. */
+function cardHtml(f, slot, role) {
+  var item = f.item, t = COPY[state.lang], big = slot === 0, isTool = f.g === "t";
+  var hand = (HANDS[f.g] || [])[f.i] || [pick(item.title), ""];
+  var seals = [];
+  if (item.award) seals.push({ txt: pick(item.award), award: true });
+  if (item.nda) seals.push({ txt: "NDA" });
+  if (item.youtubeId) seals.push({ txt: t.watch });
+  /* orgShort: la cabecera de una chica del 2×2 mide ~230 px; el nombre largo
+     vive en el inspector. */
+  var head = isTool ? toolType(item) + " · " + pick(item.meta) : t.tProject + " · " + pick(item.orgShort || item.org);
+
+  var h = '<button type="button" class="pin f' + (slot + 1) + '" style="' + accVars(item, slot) + ';--k:' + slot + '"'
+        + ' data-g="' + f.g + '" data-i="' + f.i + '"'
+        + ' aria-label="' + esc(pick(item.title)) + ' · ' + esc(t.inspect) + '">';
   h += '<div class="ring" aria-hidden="true"><i class="rhalo"></i><i class="rline"></i></div>';
   h += '<div class="hand">' + esc(hand[0])
      + (hand[1] ? ' <span class="dashx">&#183; ' + esc(pick(hand[1])) + '</span>' : '') + '</div>';
-  h += '<div class="sheet">';
-  h += '<i class="tape t1"></i><i class="tape t2"></i>';
-  h += '<div class="chead"><span>' + esc(opts.type) + ' &#183; ' + esc(pick(opts.v1) || "—") + '</span>'
-     + '<span>' + esc(pick(opts.v2) || "") + '</span></div>';
-  h += '<div class="figbox">' + figureFor(item, state.lang) + '</div>';
-  h += '<div class="ccap">' + esc(figCaption(item, opts.fig, state.lang)) + '</div>';
+  h += '<div class="sheet"><i class="tape t1"></i><i class="tape t2"></i>';
+  h += '<div class="chead"><span>' + esc(head) + '</span></div>';
+  h += '<div class="figbox">' + cardMedia(item, big) + '</div>';
+  /* La tira de 3 capturas solo existe si hay galería de verdad: nada de huecos. */
+  var gal = item.gallery || [];
+  if (big && gal.length >= 4) {
+    h += '<div class="minis" aria-hidden="true">' + gal.slice(1, 4).map(function (g) {
+      return '<span><img src="' + esc(g.src) + '" alt="" loading="lazy" decoding="async"></span>';
+    }).join("") + '</div>';
+  }
+  /* El pie de figura solo en la grande: en una chica de ~200 px eran dos
+     renglones de ruido (v5.1). */
+  if (big) h += '<div class="ccap">' + esc(figCaption(item, figNumber(f.g, f.i))) + '</div>';
   h += '<div class="ctitle">' + esc(pick(item.title)) + '</div>';
-  h += '<div class="cbody">' + esc(pick(opts.short)) + '</div>';
+  if (big) {
+    h += '<div class="cbody">' + esc(pick(isTool ? firstSentence(pick(item.body)) : item.short)) + '</div>';
+    var raw = pick(item.bullets) || [];
+    var idx = (item.proof && item.proof[role]) || [];
+    var proof = idx.map(function (k) { return firstSentence(bulletText(raw[k])); })
+                   .filter(function (x) { return x; });
+    if (proof.length) {
+      h += '<ul class="proof">' + proof.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul>';
+    }
+  }
   if (seals.length) {
     h += '<div class="seals">' + seals.map(function (s) {
-      return '<span class="seal' + (s.ai ? " seal-ai" : "") + '">' + esc(s.txt) + '</span>';
+      return '<span class="seal' + (s.award ? " award" : "") + '">' + esc(s.txt) + '</span>';
     }).join("") + '</div>';
   }
   h += '<div class="rows">';
-  h += '<span>' + esc(opts.l3) + '</span><b>' + esc(pick(opts.v3) || "—") + '</b>';
-  h += '<span>' + esc(opts.l4) + '</span><b>' + esc(pick(opts.v4) || "—") + '</b>';
+  if (isTool) h += '<span>' + esc(t.rType) + '</span><b>' + esc(pick(item.kind)) + '</b>';
+  else {
+    h += '<span>' + esc(t.rRole) + '</span><b>' + esc(pick(item.role)) + '</b>';
+    if (big) h += '<span>' + esc(t.rStack) + '</span><b>' + esc(pick(item.stack)) + '</b>'
+      + '<span>' + esc(t.rTeam) + '</span><b>' + esc(pick(item.team)) + '</b>';
+  }
   h += '</div></div></button>';
   return h;
+}
+
+/* EL RENGLÓN DEL ARCHIVO: miniatura en papel, título y una línea de contexto.
+   Abre el mismo inspector que una hoja destacada. */
+function archRowHtml(f, n) {
+  var item = f.item, t = COPY[state.lang], isTool = f.g === "t";
+  var meta = isTool ? toolType(item) + " · " + pick(item.meta) : pick(item.org) + " · " + pick(item.dates);
+  var line = isTool ? pick(item.kind) : pick(item.role);
+  return '<li><button type="button" class="arow" style="' + accVars(item, n) + '"'
+    + ' data-g="' + f.g + '" data-i="' + f.i + '"'
+    + ' aria-label="' + esc(pick(item.title)) + ' · ' + esc(t.inspect) + '">'
+    + '<div class="thumb">' + figureFor(item) + '</div>'
+    + '<div><div class="atitle">' + esc(pick(item.title))
+    + (item.award ? ' <i>&#183; ' + esc(pick(item.award)) + '</i>' : '') + '</div>'
+    + '<div class="ameta">' + esc(meta) + '</div>'
+    + '<div class="arole">' + esc(line) + '</div></div></button></li>';
 }
 
 /* =========================================================================
@@ -2419,35 +2756,54 @@ function modalHeadHtml(c) {
   var h = '<div class="itop"><span>' + esc(left.join(" · ")) + '</span>';
   h += '<span>' + esc(pick(c.isTool ? p.meta : p.dates) || "") + '</span></div>';
   h += '<div class="ititle">' + esc(pick(p.title)) + '</div>';
-  h += '<p class="isub">' + esc(pick(c.isTool ? p.body : p.desc)) + '</p>';
+  /* v5.1 (14-oct): la descripción larga ya no abre la hoja; vive en la columna
+     lateral, junto al video, donde antes quedaba un hueco de ~300 px. */
   return h;
 }
 
-/* La pieza grande: el video si lo hay, y si no la figura. Va al ancho de la
-   hoja y no en una columna de 315 px, que era el 21 % de la pantalla. */
+/* v5: lo que se puede mirar en la pieza grande, en orden. El video (si hay)
+   va primero y después las capturas. Con menos de dos piezas no hay tira. */
+function mediaList(p) {
+  var m = [];
+  if (p.youtubeId) m.push({ kind: "video" });
+  (p.gallery || []).forEach(function (g) { m.push({ kind: "img", src: g.src, cap: g.cap }); });
+  return m;
+}
+
+/* La pieza grande: el video si lo hay, una captura de la galería, o la figura.
+   Va al ancho de la hoja y no en una columna de 315 px. */
 function modalLeadHtml(c) {
   var p = c.p;
-  var n = c.isTool ? PROJECTS.length + c.i + 1 : c.i + 1;
-  if (p.youtubeId) {
-    return '<div class="figbox"><div class="ivideo" id="modalVideo">'
-      + videoInnerHtml(c) + '</div></div>';
+  var m = mediaList(p), cur = m[state.media] || m[0];
+  if (cur && cur.kind === "video") {
+    return '<div class="figbox"><div class="ivideo" id="modalVideo">' + videoInnerHtml(c) + '</div></div>';
   }
-  return '<div class="figbox">' + figureFor(p, state.lang) + '</div>'
-    + '<div class="ccap" style="margin-top:6px">' + esc(figCaption(p, n, state.lang)) + '</div>';
+  if (cur && cur.kind === "img") {
+    return '<div class="figbox"><img class="istill" src="' + esc(cur.src) + '" alt="' + esc(pick(cur.cap)) + '"></div>'
+      + '<div class="ccap" style="margin-top:6px">' + esc(pick(cur.cap)) + '</div>';
+  }
+  return '<div class="figbox">' + figureFor(p) + '</div>'
+    + '<div class="ccap" style="margin-top:6px">' + esc(figCaption(p, figNumber(c.g, c.i))) + '</div>';
+}
+
+function modalStripHtml(c) {
+  var m = mediaList(c.p), t = c.t;
+  if (m.length < 2) return "";
+  /* Una sola fila siempre: tantas columnas como piezas (el video + 5 capturas
+     de Tatemis partían la tira en dos renglones con 5 columnas fijas). */
+  return '<div class="strip" style="grid-template-columns:repeat(' + m.length + ',minmax(0,1fr))">' + m.map(function (x, k) {
+    var src = x.kind === "video" ? bigUrl(c.p) : x.src;
+    var lab = x.kind === "video" ? t.stripVideo : t.stripShot + " · " + pick(x.cap);
+    return '<button type="button" data-m="' + k + '" aria-current="' + (k === state.media) + '"'
+      + ' aria-label="' + esc(lab) + '"><img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">'
+      + (x.kind === "video" ? '<span class="sv"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"></path></svg></span>' : '')
+      + '</button>';
+  }).join("") + '</div>';
 }
 
 function modalSideHtml(c) {
   var p = c.p, t = c.t;
-  var n = c.isTool ? PROJECTS.length + c.i + 1 : c.i + 1;
-  var h = "";
-
-  /* Si el video ocupó la pieza grande, el diagrama sigue teniendo sitio al
-     costado; la portada no, porque sería la misma imagen dos veces. */
-  if (p.youtubeId && p.diag && DIAGRAMS[p.diag]) {
-    h += '<div class="figbox">' + figureFor(p, state.lang) + '</div>';
-    h += '<div class="ccap" style="margin-top:-8px">' + esc(figCaption(p, n, state.lang)) + '</div>';
-  }
-
+  var h = '<p class="isub">' + esc(pick(c.isTool ? p.body : p.desc)) + '</p>';
   h += '<div class="irows">' + rowsFor(c).map(function (r) {
     return '<span>' + esc(r[0]) + '</span><b>' + esc(r[1]) + '</b>';
   }).join("") + '</div>';
@@ -2459,16 +2815,17 @@ function modalSideHtml(c) {
         + esc(pick(l.label)) + ' &#8599;</a>';
     }).join("") + '</div>';
   }
-  /* 13 de las 17 fichas mostraban esta nota sin tener un solo punto marcado.
-     Don't Chicken Out! es el proyecto más defendible en pizarra y lo hizo
-     antes de usar Claude: la nota decía justo lo contrario de lo que toca. */
-  var marked = bulletList(pick(p.bullets)).filter(function (b) { return b.ai; }).length;
-  if (marked) h += '<div class="inote">' + esc(t.aiNote) + '</div>';
-  h += '<div class="inote' + (marked ? ' istamp' : '') + '">' + esc(t.updated) + ' '
-     + esc(lastUpdatedText(state.lang)) + '</div>';
+  /* v5 (13-oct): UNA nota de IA por ficha, solo donde aplica, y diciendo para
+     qué. Reemplaza al sello por tarjeta y a la marca por punto. Don't Chicken
+     Out!, Prismonaut y los proyectos de antes de usar IA no la llevan. */
+  if (p.aiUse) h += '<p class="iai"><b>' + esc(t.aiUseLabel) + '</b> ' + esc(pick(p.aiUse)) + '</p>';
+  h += '<div class="inote">' + esc(t.updated) + ' ' + esc(lastUpdatedText(state.lang)) + '</div>';
   return h;
 }
 
+/* El video. Antes del clic, el póster es el loop mudo de la ficha corriendo
+   (o su imagen fija, con movimiento reducido): nada de YouTube se carga hasta
+   que se pide. */
 function videoInnerHtml(c) {
   var p = c.p, big = bigUrl(p);
   if (state.playing) {
@@ -2476,43 +2833,86 @@ function videoInnerHtml(c) {
       + '?autoplay=1&amp;rel=0" title="Gameplay video" allow="accelerometer; autoplay; clipboard-write; '
       + 'encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
   }
-  var h = big
-    ? '<div class="iposter" style="background-image:' + cssUrl(big) + '"></div>'
-    : '<div class="figgap"><i></i><span>' + esc(coverPath(p)) + '</span></div>';
+  var h;
+  if (p.loop && !REDUCED) {
+    h = '<video src="' + esc(p.loop) + '" poster="' + esc(big || "") + '" autoplay muted loop playsinline aria-hidden="true"></video>';
+  } else if (big) {
+    h = '<div class="iposter" style="background-image:' + cssUrl(big) + '"></div>';
+  } else {
+    h = '<div class="figgap"><i></i><span>' + esc(coverPath(p)) + '</span></div>';
+  }
   return h + '<button type="button" class="iplay" id="modalPlay" aria-label="' + esc(COPY[state.lang].playHint)
     + '"><i><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7L8 5Z"></path></svg></i></button>';
 }
 
-function modalBodyHtml(c) {
-  var p = c.p, t = c.t;
-  var bullets = bulletList(pick(p.bullets));
+/* Debajo de los puntos: cómo funciona, documentos y código. Cada bloque existe
+   solo si la ficha tiene algo que poner (regla de Andrés del 13-oct: igual que
+   Recognition, nada de bloques vacíos ni "próximamente"). */
+function modalBlocksHtml(c) {
+  var p = c.p, t = c.t, out = [];
+  var leadIsFig = !mediaList(p).length && !thumbUrl(p);
+  if (p.diag && DIAGRAMS[p.diag] && !leadIsFig) {
+    out.push('<div><h4>' + esc(t.howItWorks) + '</h4><div class="how">' + figSvg(p.diag) + '</div>'
+      + '<div class="ccap" style="margin-top:6px">' + esc(pick(DIAGRAMS[p.diag].cap)) + '</div></div>');
+  }
+  if (p.docs && p.docs.length) {
+    out.push('<div><h4>' + esc(t.designDocs) + '</h4>' + p.docs.map(function (d, k) {
+      return '<a class="slip" style="--rot:' + (k % 2 ? ".5deg" : "-.4deg") + '" href="' + esc(d.url) + '"'
+        + ' target="_blank" rel="noopener"><b>' + esc(pick(d.label)) + '</b>'
+        + (d.sub ? '<span>' + esc(pick(d.sub)) + '</span>' : '')
+        + '<em>' + esc(t.docPdf) + '</em></a>';
+    }).join("") + '</div>');
+  }
+  if (p.codeLinks && p.codeLinks.length) {
+    out.push('<div class="code"><h4>' + esc(t.codeTitle) + '</h4>' + p.codeLinks.map(function (l) {
+      return '<a href="' + esc(l.url) + '" target="_blank" rel="noopener"><span>' + esc(pick(l.label))
+        + '</span><code>' + esc(l.file) + '</code></a>';
+    }).join("") + '</div>');
+  }
+  return out.length ? '<div class="blocks">' + out.join("") + '</div>' : "";
+}
+
+function modalRestHtml(c) {
+  var bullets = (pick(c.p.bullets) || []).map(bulletText).filter(function (x) { return x; });
   /* Dos modelos de contenido: proyectos con puntos y herramientas con prosa.
      Sin puntos no se emite el bloque, así que no queda una columna vacía. */
-  var h = '<div class="ilead"><div>' + modalLeadHtml(c) + '</div>';
-  h += '<div class="iside">' + modalSideHtml(c) + '</div></div>';
+  var h = "";
   if (bullets.length) {
-    h += '<ol class="ibul">' + bullets.map(function (b, i) {
-      return '<li>'
-        + chalkMark("mkBullet", "15 15", "var(--ki)", "ibulmark", 1.5, 2.2, ".4", ".95")
-        + '<b>' + esc(b.text)
-        + (b.ai ? '<span class="aitag">' + esc(t.aiTag) + '</span>' : '') + '</b></li>';
+    /* v5.1: cada punto se lee por su primera frase, que va como titular; el
+       resto queda debajo en gris. Se puede escanear la hoja entera leyendo
+       solo los titulares, que es lo que hace un reclutador. */
+    h += '<ol class="ibul">' + bullets.map(function (b) {
+      var head = firstSentence(b), rest = b.slice(head.length).trim();
+      return '<li>' + chalkMark("mkBullet", "15 15", "var(--ki)", "ibulmark", 1.5, 2.2, ".4", ".95")
+        + '<div' + (rest ? "" : ' class="solo"') + '><b>' + esc(head) + '</b>' + (rest ? '<span>' + esc(rest) + '</span>' : '') + '</div></li>';
     }).join("") + '</ol>';
   }
-  return h;
+  return h + modalBlocksHtml(c);
+}
+
+/* Se arma en piezas con id propio: cambiar de idioma reescribe el texto pero
+   NUNCA toca #modalLead mientras muestra el video, así que lo que esté sonando
+   sigue sonando. */
+function modalBodyHtml(c) {
+  return '<div class="ilead"><div><div id="modalLead">' + modalLeadHtml(c) + '</div>'
+    + '<div id="modalStrip">' + modalStripHtml(c) + '</div></div>'
+    + '<div class="iside" id="modalSide">' + modalSideHtml(c) + '</div></div>'
+    + '<div id="modalRest" style="display:flex;flex-direction:column;gap:16px">' + modalRestHtml(c) + '</div>';
 }
 
 function modalHtml() {
   var c = modalCtx();
   if (!c) return "";
   var hand = (HANDS[c.g] || [])[c.i] || [pick(c.p.title), ""];
-  var h = '<div class="insp" id="overlay" style="' + accVars(c.p, 0) + '">';
+  var h = '<div class="insp" id="overlay" role="dialog" aria-modal="true" aria-label="' + esc(pick(c.p.title)) + '"'
+        + ' style="' + accVars(c.p, 0) + '">';
   h += '<button type="button" class="close" id="modalClose">' + esc(c.t.close) + ' &#183; Esc</button>';
   h += '<div class="ipin">';
   h += '<div class="ihand">' + esc(hand[0])
      + (hand[1] ? ' <span class="dashx">&#183; ' + esc(pick(hand[1])) + '</span>' : '') + '</div>';
   h += '<div class="isheet"><i class="itape a"></i><i class="itape b"></i>';
   h += '<div id="modalHead">' + modalHeadHtml(c) + '</div>';
-  h += '<div id="modalBody">' + modalBodyHtml(c) + '</div>';
+  h += '<div id="modalBody" style="display:flex;flex-direction:column;gap:16px">' + modalBodyHtml(c) + '</div>';
   h += '</div></div></div>';
   return h;
 }
@@ -2555,33 +2955,173 @@ function navHtml() {
   }).join("");
 }
 
-/* El nombre en tres capas: el halo difuso, el núcleo nítido y la textura
-   encima. Es SVG y no texto HTML porque el filtro de tiza sobre texto vivo se
-   lo come; acá el trazo se dibuja dos veces y el núcleo sale intacto. */
-function heroNameHtml() {
+/* =========================================================================
+   v5 · LOS DESTACADOS POR PERFIL. Decididos por Andrés el 13-oct: 5 por
+   perfil, la primera es la hoja grande. Todo lo que no está aquí baja al
+   archivo, herramientas incluidas: nada sale de la página.
+   ========================================================================= */
+const FEAT = {
+  td: ["tatemis", "prismonaut", "unseasoned", "runies", "crust"],
+  ud: ["dco", "runies", "tatemis", "casino", "unseasoned"]
+};
+/* El orden del archivo: proyectos primero y después herramientas y prototipos. */
+const ARCHIVE_ORDER = ["tatemis", "dco", "runies", "unseasoned", "prismonaut", "casino", "crust",
+  "treasure", "hell", "momentum", "nodegraph", "abilities", "combatlab", "space", "fusion"];
+
+/* RECONOCIMIENTO. Solo lo que tiene fuente pública, y cada recorte la enlaza.
+   ⚠️ GJ+ 24/25: la evidencia dice SEMIFINALISTA (video oficial de las
+   semifinales). No escribir "finalista" en ningún lado (14-oct-2026). */
+const RECOG = [
+  { acc: "unseasoned", rot: "-.5deg", icon: "medal",
+    ev: { en: "Takernal Game Jam 2026", es: "Takernal Game Jam 2026" },
+    hon: { en: "Best Narrative", es: "Mejor narrativa" },
+    pr: { en: "Unseasoned. I wrote the narrative: a cook who reconciles people through food.",
+          es: "Unseasoned. La narrativa es mía: un cocinero que reconcilia a la gente a través de la comida." },
+    url: "https://www.instagram.com/p/Dd2jUTUHL8h/?img_index=5",
+    link: { en: "See the announcement", es: "Ver el anuncio" } },
+  { acc: "prismonaut", rot: ".6deg", icon: "medal",
+    ev: { en: "Game Jam Plus 24/25", es: "Game Jam Plus 24/25" },
+    hon: { en: "Latin America semifinalist", es: "Semifinalista de Latinoamérica" },
+    pr: { en: "Prismonaut, from Naked Dog, the studio I founded to build it.",
+          es: "Prismonaut, de Naked Dog, el estudio que fundé para construirlo." },
+    url: "https://www.youtube.com/watch?v=PiHn4dLze3s&t=3903s",
+    link: { en: "Watch the semifinals", es: "Ver las semifinales" } },
+  { acc: "dco", rot: "-.3deg", icon: "page",
+    ev: { en: "Global Game Jam · Community Spotlight", es: "Global Game Jam · Community Spotlight" },
+    hon: { en: "Featured", es: "Destacados" },
+    pr: { en: "Raymi Games and Don’t Chicken Out!, naming me as programming lead.",
+          es: "Raymi Games y Don’t Chicken Out!, con mi nombre como líder de programación." },
+    url: "https://globalgamejam.org/news/global-game-jam-community-spotlight-raymi-games-peru",
+    link: { en: "Read the spotlight", es: "Leer el spotlight" } }
+];
+const RECOG_ICONS = {
+  medal: '<circle cx="15" cy="12" r="8" fill="none" stroke="var(--ki)" stroke-width="1.8"/><path d="M10 18 7 28l8-4 8 4-3-10" fill="none" stroke="var(--ki)" stroke-width="1.8" stroke-linejoin="round"/>',
+  page: '<rect x="6" y="5" width="18" height="21" fill="none" stroke="var(--ki)" stroke-width="1.8"/><path d="M10 11h10M10 15h10M10 19h6" stroke="var(--ki)" stroke-width="1.6"/>'
+};
+
+/* Los 8 datos en una línea. Cada uno toma una tiza de identidad; el último va
+   en el amarillo de marca y rodeado: es el remate. */
+const FACT_CHALK = ["dco", "runies", "casino", "tatemis", "unseasoned", "treasure", "prismonaut"];
+
+function renderProfile() {
+  var t = COPY[state.lang], r = state.role, prof = t.profile[r];
+  Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (b) {
+    b.setAttribute("aria-pressed", b.getAttribute("data-r") === r ? "true" : "false");
+  });
+  $("pickHint").innerHTML = esc(prof.hint).replace(/\?r=\w+/, function (m) { return "<code>" + m + "</code>"; });
+  $("projectsWhy").textContent = prof.why;
+  var feat = FEAT[r].map(findItem).filter(Boolean);
+  $("projectsGrid").innerHTML = feat.map(function (f, k) { return cardHtml(f, k, r); }).join("");
+  var arch = ARCHIVE_ORDER.filter(function (id) { return FEAT[r].indexOf(id) < 0; }).map(findItem).filter(Boolean);
+  $("archList").innerHTML = arch.map(archRowHtml).join("");
+  renderFilter(arch);
+  observeVideos();
+}
+
+/* LOS FILTROS DEL ARCHIVO (v5.1). Cuentan sobre lo que hay en el archivo del
+   perfil actual; un filtro sin fichas queda apagado, no escondido, para que
+   la fila no cambie de forma al cambiar de perfil. */
+const DISC_ORDER = ["all", "design", "code", "impl", "techart", "vfx", "tools", "proto"];
+function renderFilter(arch) {
   var t = COPY[state.lang];
-  var nombre = "Andrés Ruiz Palomino";
-  /* Centrado dentro del propio viewBox: el div está centrado, pero el texto de
-     un <svg> arranca en x=0 si no se le dice otra cosa, así que el nombre
-     quedaba pegado a la izquierda dentro de una caja centrada. */
-  /* Centrado dentro del propio viewBox: el div está centrado, pero el texto de
-     un <svg> arranca en x=0 si no se le dice otra cosa.
-     🔑 El viewBox creció junto con la letra (620x92 → 760x112) en vez de
-     escalar el svg entero. Escalarlo habría estirado también el ruido del
-     filtro de tiza, que está en unidades de usuario: el grano se habría vuelto
-     más grueso. Así 1 unidad sigue siendo 1 px y la tiza no cambia. */
-  function capa(y, size, weight, fill, txt) {
-    var base = ' x="380" text-anchor="middle" y="' + y
-             + '" font-family="Archivo,sans-serif" font-weight="' + weight
-             + '" font-size="' + size + '" fill="' + fill + '"';
-    return '<text' + base + ' opacity=".34" filter="url(#halo)">' + esc(txt) + '</text>'
-         + '<text' + base + '>' + esc(txt) + '</text>'
-         + '<text' + base + ' opacity=".5" filter="url(#chalk)">' + esc(txt) + '</text>';
+  var count = function (d) {
+    return d === "all" ? arch.length : arch.filter(function (f) { return (f.item.disc || []).indexOf(d) >= 0; }).length;
+  };
+  if (!count(state.filter)) state.filter = "all";
+  $("archFilter").setAttribute("aria-label", t.filterAria);
+  $("archFilter").innerHTML = DISC_ORDER.map(function (d) {
+    var n = count(d);
+    return '<button type="button" data-f="' + d + '" aria-pressed="' + (state.filter === d) + '"'
+      + (n ? '' : ' disabled') + '>' + esc(t.disc[d]) + '<i>' + n + '</i></button>';
+  }).join("");
+  applyFilter();
+}
+function applyFilter() {
+  var f = state.filter, k = 0;
+  Array.prototype.forEach.call(document.querySelectorAll("#archList > li"), function (li) {
+    var b = li.querySelector("[data-g]");
+    var item = b.getAttribute("data-g") === "t" ? TOOLS[+b.getAttribute("data-i")] : PROJECTS[+b.getAttribute("data-i")];
+    var on = f === "all" || (item.disc || []).indexOf(f) >= 0;
+    li.hidden = !on;
+    if (on) li.style.setProperty("--k", k++);
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("#archFilter [data-f]"), function (b) {
+    b.setAttribute("aria-pressed", b.getAttribute("data-f") === f ? "true" : "false");
+  });
+}
+
+/* Los videos de las hojas: la grande corre solo mientras se ve; las chicas, al
+   pasar el mouse. Pausar lo que no se ve importa: la página ya es pesada por
+   los filtros de tiza. */
+var videoObs = null;
+function observeVideos() {
+  if (REDUCED) return;
+  var autos = document.querySelectorAll("video[data-auto]");
+  if (!("IntersectionObserver" in window)) {
+    Array.prototype.forEach.call(autos, function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+    return;
   }
-  return '<svg viewBox="0 0 760 112" role="img" aria-label="' + esc(nombre) + '">'
-    + capa(47, 43, 700, "#F0F2ED", nombre)
-    + capa(90, 22, 500, "#B3BAB4", t.eyebrow)
-    + '</svg>';
+  if (!videoObs) {
+    videoObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var v = en.target;
+        if (state.open) return;
+        if (en.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else v.pause();
+      });
+    }, { threshold: 0.15 });
+  }
+  Array.prototype.forEach.call(autos, function (v) { videoObs.observe(v); });
+}
+
+/* EL GRÁFICO DE LA TRAYECTORIA. Eje de 2022 a 2026, en meses. "end: now"
+   llega hasta la fecha de LAST_UPDATE; fuzzy difumina el extremo cuyo mes no
+   se conoce (no se inventa). */
+var TL_FROM = 2022, TL_YEARS = 5;
+function tlPos(ym) {
+  var p = (ym === "now" ? LAST_UPDATE.slice(0, 7) : ym).split("-");
+  return Math.max(0, Math.min(1, ((+p[0] - TL_FROM) * 12 + (+p[1] - 1)) / (TL_YEARS * 12)));
+}
+function tlRow(e, name, sub, small, isCur, t) {
+  var f = findItem(e.open);
+  var acc = e.acc || (f && f.item.acc) || "space";
+  var x0 = tlPos(e.start), x1 = e.end === "now" ? tlPos("now") : tlPos(e.end) + 1 / (TL_YEARS * 12);
+  var fz = e.fuzzy === "both" ? " fz-s fz-e" : e.fuzzy === "end" ? " fz-e" : e.fuzzy === "start" ? " fz-s" : "";
+  return '<button type="button" class="tlrow2" style="--kc:var(--k-' + acc + ')"'
+    + (f ? ' data-g="' + f.g + '" data-i="' + f.i + '"' : '') + '>'
+    + '<div class="tllab"><h3>' + esc(name) + (isCur ? '<em>' + esc(t.current) + '</em>' : '') + '</h3>'
+    + '<p>' + esc(sub) + '</p><small>' + esc(small) + '</small></div>'
+    + '<div class="tltrack"><i class="tlbar' + fz + '" style="left:' + (x0 * 100).toFixed(2) + '%;width:'
+    + ((x1 - x0) * 100).toFixed(2) + '%"></i></div></button>';
+}
+function timelineHtml(t) {
+  var h = '<div class="tlaxis" aria-hidden="true">';
+  for (var y = 0; y <= TL_YEARS; y++) {
+    var x = (y / TL_YEARS * 100).toFixed(2);
+    h += '<i style="left:' + x + '%"></i>';
+    if (y < TL_YEARS) h += '<span style="left:' + ((y + .5) / TL_YEARS * 100).toFixed(2) + '%">' + (TL_FROM + y) + '</span>';
+  }
+  h += '</div><div class="tlbody2" style="--now:' + tlPos("now") + '">';
+  h += '<div class="tlnow" style="left:calc(var(--lab,334px) + (100% - var(--lab,334px)) * var(--now))"><b>' + esc(t.tlNow) + '</b></div>';
+  h += '<div class="tlgroup">' + esc(t.tlStudios) + '</div>';
+  h += TIMELINE.map(function (e) {
+    return tlRow(e, pick(e.org), pick(e.role), pick(e.dates) + " · " + pick(e.kind), e.current, t);
+  }).join("");
+  h += '<div class="tlgroup">' + esc(t.tlTraining) + '</div>';
+  h += EDUCATION.map(function (e) {
+    return tlRow(e, pick(e.school), pick(e.program), pick(e.dates) + (e.note ? " · " + pick(e.note) : ""), false, t);
+  }).join("");
+  return h + '</div>';
+}
+
+function setReelBtn() {
+  var v = $("reelVideo"), b = $("reelBtn"), t = COPY[state.lang];
+  if (!v || !b) return;
+  var paused = v.paused;
+  b.innerHTML = (paused
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7L8 5Z"/></svg>' + esc(t.reelPlay)
+    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>' + esc(t.reelPause));
+  b.setAttribute("aria-pressed", paused ? "true" : "false");
 }
 
 function render() {
@@ -2595,170 +3135,62 @@ function render() {
   });
 
   /* hero */
-  $("oname").innerHTML = heroNameHtml();
+  $("heroRole").textContent = t.eyebrow;
   $("claim").textContent = t.claim;
-  $("claimSub").textContent = t.claimSub;
-
-  /* Las anotaciones al margen. Cada una toma una tiza distinta de los 12
-     matices de identidad, su propio giro, su propio desplazamiento vertical y
-     su propio cuerpo; y solo algunas llevan subrayado. La última va rodeada:
-     es la que el que llegó hasta acá vino a leer.
-     Los adornos NO se reparten por índice sino por nota, escritos a mano, para
-     que no salga un patrón regular (una sí, una no) que es tan legible como
-     no tener adorno ninguno. */
-  var NOTE_CHALK = ["dco", "runies", "casino", "tatemis", "crazynema", "treasure",
-                    "prismonaut", "space"];
-  /* doo = el garabato al margen y de qué lado cuelga. Todos son dibujo, no
-     texto, así que no hay nada que traducir en ellos. */
-  /* doo = el garabato al margen, dónde cuelga, y con qué giro y corrimiento
-     propios. dr/dmx/dmy existen para que no queden dos apoyados igual: son
-     apuntes al margen, no una fila de iconos. */
-  /* doo = el garabato, de qué lado va, y su giro y corrimiento propios. dw/dh
-     son su hueco: la nota se ensancha ese tanto para alojarlo por dentro.
-     core/thick suben el grosor de tiza cuando el dibujo lo pide — la bandera
-     necesita trazo gordo para que las franjas se lean llenas. */
-  /* 🔑 ESTE ARREGLO VA EMPAREJADO CON COPY.notes POR INDICE, y los garabatos
-     NO son decoracion: cada uno significa lo que dice su chip.
-       0  dooStar   -> "3 years in games"        la estrella abre
-       1  uline1    -> "game design degree"
-       2  dooGear   -> "9 projects"              engranaje = cosas construidas
-       3  uline2    -> "Unity . C#"
-       4  dooFlag   -> "Peru . UTC-5"            BANDERA = pais
-       5  uline1    -> "advanced English"        (lleva el aside "fluent")
-       6  dooClock  -> "full US-hours overlap"   RELOJ = horas
-       7  dooBang   -> "open to work"            "!!" y circulado: es el remate
-     ⚠️ Se indexa con % , asi que aceptar mas chips NO da error: los CORRE a
-     todos en silencio. Paso el 27-ago al meter un chip noveno, y el reloj
-     acabo sobre "ingles" y la bandera sobre "Unity". Si cambias COPY.notes,
-     cambia este arreglo en el mismo movimiento. */
-  var NOTE_STYLE = [
-    { rot: "-1.7deg", dy: "2px",  fs: "24px",
-      doo: "dooStar", pos: "l", dr: "-14deg", dmx: "-2px", dmy: "-4px", dw: "31px", dh: "31px" },
-    { rot: "1.2deg",  dy: "-5px", fs: "22px", ul: "uline1" },
-    { rot: "-.6deg",  dy: "4px",  fs: "23px",
-      doo: "dooGear", pos: "r", dr: "9deg",  dmx: "2px",  dmy: "4px",  dw: "23px", dh: "23px" },
-    { rot: "1.9deg",  dy: "-2px", fs: "22px", ul: "uline2" },
-    { rot: "-1.3deg", dy: "5px",  fs: "23px",
-      doo: "dooFlag", pos: "l", dr: "-6deg", dmx: "0px", dmy: "3px",
-      dw: "38px", dh: "27px", core: 2.8, thick: 4.2 },
-    { rot: ".8deg",   dy: "-4px", fs: "24px", ul: "uline1" },
-    { rot: "-2.1deg", dy: "1px",  fs: "22px",
-      doo: "dooClock", pos: "r", dr: "-11deg", dmx: "1px", dmy: "-3px", dw: "24px", dh: "24px" },
-    { rot: "1.4deg",  dy: "-3px", fs: "25px", ring: true,
-      doo: "dooBang", pos: "r", dr: "6deg",  dmx: "2px",  dmy: "-2px", dw: "17px", dh: "24px" }
-  ];
-  var DOO_BOX = { dooStar: "28 28", dooFlag: "30 21", dooBang: "20 28",
-                  dooGear: "26 26", dooClock: "26 26", dooUp: "24 30" };
-  var asides = t.notesAside || [];
-
-  $("heroNotes").innerHTML = t.notes.map(function (n, i) {
-    var s = NOTE_STYLE[i % NOTE_STYLE.length];
-    var chalk = "var(--k-" + NOTE_CHALK[i % NOTE_CHALK.length] + ")";
-    var h = i ? chalkMark("mkBullet", "15 15", "#7E8781", "tick", 1.4, 2, ".35", ".8") : "";
-    h += '<span class="note' + (s.doo ? " d" + s.pos : "") + '" style="--kc:' + chalk
-       + ';--rot:' + s.rot + ';--dy:' + s.dy + ';--fs:' + s.fs
-       + (s.dw ? ';--dw:' + s.dw + ';--dh:' + s.dh : "") + '">';
-    h += '<b>' + esc(n) + '</b>';
-    if (s.ul) {
-      h += '<svg class="uline" viewBox="0 0 128 12" preserveAspectRatio="none" aria-hidden="true">'
-         + '<g style="--sw:1.6;--nk:' + chalk + '" opacity=".38"><use href="#' + s.ul + '"/></g>'
-         + '<g style="--sw:2.4;--nk:' + chalk + '" opacity=".9" filter="url(#chalk)">'
-         + '<use href="#' + s.ul + '"/></g></svg>';
-    }
-    if (s.doo) {
-      h += chalkMark(s.doo, DOO_BOX[s.doo], chalk, "doo " + s.pos,
-                     s.core || 1.5, s.thick || 2.3, ".34", ".92")
-        .replace('class="doo ' + s.pos + '"', 'class="doo ' + s.pos + '" style="--dr:'
-          + s.dr + ';--dmx:' + s.dmx + ';--dmy:' + s.dmy + '"');
-    }
-    /* La flecha va dentro de la aclaración para que no se descuadren. */
-    if (asides[i]) {
-      h += '<span class="aside">'
-         + chalkMark("dooUp", DOO_BOX.dooUp, chalk, "", 1.5, 2.3, ".34", ".92")
-         + '<b>' + esc(asides[i]) + '</b></span>';
-    }
-    if (s.ring) h += '<i class="circ" aria-hidden="true"></i>';
-    h += '</span>';
-    /* La fila se parte a la mitad, después de la cuarta nota. */
-    if (i === 3) h += '<span class="brk" aria-hidden="true"></span>';
-    return h;
+  $("pickQ").textContent = t.pickQ;
+  $("pickTabs").setAttribute("aria-label", t.pickAria);
+  $("pickTabs2").setAttribute("aria-label", t.pickAria);
+  Array.prototype.forEach.call(document.querySelectorAll("[data-tab]"), function (el) {
+    el.textContent = t.tabs[el.getAttribute("data-tab")];
+  });
+  $("reelHead").textContent = t.reelHead;
+  $("reelCap").textContent = t.reelCap;
+  $("reelVideo").setAttribute("aria-label", t.reelAria);
+  setReelBtn();
+  $("heroFacts").innerHTML = t.notes.map(function (n, i) {
+    var last = i === t.notes.length - 1;
+    var chalk = last ? "var(--mark)" : "var(--k-" + FACT_CHALK[i % FACT_CHALK.length] + ")";
+    return '<li' + (last ? ' class="circled"' : '') + ' style="--kc:' + chalk + '">' + esc(n) + '</li>';
   }).join("");
   $("ctaEmail").textContent = t.ctaEmail;
   $("ctaCv").textContent = t.ctaCv;
 
-  /* 01 proyectos */
+  /* reconocimiento */
+  $("secRecog").textContent = t.secRecog;
+  $("recogWhy").textContent = t.recogWhy;
+  $("recogList").innerHTML = RECOG.map(function (r) {
+    return '<div class="clip" style="--rot:' + r.rot + ';--ki:var(--ki-' + r.acc + ')"><i class="tape"></i>'
+      + '<svg viewBox="0 0 30 30" aria-hidden="true">' + RECOG_ICONS[r.icon] + '</svg>'
+      + '<span class="ev">' + esc(pick(r.ev)) + '</span><span class="hon">' + esc(pick(r.hon)) + '</span>'
+      + '<span class="pr">' + esc(pick(r.pr)) + '</span>'
+      + '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(pick(r.link)) + ' &#8599;</a></div>';
+  }).join("");
+
+  /* proyectos: destacados del perfil + archivo */
   $("secProjects").textContent = t.secProjects;
-  $("projectsNote").textContent = t.projectsNote;
-  $("projectsGrid").innerHTML = PROJECTS.map(function (p, i) {
-    return cardHtml(p, "p", i, {
-      fig: i + 1, type: t.tProject, v1: p.org, v2: p.team,
-      l3: t.rRole, v3: p.role, l4: t.rStack, v4: p.stack, short: p.short
-    });
-  }).join("");
+  $("archTitle").textContent = t.archTitle;
+  $("archSub").textContent = t.archSub;
+  renderProfile();
 
-  /* 02 herramientas — la numeración de figuras sigue de largo desde proyectos */
-  $("secTools").textContent = t.secTools;
-  $("toolsNote").textContent = t.toolsNote;
-  $("toolsGrid").innerHTML = TOOLS.map(function (x, i) {
-    return cardHtml(x, "t", i, {
-      fig: PROJECTS.length + i + 1, type: toolType(x), v1: x.meta, v2: "",
-      l3: t.rType, v3: x.kind, l4: t.rRole, v4: (pick(x.roleTags) || []).join(" · "),
-      short: firstSentence(pick(x.body))
-    });
-  }).join("");
-
-  /* 03 trayectoria */
+  /* trayectoria v5.1: estudios y formación en un gráfico en el tiempo */
   $("secTimeline").textContent = t.secTimeline;
-  $("timelineNote").textContent = t.timelineNote;
-  /* Un solo riel para toda la lista; las filas solo ponen su nodo. */
-  $("timelineList").innerHTML = '<div class="tlspine" aria-hidden="true">' + railSvg() + '</div>'
-    + TIMELINE.map(function (e, i) {
-    return '<div class="tlrow' + (i % 2 ? ' alt' : '') + '">'
-      + '<div class="tlbody"><div class="tlh"><h3>' + esc(pick(e.org)) + '</h3>'
-      + (e.current ? '<div class="tlcur">' + esc(t.current) + '</div>' : '')
-      + '<div class="tlkind">' + esc(pick(e.kind)) + '</div></div>'
-      + '<div class="tlrole">' + esc(pick(e.role)) + '</div>'
-      + '<div class="tldates">' + esc(pick(e.dates)) + '</div>'
-      + '<p class="tlline">' + esc(pick(e.line)) + '</p></div>'
-      + '<div class="tlrail">' + nodeSvg(e.current) + '</div></div>';
-  }).join("");
+  $("timelineWhy").textContent = t.timelineWhy;
+  $("timelineChart").innerHTML = timelineHtml(t);
 
-  /* 04 educación */
-  $("secEdu").textContent = t.secEdu;
-  $("eduNote").textContent = t.eduNote;
-  $("eduList").innerHTML = EDUCATION.map(function (e, i) {
-    var h = '<div class="pin" style="--kc:var(--k-hell);--ki:var(--ki-hell);--rot:'
-          + ROTS[(i + 2) % 4] + ';padding-top:34px">'
-          + '<div class="sheet"><i class="tape t1"></i><i class="tape t2"></i>'
-          + '<div class="eduh"><h3>' + esc(pick(e.school)) + '</h3>'
-          + '<div class="edudates">' + esc(pick(e.dates)) + '</div></div>'
-          + '<div class="eduprog">' + esc(pick(e.program)) + '</div>'
-          + '<p class="eduline">' + esc(pick(e.line)) + '</p>';
-    if (e.note) {
-      h += '<div class="edunote"><svg viewBox="0 0 24 24"><path d="M12 3 1 8l11 5 9-4.09V15h2V8L12 3ZM5 '
-         + '13.18v2.94l7 3.82 7-3.82v-2.94l-7 3.82-7-3.82Z"></path></svg><span>'
-         + esc(pick(e.note)) + '</span></div>';
-    }
-    return h + '</div></div>';
-  }).join("");
-
-  /* la banda de IA: el método, en tiza y sin hoja */
+  /* la banda de IA: dos carriles y la vara */
   $("aiLabel").textContent = t.aiLabel;
-  /* Sin numeración y sin marca: son dos párrafos, no una lista ordenada. */
-  /* v4.1: cada punto es [entradilla, resto]. Los dos se escapan; la entradilla
-     va en <strong>, que .band li strong ya estila. aiNote NO va aqui: se sigue
-     usando dentro de las tarjetas marcadas (ver la linea del .inote). */
-  $("aiList").innerHTML = t.aiPoints.map(function (p, i) {
-    var num = String(i + 1);
-    if (num.length < 2) num = "0" + num;
-    return '<li><i>' + num + '</i><span><strong>' + esc(p[0]) + '</strong> '
-         + esc(p[1]) + '</span></li>';
-  }).join("");
+  $("aiMineT").textContent = t.aiMineT;
+  $("aiHelpT").textContent = t.aiHelpT;
+  $("aiMine").innerHTML = t.aiMine.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("");
+  $("aiHelp").innerHTML = t.aiHelp.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("");
+  $("aiBetween").textContent = t.aiBetween;
+  $("aiBar").textContent = t.aiBar;
+  $("aiBarSub").textContent = t.aiBarSub;
+  $("aiCheck").textContent = t.aiCheck;
 
   /* cierre */
   $("contactTitle").textContent = t.contactTitle;
   $("contactNote").textContent = t.contactNote;
-  $("lnkEmail").textContent = t.ctaEmail;
   $("lnkCv").textContent = t.cvLabel;
   /* Un solo texto para los dos popovers: se llenan por data-attribute. */
   function fill(sel, txt) {
@@ -2823,6 +3255,7 @@ function toggleCvMenu(btn, abrir) {
 function closeModal() {
   var ov = $("overlay");
   state.open = null; state.playing = false; modalShown = "";
+  pagePlayback(true);
   document.body.style.overflow = "";
   if (!ov) { $("modalRoot").innerHTML = ""; return; }
   ov.classList.add("is-out");
@@ -2833,7 +3266,21 @@ function closeModal() {
   }, 210);
 }
 
+/* Con el inspector abierto, los videos de la página se pausan: nadie los ve y
+   competían con el del inspector. Al cerrar, vuelven los que corrían. */
+var pausedByModal = [];
+function pagePlayback(on) {
+  if (!on) {
+    pausedByModal = Array.prototype.filter.call(document.querySelectorAll(".wrap video"), function (v) { return !v.paused; });
+    pausedByModal.forEach(function (v) { v.pause(); });
+  } else {
+    pausedByModal.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+    pausedByModal = [];
+  }
+}
+
 function renderModal() {
+  if (state.open && !pausedByModal.length) pagePlayback(false);
   $("modalRoot").innerHTML = modalHtml();
   modalShown = modalKey();
   document.body.style.overflow = state.open ? "hidden" : "";
@@ -2843,19 +3290,76 @@ function renderModal() {
 function refreshModal() {
   var c = modalCtx();
   var head = $("modalHead");
-  var body = $("modalBody");
-  if (!c || !head || !body) { renderModal(); return; }
+  if (!c || !head || !$("modalLead")) { renderModal(); return; }
   head.innerHTML = modalHeadHtml(c);
-  body.innerHTML = modalBodyHtml(c);
+  $("modalSide").innerHTML = modalSideHtml(c);
+  $("modalStrip").innerHTML = modalStripHtml(c);
+  $("modalRest").innerHTML = modalRestHtml(c);
+  /* La pieza grande solo se rehace si es una captura (su pie cambia de idioma).
+     Si es el video, no se toca: lo que suena sigue sonando. */
+  if (!$("modalVideo")) $("modalLead").innerHTML = modalLeadHtml(c);
+}
+
+/* Cambiar la pieza grande desde la tira, sin tocar el resto del inspector. */
+function showMedia(k) {
+  var c = modalCtx();
+  if (!c) return;
+  state.media = k; state.playing = false;
+  $("modalLead").innerHTML = modalLeadHtml(c);
+  Array.prototype.forEach.call(document.querySelectorAll("#modalStrip [data-m]"), function (b) {
+    b.setAttribute("aria-current", Number(b.getAttribute("data-m")) === k ? "true" : "false");
+  });
+}
+
+/* El cambio animado: lo que está se despega, se rehace la grilla y lo nuevo
+   se pega. Con movimiento reducido, cambio seco. */
+var swapping = false;
+function swapRole(r) {
+  if ((r === "ud" ? "ud" : "td") === state.role || swapping) return;
+  if (REDUCED) { setRole(r); return; }
+  swapping = true;
+  var els = [$("projectsGrid"), $("archList")];
+  els.forEach(function (el) { el.classList.add("is-out"); });
+  setTimeout(function () {
+    setRole(r);
+    els.forEach(function (el) { el.classList.remove("is-out"); el.classList.add("is-in"); void el.offsetWidth; });
+    requestAnimationFrame(function () {
+      els.forEach(function (el) { el.classList.remove("is-in"); });
+      setTimeout(function () { swapping = false; }, 520);
+    });
+  }, 300);
+}
+function swapFilter(f) {
+  if (f === state.filter) return;
+  var list = $("archList");
+  if (REDUCED) { state.filter = f; applyFilter(); return; }
+  list.classList.add("is-out");
+  setTimeout(function () {
+    state.filter = f; applyFilter();
+    list.classList.remove("is-out"); list.classList.add("is-in"); void list.offsetWidth;
+    requestAnimationFrame(function () { list.classList.remove("is-in"); });
+  }, 220);
+}
+
+/* El perfil viaja en la URL (?r=ud) para mandar el enlace directo en cada
+   postulación. replaceState y no pushState: cambiar de pestaña no es navegar. */
+function setRole(r) {
+  state.role = r === "ud" ? "ud" : "td";
+  renderProfile();
+  try {
+    var u = new URL(window.location.href);
+    if (state.role === "td") u.searchParams.delete("r"); else u.searchParams.set("r", state.role);
+    history.replaceState(null, "", u.toString());
+  } catch (err) {}
 }
 
 /* ---------- reveal al scroll ---------------------------------------------- */
 /* El observador y el CSS ya estaban escritos, pero ningún elemento llevaba la
    clase: document.querySelectorAll('.rv').length daba 0 y nada aparecía nunca.
    Eso era, literalmente, la ausencia de pacing. */
-var REVEAL_SEL = ["#projectsGrid > *", "#toolsGrid > *", "#eduList > *", ".tlrow",
-                  "#aiList > li", ".sec > .sechead", ".sec > .secnote", ".gap",
-                  ".closetext", "#sec-contact .pin"];
+var REVEAL_SEL = ["#projectsGrid > *", "#recogList > *", ".tlrow2", ".lanes", ".bar2",
+                  ".sec > .sechead", ".sec > .secnote", ".gap",
+                  ".close2 > *"];
 var firstPaint = true;
 
 function markReveals() {
@@ -3043,11 +3547,23 @@ document.addEventListener("click", function (e) {
 
   /* el poster inyecta el iframe; el resto del inspector no se toca */
   if (e.target.closest("#modalPlay")) { playVideo(); return; }
+  if ((b = e.target.closest("#modalStrip [data-m]"))) { showMedia(Number(b.getAttribute("data-m"))); return; }
 
-  /* La hoja del cierre no abre nada: es contacto, no una ficha. */
-  if ((b = e.target.closest(".pin[data-g]"))) {
+  if ((b = e.target.closest(".tab[data-r]"))) { swapRole(b.getAttribute("data-r")); return; }
+  if ((b = e.target.closest("#archFilter [data-f]"))) { swapFilter(b.getAttribute("data-f")); return; }
+
+  if (e.target.closest("#reelBtn")) {
+    var rv = $("reelVideo");
+    if (rv.paused) { rv.reelUser = false; var pr = rv.play(); if (pr && pr.catch) pr.catch(function () {}); }
+    else { rv.reelUser = true; rv.pause(); }
+    return;
+  }
+
+  /* Hojas destacadas y renglones del archivo abren el mismo inspector. La hoja
+     del cierre no abre nada: es contacto, no una ficha. */
+  if ((b = e.target.closest("[data-g][data-i]"))) {
     state.open = { g: b.getAttribute("data-g"), i: Number(b.getAttribute("data-i")) };
-    state.playing = false;
+    state.playing = false; state.media = 0;
     renderModal();
     return;
   }
@@ -3067,6 +3583,20 @@ document.addEventListener("keydown", function (e) {
   }
 });
 
+/* Las chicas del 2×2 corren su loop solo mientras el mouse (o el foco) está
+   encima. En táctil no hay hover: se quedan en el póster. */
+function hoverVideo(e, on) {
+  var pin = e.target.closest && e.target.closest(".pin");
+  if (!pin || (e.relatedTarget && pin.contains(e.relatedTarget))) return;
+  var v = pin.querySelector("video[data-hover]");
+  if (!v || REDUCED) return;
+  if (on) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause();
+}
+document.addEventListener("mouseover", function (e) { hoverVideo(e, true); });
+document.addEventListener("mouseout", function (e) { hoverVideo(e, false); });
+document.addEventListener("focusin", function (e) { hoverVideo(e, true); });
+document.addEventListener("focusout", function (e) { hoverVideo(e, false); });
+
 window.addEventListener("scroll", onScroll, { passive: true });
 window.addEventListener("scroll", revealSweep, { passive: true });
 
@@ -3077,8 +3607,32 @@ try {
   if (guardado === "en" || guardado === "es") state.lang = guardado;
 } catch (err) {}
 
+/* ?r=ud abre directo la vista de Unity Developer; sin parámetro, Technical
+   Designer (decidido el 13-oct). */
+try {
+  if (new URLSearchParams(window.location.search).get("r") === "ud") state.role = "ud";
+} catch (err) {}
+
 render();
 onScroll();
 barStateInit();
+
+/* El reel: mudo, en loop, y solo si no se pidió movimiento reducido. */
+(function () {
+  var v = $("reelVideo");
+  if (!v) return;
+  v.addEventListener("play", setReelBtn);
+  v.addEventListener("pause", setReelBtn);
+  /* reelUser: si la persona lo pausó, no se reanuda solo al volver a verlo. */
+  v.reelUser = false;
+  if (!REDUCED && "IntersectionObserver" in window) {
+    new IntersectionObserver(function (en) {
+      if (state.open) return;
+      if (en[0].isIntersecting) { if (!v.reelUser) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } }
+      else if (!v.paused) v.pause();
+    }, { threshold: 0.1 }).observe(v);
+  } else if (!REDUCED) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+  setReelBtn();
+})();
 
 </script>

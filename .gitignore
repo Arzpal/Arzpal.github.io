@@ -11,3 +11,6 @@ Rediseño portafolio pizarra.zip
 
 # Material crudo para capturas, clips y el reel: se procesa a assets/, no se publica.
 _media-crudo/
+
+# Traducciones de los documentos de diseño, en revisión de Andrés antes de publicarse.
+_traducciones/
