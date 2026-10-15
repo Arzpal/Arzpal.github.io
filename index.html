@@ -277,8 +277,11 @@ a{color:var(--mark);text-decoration:none}
   border-radius:56% 44% 60% 40%/48% 56% 44% 52%;opacity:.6;filter:url(#chalk)}
 
 /* La nota a mano bajo el título de una sección: por qué se ve lo que se ve. */
-.why{display:block;margin:-4px auto 0;padding-bottom:30px;text-align:center;font-family:var(--f-hand);
-  font-weight:600;font-size:23px;line-height:1.2;color:var(--mark);transform:rotate(-1deg)}
+/* v5.1: bajó de 23 a 18 px y se separó del título. Casi del tamaño del h2 y
+   pegada a él, competía con el título en vez de acotarlo. */
+.why{display:block;margin:8px auto 0;padding-bottom:30px;text-align:center;font-family:var(--f-hand);
+  font-weight:600;font-size:19px;line-height:1.2;color:var(--mark);opacity:.85;transform:rotate(-1deg)}
+.ptabs + .why{margin-top:2px}
 
 /* =========================================================================
    RECONOCIMIENTO — tres recortes pegados. Es lo único de la página que dice
@@ -360,6 +363,11 @@ a{color:var(--mark);text-decoration:none}
 .minis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:-3px}
 .minis span{background:var(--paper-2);padding:3px}
 .minis img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}
+/* El clip: la ficha trae documentos adjuntos (PDF). Va mordiendo el canto de
+   la hoja, arriba a la derecha, como un clip de verdad. */
+.clipicon{position:absolute;top:-16px;right:22px;width:17px;height:40px;z-index:2;pointer-events:none;
+  transform:rotate(8deg);filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+.atitle .clipmini{display:inline-block;width:10px;height:20px;margin-left:8px;vertical-align:-4px;opacity:.85}
 /* Dos puntos de prueba en la grande: la primera frase de dos bullets REALES de
    la ficha, elegidos por perfil. Nunca un resumen inventado. */
 .proof{margin:2px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
@@ -369,7 +377,7 @@ a{color:var(--mark);text-decoration:none}
   border-radius:50% 40% 55% 45%}
 
 /* El selector repetido en la sección, un punto más chico que el del hero. */
-.ptabs{justify-content:center;margin:-2px 0 6px}
+.ptabs{justify-content:center;margin:12px 0 4px}
 .ptabs .tab{font-size:25px}
 
 /* EL CAMBIO DE PERFIL (v5.1): las hojas se despegan hacia arriba y las nuevas
@@ -504,7 +512,10 @@ a{color:var(--mark);text-decoration:none}
   margin:18px 0 2px;transform:rotate(-1deg);transform-origin:left}
 .tlrow2{grid-column:1 / -1;display:grid;grid-template-columns:subgrid;align-items:center;text-align:left;
   padding:13px 0;border-bottom:1px solid rgba(240,242,237,.07);transition:background .18s ease}
-.tlrow2:hover,.tlrow2:focus-visible{background:linear-gradient(90deg,rgba(240,242,237,.045),transparent 70%)}
+div.tlrow2{cursor:default}
+.tlpre{position:absolute;left:0;top:calc(50% - 30px);font-family:var(--f-mono);font-size:9.5px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--chalk-3);white-space:nowrap}
+button.tlrow2:hover,button.tlrow2:focus-visible{background:linear-gradient(90deg,rgba(240,242,237,.045),transparent 70%)}
 .tllab h3{font-weight:600;font-size:17px;letter-spacing:-.01em;color:var(--chalk);line-height:1.25}
 .tllab h3 em{font-style:normal;margin-left:8px;font-family:var(--f-mono);font-size:9.5px;letter-spacing:.08em;
   color:var(--mark);border:1px solid rgba(217,227,107,.45);padding:1px 5px;vertical-align:2px}
@@ -515,7 +526,7 @@ a{color:var(--mark);text-decoration:none}
 /* La barra: tiza gruesa del color del proyecto. Borde irregular a propósito. */
 /* Dos pasadas, como los diagramas: un núcleo liso y encima la capa con la
    textura de tiza. Solo con el filtro, la barra se leía punteada. */
-.tlbar{position:absolute;top:50%;height:17px;margin-top:-10px;opacity:.9}
+.tlbar{position:absolute;top:50%;height:17px;margin-top:-10px;opacity:.9;min-width:22px}
 .tlbar::before,.tlbar::after{content:"";position:absolute;inset:0;background:var(--kc);
   border-radius:8px 4px 9px 5px/7px 8px 6px 7px}
 .tlbar::before{opacity:.5}
@@ -575,6 +586,15 @@ a{color:var(--mark);text-decoration:none}
 .closelinks a{color:var(--chalk);border-bottom:1px solid rgba(240,242,237,.3);transition:.18s ease}
 .closelinks a:hover{color:var(--mark);border-bottom-color:var(--mark)}
 .close2 .pin{padding-top:56px}
+.cvnote2{margin-top:30px;font-size:13.5px;color:var(--chalk-3);max-width:46ch}
+.cvrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:10px}
+.cvrow a{display:flex;flex-direction:column;gap:4px;padding:11px 12px 12px;background:var(--paper);color:var(--ink);
+  box-shadow:0 6px 16px rgba(0,0,0,.4);transition:transform .18s ease,box-shadow .18s ease}
+.cvrow a:nth-child(1){transform:rotate(-.6deg)}.cvrow a:nth-child(2){transform:rotate(.4deg)}
+.cvrow a:nth-child(3){transform:rotate(-.3deg)}
+.cvrow a:hover,.cvrow a:focus-visible{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,.5)}
+.cvrow b{font-family:var(--f-mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.cvrow span{font-size:12.5px;line-height:1.35;color:var(--ink-2)}
 .close2 .stamp{margin-top:18px}
 
 /* =========================================================================
@@ -808,6 +828,7 @@ a{color:var(--mark);text-decoration:none}
   .bar2 q{font-size:25px}
   .close2{grid-template-columns:1fr;gap:20px}
   .close2 h2{font-size:34px}
+  .cvrow{grid-template-columns:1fr}
   .cmail{font-size:27px}
   .insp{padding:64px 14px 40px}
   .isheet{padding:20px 18px 20px}
@@ -1456,7 +1477,6 @@ a{color:var(--mark);text-decoration:none}
           <button type="button" class="tab" data-r="td" aria-pressed="true"><span data-tab="td"></span><i class="circ" aria-hidden="true"></i></button>
           <button type="button" class="tab" data-r="ud" aria-pressed="false"><span data-tab="ud"></span><i class="circ" aria-hidden="true"></i></button>
         </div>
-        <p class="hint" id="pickHint"></p>
       </div>
     </div>
     <div class="reel">
@@ -1543,17 +1563,15 @@ a{color:var(--mark);text-decoration:none}
         <h2 id="contactTitle"></h2>
         <p class="cnote" id="contactNote"></p>
         <a class="cmail" href="mailto:andres.gp.ruiz@gmail.com">andres.gp.ruiz@gmail.com</a>
+        <!-- v5.1: abajo hay sitio, así que los tres CV van a la vista en vez del
+             desplegable. Se abren en pestaña nueva (sin download, como arriba). -->
+        <p class="cvnote2" data-cvnote></p>
+        <div class="cvrow">
+          <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
+          <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
+          <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
+        </div>
         <div class="closelinks">
-          <span class="cvpick up" id="cvPickEnd">
-            <button type="button" id="lnkCv"
-              aria-haspopup="true" aria-expanded="false" aria-controls="cvMenuEnd"></button>
-            <div class="cvmenu" id="cvMenuEnd" hidden>
-              <p class="cvnote" data-cvnote></p>
-              <a href="Andres-Ruiz-Technical-Designer.pdf" target="_blank" rel="noopener"><b data-cvd></b><span data-cvds></span></a>
-              <a href="Andres-Ruiz-Unity-Developer.pdf" target="_blank" rel="noopener"><b data-cvv></b><span data-cvvs></span></a>
-              <a href="Andres-Ruiz-Technical-Artist.pdf" target="_blank" rel="noopener"><b data-cva></b><span data-cvas></span></a>
-            </div>
-          </span>
           <a href="https://github.com/Arzpal" target="_blank" rel="noopener">GitHub &#8599;</a>
           <a href="https://www.linkedin.com/in/arzpal/" target="_blank" rel="noopener">LinkedIn &#8599;</a>
           <a href="https://www.youtube.com/@arzpal" target="_blank" rel="noopener">YouTube &#8599;</a>
@@ -1646,7 +1664,7 @@ const COPY = {
     stripVideo: "Video", stripShot: "Screenshot",
     disc: { all: "All", design: "Design", code: "Programming", impl: "Implementation", techart: "Technical art",
             vfx: "VFX", tools: "Tools", proto: "Prototypes" },
-    filterAria: "Filter the archive",
+    filterAria: "Filter the archive", hasDocs: "Design documents attached",
     ctaEmail: "EMAIL ME", ctaCv: "DOWNLOAD CV", openToWork: "OPEN TO WORK · UTC-5",
     /* Dos CVs, publicos y leidos juntos: uno dice lo que decide, el otro lo que
        construye. Misma evidencia, distinto orden. Ver kit-posicionamiento v3. */
@@ -1687,7 +1705,7 @@ const COPY = {
     aiBarSub: "I have pulled things off this page and out of my CV for exactly that reason, including some I liked.",
     aiCheck: "Where it is easiest to check: Tatemis3D →",
     timelineWhy: "the bars overlap because the work did",
-    tlStudios: "Studios", tlTraining: "Training", tlNow: "today",
+    tlStudios: "Studios", tlTraining: "Training", tlNow: "today", tlSince: "since",
 
     tProject: "PROJECT", tTool: "TOOL", tSystem: "SYSTEM", tPrototype: "PROTOTYPE",
     rOrg: "ORG", rDates: "DATES", rRole: "ROLE", rStack: "STACK", rTeam: "TEAM",
@@ -1734,7 +1752,7 @@ const COPY = {
     stripVideo: "Video", stripShot: "Captura",
     disc: { all: "Todo", design: "Diseño", code: "Programación", impl: "Implementación", techart: "Arte técnico",
             vfx: "VFX", tools: "Herramientas", proto: "Prototipos" },
-    filterAria: "Filtrar el archivo",
+    filterAria: "Filtrar el archivo", hasDocs: "Trae documentos de diseño",
     ctaEmail: "ESCRÍBEME", ctaCv: "DESCARGAR CV", openToWork: "DISPONIBLE · UTC-5",
     cvDesign: "CV · DISEÑADOR TÉCNICO", cvDev: "CV · UNITY DEVELOPER",
     cvLabel: "CV",
@@ -1764,7 +1782,7 @@ const COPY = {
     aiBarSub: "He sacado cosas de esta página y de mi CV por exactamente eso, incluidas algunas que me gustaban.",
     aiCheck: "Donde es más fácil comprobarlo: Tatemis3D →",
     timelineWhy: "las barras se pisan porque el trabajo también",
-    tlStudios: "Estudios", tlTraining: "Formación", tlNow: "hoy",
+    tlStudios: "Estudios", tlTraining: "Formación", tlNow: "hoy", tlSince: "desde",
 
     tProject: "PROYECTO", tTool: "HERRAMIENTA", tSystem: "SISTEMA", tPrototype: "PROTOTIPO",
     rOrg: "ORG", rDates: "FECHAS", rRole: "ROL", rStack: "STACK", rTeam: "EQUIPO",
@@ -2388,7 +2406,25 @@ const TOOLS = [
   }
 ];
 
+/* v5.1 (14-oct-2026): entran el freelance de Upwork y el playtest pagado, con
+   las mismas fechas y palabras que los CVs. Naked Dog sigue activo (Andrés).
+   Las barras ya no se difuminan: donde el mes no se conoce (Zarzilla,
+   Toulouse, GJ+) es una aproximación, y la etiqueta dice el año real. */
 const TIMELINE = [
+  {
+    org: "Upwork · Vortex Studios", start: "2026-09", end: "now", acc: "crazynema", current: true,
+    dates: { en: "Sep 2026 – Present", es: "Set 2026 – Presente" },
+    kind: { en: "Freelance", es: "Freelance" },
+    role: { en: "Freelance game developer · three mobile games for one publisher", es: "Desarrollador de juegos freelance · tres juegos móviles para un publisher" },
+    line: { en: "Weekly deliveries; one game is live on Google Play, so every delivery ships as a public update. First contract closed with a 5-star review.", es: "Entregas semanales; un juego está en Google Play, así que cada entrega sale como actualización pública. Primer contrato cerrado con reseña de 5 estrellas." }
+  },
+  {
+    org: "Mega Cat Studios · ErmanAI", start: "2026-03", end: "now", acc: "space", current: true,
+    dates: { en: "Mar 2026 – Present", es: "Mar 2026 – Presente" },
+    kind: { en: "Contract · US studios", es: "Contrato · estudios de EE.UU." },
+    role: { en: "Paid playtester and design critique", es: "Playtester pagado y crítica de diseño" },
+    line: { en: "Recorded first-time-player sessions with written critique, each fix tied to a timestamp.", es: "Sesiones grabadas de primera partida con crítica escrita, cada arreglo atado a un minuto del video." }
+  },
   {
     org: "DOB Studios", start: "2026-03", end: "2026-08", open: "runies",
     dates: { en: "Mar 2026 – Aug 2026", es: "Mar 2026 – Ago 2026" },
@@ -2412,14 +2448,14 @@ const TIMELINE = [
     line: { en: "Four Unity titles shipped onto physical casino cabinets, onto a codebase that already had to render across three cabinet models with completely different screen arrangements.", es: "Cuatro títulos en Unity publicados en cabinas físicas de casino, sobre un codebase que ya tenía que renderizar en tres modelos de cabina con arreglos de pantalla completamente distintos." }
   },
   {
-    org: "Naked Dog", start: "2024-12", end: "2026-05", open: "prismonaut",
-    dates: { en: "Dec 2024 – May 2026", es: "Dic 2024 – May 2026" },
+    org: "Naked Dog", start: "2024-12", end: "now", open: "prismonaut", current: true,
+    dates: { en: "Dec 2024 – Present", es: "Dic 2024 – Presente" },
     kind: { en: "Studio I founded", es: "Estudio que fundé" },
     role: { en: "Founder · designer, environment artist and lead technical artist", es: "Fundador · diseñador, artista de entornos y lead technical artist" },
     line: { en: "Founded the studio to build Prismonaut. Started at ten, settled into a core six, took it from prototype through Game Jam Plus incubation to a Steam build.", es: "Fundé el estudio para construir Prismonaut. Empezamos diez, nos asentamos en un core de seis, y lo llevamos de prototipo a la incubación de Game Jam Plus y a una build de Steam." }
   },
   {
-    org: "Zarzilla Games", start: "2023-01", end: "2025-06", fuzzy: "both", open: "treasure",
+    org: "Zarzilla Games", start: "2023-01", end: "2025-05", open: "treasure",
     dates: { en: "2023 – 2025", es: "2023 – 2025" },
     kind: { en: "Studio", es: "Estudio" },
     role: { en: "Technical Artist → Lead Technical Artist → Studio Manager", es: "Technical Artist → Lead Technical Artist → Studio Manager" },
@@ -2429,14 +2465,16 @@ const TIMELINE = [
 
 const EDUCATION = [
   {
-    school: "Toulouse Lautrec", start: "2022-01", end: "2023-06", fuzzy: "both", open: "hell", acc: "hell",
-    dates: { en: "Graduated 2023", es: "Egresado 2023" },
+    school: "Toulouse Lautrec", start: "2019-04", end: "2023-07", open: "hell", acc: "hell",
+    dates: { en: "2019 – 2023 · graduated", es: "2019 – 2023 · egresado" },
     program: { en: "Game Design & Digital Entertainment · final degree project: Hell Is Mine", es: "Diseño de Videojuegos y Entretenimiento Digital · proyecto final: Hell Is Mine" },
     line: { en: "Hell Is Mine was the final degree project: a top-down action game in a stylized underworld, where I owned game design, environment art and technical art, including the shader for the glowing lava that lights most of the world.", es: "Hell Is Mine fue el proyecto final de carrera: un juego de acción top-down en un inframundo estilizado, donde fui dueño del diseño de juego, el arte de entornos y el arte técnico, incluyendo el shader de la lava brillante que ilumina casi todo el mundo." },
     note: { en: "Pronabec scholarship, 2021 · a year and a half of the degree", es: "Becado Pronabec 2021 · un año y medio de la carrera" }
   },
   {
-    school: { en: "Game Jam Plus · incubation", es: "Game Jam Plus · incubación" }, start: "2023-10", end: "2025-06", fuzzy: "end", open: "crust", acc: "crust",
+    /* Dos tramos (Andrés, 14-oct): la jam de Crust and Conflict en oct-2023 y
+       la incubación de Prismonaut de oct-2024 a feb-2025. */
+    school: { en: "Game Jam Plus · incubation", es: "Game Jam Plus · incubación" }, segs: [["2023-10", "2023-10"], ["2024-10", "2025-02"]], open: "crust", acc: "crust",
     dates: { en: "2023 – 2025", es: "2023 – 2025" },
     program: { en: "Crust and Conflict (2023) and Prismonaut (incubation)", es: "Crust and Conflict (2023) y Prismonaut (incubación)" },
     line: { en: "Two projects taken to Game Jam Plus with a pitch and a playable build, and Prismonaut carried through the program's incubation stage on the way to a Steam build.", es: "Dos proyectos llevados a Game Jam Plus con pitch y build jugable, y Prismonaut llevado por la etapa de incubación del programa camino a una build de Steam." }
@@ -2634,6 +2672,14 @@ function cardMedia(item, big) {
     + ' muted loop playsinline aria-hidden="true"></video>';
 }
 
+/* Un clip de papel en metal gris: el trazo es un solo path de alambre. */
+function clipSvg(cls, label) {
+  return '<svg class="' + cls + '" viewBox="0 0 17 40" role="img" aria-label="' + esc(label) + '">'
+    + '<title>' + esc(label) + '</title>'
+    + '<path d="M12.5 13v17.5a4 4 0 0 1-8 0V7.5a2.6 2.6 0 0 1 5.2 0V29a1.3 1.3 0 0 1-2.6 0V12" fill="none"'
+    + ' stroke="#A9AFAB" stroke-width="1.8" stroke-linecap="round"/></svg>';
+}
+
 function bulletText(b) { return typeof b === "string" ? b : (b && b.t) || ""; }
 
 /* LA HOJA DESTACADA (v5). slot 0 es la grande; 1-4, el 2×2.
@@ -2657,6 +2703,7 @@ function cardHtml(f, slot, role) {
   h += '<div class="hand">' + esc(hand[0])
      + (hand[1] ? ' <span class="dashx">&#183; ' + esc(pick(hand[1])) + '</span>' : '') + '</div>';
   h += '<div class="sheet"><i class="tape t1"></i><i class="tape t2"></i>';
+  if (item.docs && item.docs.length) h += clipSvg("clipicon", t.hasDocs);
   h += '<div class="chead"><span>' + esc(head) + '</span></div>';
   h += '<div class="figbox">' + cardMedia(item, big) + '</div>';
   /* La tira de 3 capturas solo existe si hay galería de verdad: nada de huecos. */
@@ -2707,7 +2754,8 @@ function archRowHtml(f, n) {
     + ' aria-label="' + esc(pick(item.title)) + ' · ' + esc(t.inspect) + '">'
     + '<div class="thumb">' + figureFor(item) + '</div>'
     + '<div><div class="atitle">' + esc(pick(item.title))
-    + (item.award ? ' <i>&#183; ' + esc(pick(item.award)) + '</i>' : '') + '</div>'
+    + (item.award ? ' <i>&#183; ' + esc(pick(item.award)) + '</i>' : '')
+    + (item.docs && item.docs.length ? clipSvg("clipmini", t.hasDocs) : '') + '</div>'
     + '<div class="ameta">' + esc(meta) + '</div>'
     + '<div class="arole">' + esc(line) + '</div></div></button></li>';
 }
@@ -3008,7 +3056,6 @@ function renderProfile() {
   Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (b) {
     b.setAttribute("aria-pressed", b.getAttribute("data-r") === r ? "true" : "false");
   });
-  $("pickHint").innerHTML = esc(prof.hint).replace(/\?r=\w+/, function (m) { return "<code>" + m + "</code>"; });
   $("projectsWhy").textContent = prof.why;
   var feat = FEAT[r].map(findItem).filter(Boolean);
   $("projectsGrid").innerHTML = feat.map(function (f, k) { return cardHtml(f, k, r); }).join("");
@@ -3085,14 +3132,20 @@ function tlPos(ym) {
 function tlRow(e, name, sub, small, isCur, t) {
   var f = findItem(e.open);
   var acc = e.acc || (f && f.item.acc) || "space";
-  var x0 = tlPos(e.start), x1 = e.end === "now" ? tlPos("now") : tlPos(e.end) + 1 / (TL_YEARS * 12);
-  var fz = e.fuzzy === "both" ? " fz-s fz-e" : e.fuzzy === "end" ? " fz-e" : e.fuzzy === "start" ? " fz-s" : "";
-  return '<button type="button" class="tlrow2" style="--kc:var(--k-' + acc + ')"'
+  var segs = e.segs || [[e.start, e.end]];
+  var bars = segs.map(function (sg) {
+    var x0 = tlPos(sg[0]), x1 = sg[1] === "now" ? tlPos("now") : tlPos(sg[1]) + 1 / (TL_YEARS * 12);
+    return '<i class="tlbar" style="left:' + (x0 * 100).toFixed(2) + '%;width:' + ((x1 - x0) * 100).toFixed(2) + '%"></i>';
+  }).join("");
+  /* Si empieza antes del eje (Toulouse, 2019), lo dice en vez de cortarse mudo. */
+  var y0 = +segs[0][0].slice(0, 4);
+  if (y0 < TL_FROM) bars += '<span class="tlpre">&#8592; ' + (t.tlSince || "since") + ' ' + y0 + '</span>';
+  var tag = f ? "button" : "div";
+  return '<' + tag + (f ? ' type="button"' : '') + ' class="tlrow2" style="--kc:var(--k-' + acc + ')"'
     + (f ? ' data-g="' + f.g + '" data-i="' + f.i + '"' : '') + '>'
     + '<div class="tllab"><h3>' + esc(name) + (isCur ? '<em>' + esc(t.current) + '</em>' : '') + '</h3>'
     + '<p>' + esc(sub) + '</p><small>' + esc(small) + '</small></div>'
-    + '<div class="tltrack"><i class="tlbar' + fz + '" style="left:' + (x0 * 100).toFixed(2) + '%;width:'
-    + ((x1 - x0) * 100).toFixed(2) + '%"></i></div></button>';
+    + '<div class="tltrack">' + bars + '</div></' + tag + '>';
 }
 function timelineHtml(t) {
   var h = '<div class="tlaxis" aria-hidden="true">';
@@ -3191,7 +3244,6 @@ function render() {
   /* cierre */
   $("contactTitle").textContent = t.contactTitle;
   $("contactNote").textContent = t.contactNote;
-  $("lnkCv").textContent = t.cvLabel;
   /* Un solo texto para los dos popovers: se llenan por data-attribute. */
   function fill(sel, txt) {
     document.querySelectorAll(sel).forEach(function (el) { el.textContent = txt; });
